@@ -1,0 +1,104 @@
+[0.000000] (-) TimerEvent: {}
+[0.012280] (controller) JobQueued: {'identifier': 'controller', 'dependencies': OrderedDict()}
+[0.012356] (spawner) JobQueued: {'identifier': 'spawner', 'dependencies': OrderedDict()}
+[0.012562] (controller) JobStarted: {'identifier': 'controller'}
+[0.108972] (-) TimerEvent: {}
+[0.229504] (-) TimerEvent: {}
+[0.331356] (-) TimerEvent: {}
+[0.444409] (-) TimerEvent: {}
+[0.548322] (-) TimerEvent: {}
+[0.650088] (-) TimerEvent: {}
+[0.751612] (-) TimerEvent: {}
+[0.872845] (-) TimerEvent: {}
+[0.978003] (-) TimerEvent: {}
+[1.082879] (-) TimerEvent: {}
+[1.192290] (-) TimerEvent: {}
+[1.295272] (-) TimerEvent: {}
+[1.365669] (controller) Command: {'cmd': ['/usr/bin/python3', 'setup.py', 'egg_info', '--egg-base', '../../build/controller', 'build', '--build-base', '/home/ghost/Desktop/dev_ws/build/controller/build', 'install', '--prefix', '/home/ghost/Desktop/dev_ws/install/controller', '--record', '/home/ghost/Desktop/dev_ws/build/controller/install.log', '--single-version-externally-managed'], 'cwd': '/home/ghost/Desktop/dev_ws/src/controller', 'env': {'SUDO_GID': '1000', 'LESSOPEN': '| /usr/bin/lesspipe %s', 'MAIL': '/var/mail/root', 'LANGUAGE': 'en_IN:en', 'USER': 'root', 'SHLVL': '1', 'LD_LIBRARY_PATH': '/usr/lib/x86_64-linux-gnu/gazebo-11/plugins:/opt/ros/foxy/opt/yaml_cpp_vendor/lib:/opt/ros/foxy/opt/rviz_ogre_vendor/lib:/opt/ros/foxy/lib/x86_64-linux-gnu:/opt/ros/foxy/lib', 'HOME': '/root', 'ROS_PYTHON_VERSION': '3', 'COLORTERM': 'truecolor', '_colcon_cd_root': '/root/ros2_install', 'COLCON_PREFIX_PATH': '/home/ghost/Desktop/dev_ws/install', 'SUDO_UID': '1000', 'ROS_DISTRO': 'foxy', 'LOGNAME': 'root', '_': '/usr/bin/colcon', 'ROS_VERSION': '2', 'TERM': 'xterm-256color', 'ROS_LOCALHOST_ONLY': '0', 'PATH': '/opt/ros/foxy/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin', 'DISPLAY': ':0', 'LANG': 'en_US.UTF-8', 'XAUTHORITY': '/run/user/1000/gdm/Xauthority', 'LS_COLORS': 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:', 'SUDO_COMMAND': '/usr/bin/su', 'AMENT_PREFIX_PATH': '/home/ghost/Desktop/dev_ws/install/spawner:/home/ghost/Desktop/dev_ws/install/controller:/opt/ros/foxy', 'SHELL': '/bin/bash', 'SUDO_USER': 'ghost', 'LESSCLOSE': '/usr/bin/lesspipe %s %s', 'PWD': '/home/ghost/Desktop/dev_ws/build/controller', 'LC_ALL': 'en_US.UTF-8', 'PYTHONPATH': '/home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages:/home/ghost/Desktop/dev_ws/install/spawner/lib/python3.8/site-packages:/home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages:/opt/ros/foxy/lib/python3.8/site-packages', 'COLCON': '1'}, 'shell': False}
+[1.400278] (-) TimerEvent: {}
+[1.502890] (-) TimerEvent: {}
+[1.610849] (-) TimerEvent: {}
+[1.722580] (-) TimerEvent: {}
+[1.825378] (-) TimerEvent: {}
+[1.934858] (-) TimerEvent: {}
+[2.039812] (-) TimerEvent: {}
+[2.148338] (-) TimerEvent: {}
+[2.256795] (-) TimerEvent: {}
+[2.364602] (-) TimerEvent: {}
+[2.465154] (-) TimerEvent: {}
+[2.572790] (-) TimerEvent: {}
+[2.613053] (controller) StdoutLine: {'line': b'running egg_info\n'}
+[2.623450] (controller) StdoutLine: {'line': b'writing ../../build/controller/controller.egg-info/PKG-INFO\n'}
+[2.631604] (controller) StdoutLine: {'line': b'writing dependency_links to ../../build/controller/controller.egg-info/dependency_links.txt\n'}
+[2.634455] (controller) StdoutLine: {'line': b'writing entry points to ../../build/controller/controller.egg-info/entry_points.txt\n'}
+[2.636409] (controller) StdoutLine: {'line': b'writing requirements to ../../build/controller/controller.egg-info/requires.txt\n'}
+[2.640325] (controller) StdoutLine: {'line': b'writing top-level names to ../../build/controller/controller.egg-info/top_level.txt\n'}
+[2.679268] (-) TimerEvent: {}
+[2.790480] (-) TimerEvent: {}
+[2.854912] (controller) StdoutLine: {'line': b"reading manifest file '../../build/controller/controller.egg-info/SOURCES.txt'\n"}
+[2.858528] (controller) StdoutLine: {'line': b"writing manifest file '../../build/controller/controller.egg-info/SOURCES.txt'\n"}
+[2.859477] (controller) StdoutLine: {'line': b'running build\n'}
+[2.860110] (controller) StdoutLine: {'line': b'running build_py\n'}
+[2.864274] (controller) StdoutLine: {'line': b'running install\n'}
+[2.874620] (controller) StdoutLine: {'line': b'running install_lib\n'}
+[2.877800] (controller) StdoutLine: {'line': b'running install_data\n'}
+[2.879951] (controller) StdoutLine: {'line': b'running install_egg_info\n'}
+[2.893384] (-) TimerEvent: {}
+[2.893715] (controller) StdoutLine: {'line': b"removing '/home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller-0.0.0-py3.8.egg-info' (and everything under it)\n"}
+[2.901498] (controller) StdoutLine: {'line': b'Copying ../../build/controller/controller.egg-info to /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller-0.0.0-py3.8.egg-info\n'}
+[2.904127] (controller) StdoutLine: {'line': b'running install_scripts\n'}
+[2.996413] (-) TimerEvent: {}
+[3.000333] (controller) StdoutLine: {'line': b'Installing controller script to /home/ghost/Desktop/dev_ws/install/controller/lib/controller\n'}
+[3.000969] (controller) StdoutLine: {'line': b"writing list of installed files to '/home/ghost/Desktop/dev_ws/build/controller/install.log'\n"}
+[3.107768] (-) TimerEvent: {}
+[3.119052] (controller) CommandEnded: {'returncode': 0}
+[3.177646] (controller) JobEnded: {'identifier': 'controller', 'rc': 0}
+[3.179119] (spawner) JobStarted: {'identifier': 'spawner'}
+[3.217026] (-) TimerEvent: {}
+[3.322920] (-) TimerEvent: {}
+[3.428730] (-) TimerEvent: {}
+[3.534281] (-) TimerEvent: {}
+[3.640850] (-) TimerEvent: {}
+[3.742054] (-) TimerEvent: {}
+[3.850050] (-) TimerEvent: {}
+[3.966197] (-) TimerEvent: {}
+[4.077937] (-) TimerEvent: {}
+[4.184052] (-) TimerEvent: {}
+[4.294320] (-) TimerEvent: {}
+[4.348820] (spawner) Command: {'cmd': ['/usr/bin/python3', 'setup.py', 'egg_info', '--egg-base', '../../build/spawner', 'build', '--build-base', '/home/ghost/Desktop/dev_ws/build/spawner/build', 'install', '--prefix', '/home/ghost/Desktop/dev_ws/install/spawner', '--record', '/home/ghost/Desktop/dev_ws/build/spawner/install.log', '--single-version-externally-managed'], 'cwd': '/home/ghost/Desktop/dev_ws/src/spawner', 'env': {'SUDO_GID': '1000', 'LESSOPEN': '| /usr/bin/lesspipe %s', 'MAIL': '/var/mail/root', 'LANGUAGE': 'en_IN:en', 'USER': 'root', 'SHLVL': '1', 'LD_LIBRARY_PATH': '/usr/lib/x86_64-linux-gnu/gazebo-11/plugins:/opt/ros/foxy/opt/yaml_cpp_vendor/lib:/opt/ros/foxy/opt/rviz_ogre_vendor/lib:/opt/ros/foxy/lib/x86_64-linux-gnu:/opt/ros/foxy/lib', 'HOME': '/root', 'ROS_PYTHON_VERSION': '3', 'COLORTERM': 'truecolor', '_colcon_cd_root': '/root/ros2_install', 'COLCON_PREFIX_PATH': '/home/ghost/Desktop/dev_ws/install', 'SUDO_UID': '1000', 'ROS_DISTRO': 'foxy', 'LOGNAME': 'root', '_': '/usr/bin/colcon', 'ROS_VERSION': '2', 'TERM': 'xterm-256color', 'ROS_LOCALHOST_ONLY': '0', 'PATH': '/opt/ros/foxy/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin', 'DISPLAY': ':0', 'LANG': 'en_US.UTF-8', 'XAUTHORITY': '/run/user/1000/gdm/Xauthority', 'LS_COLORS': 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:', 'SUDO_COMMAND': '/usr/bin/su', 'AMENT_PREFIX_PATH': '/home/ghost/Desktop/dev_ws/install/spawner:/home/ghost/Desktop/dev_ws/install/controller:/opt/ros/foxy', 'SHELL': '/bin/bash', 'SUDO_USER': 'ghost', 'LESSCLOSE': '/usr/bin/lesspipe %s %s', 'PWD': '/home/ghost/Desktop/dev_ws/build/spawner', 'LC_ALL': 'en_US.UTF-8', 'PYTHONPATH': '/home/ghost/Desktop/dev_ws/install/spawner/lib/python3.8/site-packages:/home/ghost/Desktop/dev_ws/install/spawner/lib/python3.8/site-packages:/home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages:/opt/ros/foxy/lib/python3.8/site-packages', 'COLCON': '1'}, 'shell': False}
+[4.404994] (-) TimerEvent: {}
+[4.516867] (-) TimerEvent: {}
+[4.632794] (-) TimerEvent: {}
+[4.745328] (-) TimerEvent: {}
+[4.854999] (-) TimerEvent: {}
+[4.960727] (-) TimerEvent: {}
+[5.063846] (-) TimerEvent: {}
+[5.166066] (-) TimerEvent: {}
+[5.260562] (spawner) StdoutLine: {'line': b'running egg_info\n'}
+[5.271312] (spawner) StdoutLine: {'line': b'writing ../../build/spawner/spawner.egg-info/PKG-INFO\n'}
+[5.271484] (-) TimerEvent: {}
+[5.280929] (spawner) StdoutLine: {'line': b'writing dependency_links to ../../build/spawner/spawner.egg-info/dependency_links.txt\n'}
+[5.282015] (spawner) StdoutLine: {'line': b'writing entry points to ../../build/spawner/spawner.egg-info/entry_points.txt\n'}
+[5.284642] (spawner) StdoutLine: {'line': b'writing requirements to ../../build/spawner/spawner.egg-info/requires.txt\n'}
+[5.289071] (spawner) StdoutLine: {'line': b'writing top-level names to ../../build/spawner/spawner.egg-info/top_level.txt\n'}
+[5.375390] (-) TimerEvent: {}
+[5.449760] (spawner) StdoutLine: {'line': b"reading manifest file '../../build/spawner/spawner.egg-info/SOURCES.txt'\n"}
+[5.457062] (spawner) StdoutLine: {'line': b"writing manifest file '../../build/spawner/spawner.egg-info/SOURCES.txt'\n"}
+[5.460102] (spawner) StdoutLine: {'line': b'running build\n'}
+[5.460315] (spawner) StdoutLine: {'line': b'running build_py\n'}
+[5.461104] (spawner) StdoutLine: {'line': b'running install\n'}
+[5.467096] (spawner) StdoutLine: {'line': b'running install_lib\n'}
+[5.472145] (spawner) StdoutLine: {'line': b'running install_data\n'}
+[5.483655] (-) TimerEvent: {}
+[5.491474] (spawner) StdoutLine: {'line': b'running install_egg_info\n'}
+[5.505046] (spawner) StdoutLine: {'line': b"removing '/home/ghost/Desktop/dev_ws/install/spawner/lib/python3.8/site-packages/spawner-0.0.0-py3.8.egg-info' (and everything under it)\n"}
+[5.507431] (spawner) StdoutLine: {'line': b'Copying ../../build/spawner/spawner.egg-info to /home/ghost/Desktop/dev_ws/install/spawner/lib/python3.8/site-packages/spawner-0.0.0-py3.8.egg-info\n'}
+[5.525144] (spawner) StdoutLine: {'line': b'running install_scripts\n'}
+[5.601914] (-) TimerEvent: {}
+[5.620581] (spawner) StdoutLine: {'line': b'Installing spawn script to /home/ghost/Desktop/dev_ws/install/spawner/lib/spawner\n'}
+[5.625937] (spawner) StdoutLine: {'line': b"writing list of installed files to '/home/ghost/Desktop/dev_ws/build/spawner/install.log'\n"}
+[5.705333] (-) TimerEvent: {}
+[5.765689] (spawner) CommandEnded: {'returncode': 0}
+[5.805553] (-) TimerEvent: {}
+[5.812468] (spawner) JobEnded: {'identifier': 'spawner', 'rc': 0}
+[5.823647] (-) EventReactorShutdown: {}

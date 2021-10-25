@@ -1,0 +1,21 @@
+[1.170s] Invoking command in '/home/ghost/Desktop/dev_ws/src/spawner': PYTHONPATH=/home/ghost/Desktop/dev_ws/install/spawner/lib/python3.8/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py egg_info --egg-base ../../build/spawner build --build-base /home/ghost/Desktop/dev_ws/build/spawner/build install --prefix /home/ghost/Desktop/dev_ws/install/spawner --record /home/ghost/Desktop/dev_ws/build/spawner/install.log --single-version-externally-managed
+[2.082s] running egg_info
+[2.092s] writing ../../build/spawner/spawner.egg-info/PKG-INFO
+[2.102s] writing dependency_links to ../../build/spawner/spawner.egg-info/dependency_links.txt
+[2.103s] writing entry points to ../../build/spawner/spawner.egg-info/entry_points.txt
+[2.110s] writing requirements to ../../build/spawner/spawner.egg-info/requires.txt
+[2.110s] writing top-level names to ../../build/spawner/spawner.egg-info/top_level.txt
+[2.271s] reading manifest file '../../build/spawner/spawner.egg-info/SOURCES.txt'
+[2.278s] writing manifest file '../../build/spawner/spawner.egg-info/SOURCES.txt'
+[2.281s] running build
+[2.281s] running build_py
+[2.282s] running install
+[2.288s] running install_lib
+[2.293s] running install_data
+[2.312s] running install_egg_info
+[2.326s] removing '/home/ghost/Desktop/dev_ws/install/spawner/lib/python3.8/site-packages/spawner-0.0.0-py3.8.egg-info' (and everything under it)
+[2.328s] Copying ../../build/spawner/spawner.egg-info to /home/ghost/Desktop/dev_ws/install/spawner/lib/python3.8/site-packages/spawner-0.0.0-py3.8.egg-info
+[2.346s] running install_scripts
+[2.442s] Installing spawn script to /home/ghost/Desktop/dev_ws/install/spawner/lib/spawner
+[2.447s] writing list of installed files to '/home/ghost/Desktop/dev_ws/build/spawner/install.log'
+[2.589s] Invoked command in '/home/ghost/Desktop/dev_ws/src/spawner' returned '0': PYTHONPATH=/home/ghost/Desktop/dev_ws/install/spawner/lib/python3.8/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py egg_info --egg-base ../../build/spawner build --build-base /home/ghost/Desktop/dev_ws/build/spawner/build install --prefix /home/ghost/Desktop/dev_ws/install/spawner --record /home/ghost/Desktop/dev_ws/build/spawner/install.log --single-version-externally-managed

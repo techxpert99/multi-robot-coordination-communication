@@ -1,0 +1,21 @@
+running egg_info
+writing ../../build/spawner/spawner.egg-info/PKG-INFO
+writing dependency_links to ../../build/spawner/spawner.egg-info/dependency_links.txt
+writing entry points to ../../build/spawner/spawner.egg-info/entry_points.txt
+writing requirements to ../../build/spawner/spawner.egg-info/requires.txt
+writing top-level names to ../../build/spawner/spawner.egg-info/top_level.txt
+reading manifest file '../../build/spawner/spawner.egg-info/SOURCES.txt'
+writing manifest file '../../build/spawner/spawner.egg-info/SOURCES.txt'
+running build
+running build_py
+running install
+running install_lib
+running install_data
+copying package.xml -> /home/ghost/Desktop/dev_ws/install/spawner/share/spawner
+copying spawn.py -> /home/ghost/Desktop/dev_ws/install/spawner/share/spawner
+running install_egg_info
+removing '/home/ghost/Desktop/dev_ws/install/spawner/lib/python3.8/site-packages/spawner-0.0.0-py3.8.egg-info' (and everything under it)
+Copying ../../build/spawner/spawner.egg-info to /home/ghost/Desktop/dev_ws/install/spawner/lib/python3.8/site-packages/spawner-0.0.0-py3.8.egg-info
+running install_scripts
+Installing spawn script to /home/ghost/Desktop/dev_ws/install/spawner/lib/spawner
+writing list of installed files to '/home/ghost/Desktop/dev_ws/build/spawner/install.log'

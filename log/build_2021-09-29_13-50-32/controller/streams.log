@@ -1,0 +1,35 @@
+[0.262s] Invoking command in '/home/ghost/Desktop/dev_ws/src/controller': PYTHONPATH=/home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py egg_info --egg-base ../../build/controller build --build-base /home/ghost/Desktop/dev_ws/build/controller/build install --prefix /home/ghost/Desktop/dev_ws/install/controller --record /home/ghost/Desktop/dev_ws/build/controller/install.log --single-version-externally-managed
+[0.419s] running egg_info
+[0.420s] creating ../../build/controller/controller.egg-info
+[0.420s] writing ../../build/controller/controller.egg-info/PKG-INFO
+[0.420s] writing dependency_links to ../../build/controller/controller.egg-info/dependency_links.txt
+[0.421s] writing entry points to ../../build/controller/controller.egg-info/entry_points.txt
+[0.421s] writing requirements to ../../build/controller/controller.egg-info/requires.txt
+[0.421s] writing top-level names to ../../build/controller/controller.egg-info/top_level.txt
+[0.422s] writing manifest file '../../build/controller/controller.egg-info/SOURCES.txt'
+[0.444s] reading manifest file '../../build/controller/controller.egg-info/SOURCES.txt'
+[0.444s] writing manifest file '../../build/controller/controller.egg-info/SOURCES.txt'
+[0.444s] running build
+[0.445s] running build_py
+[0.445s] creating /home/ghost/Desktop/dev_ws/build/controller/build
+[0.445s] creating /home/ghost/Desktop/dev_ws/build/controller/build/lib
+[0.445s] creating /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller
+[0.445s] copying controller/__init__.py -> /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller
+[0.445s] running install
+[0.446s] running install_lib
+[0.448s] creating /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller
+[0.448s] copying /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller/__init__.py -> /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller
+[0.448s] byte-compiling /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/__init__.py to __init__.cpython-38.pyc
+[0.449s] running install_data
+[0.450s] creating /home/ghost/Desktop/dev_ws/install/controller/share/ament_index
+[0.450s] creating /home/ghost/Desktop/dev_ws/install/controller/share/ament_index/resource_index
+[0.450s] creating /home/ghost/Desktop/dev_ws/install/controller/share/ament_index/resource_index/packages
+[0.450s] copying resource/controller -> /home/ghost/Desktop/dev_ws/install/controller/share/ament_index/resource_index/packages
+[0.450s] copying package.xml -> /home/ghost/Desktop/dev_ws/install/controller/share/controller
+[0.450s] creating /home/ghost/Desktop/dev_ws/install/controller/share/controller/launch
+[0.450s] running install_egg_info
+[0.451s] Copying ../../build/controller/controller.egg-info to /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller-0.0.0-py3.8.egg-info
+[0.452s] running install_scripts
+[0.467s] Installing spawn_demo script to /home/ghost/Desktop/dev_ws/install/controller/lib/controller
+[0.467s] writing list of installed files to '/home/ghost/Desktop/dev_ws/build/controller/install.log'
+[0.485s] Invoked command in '/home/ghost/Desktop/dev_ws/src/controller' returned '0': PYTHONPATH=/home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py egg_info --egg-base ../../build/controller build --build-base /home/ghost/Desktop/dev_ws/build/controller/build install --prefix /home/ghost/Desktop/dev_ws/install/controller --record /home/ghost/Desktop/dev_ws/build/controller/install.log --single-version-externally-managed
