@@ -1,0 +1,73 @@
+[0.322s] Invoking command in '/home/ghost/Desktop/dev_ws/src/controller': PYTHONPATH=/home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages: /usr/bin/python3 setup.py egg_info --egg-base ../../build/controller build --build-base /home/ghost/Desktop/dev_ws/build/controller/build install --prefix /home/ghost/Desktop/dev_ws/install/controller --record /home/ghost/Desktop/dev_ws/build/controller/install.log --single-version-externally-managed
+[0.662s] running egg_info
+[0.663s] creating ../../build/controller/controller.egg-info
+[0.663s] writing ../../build/controller/controller.egg-info/PKG-INFO
+[0.664s] writing dependency_links to ../../build/controller/controller.egg-info/dependency_links.txt
+[0.664s] writing entry points to ../../build/controller/controller.egg-info/entry_points.txt
+[0.664s] writing requirements to ../../build/controller/controller.egg-info/requires.txt
+[0.665s] writing top-level names to ../../build/controller/controller.egg-info/top_level.txt
+[0.667s] writing manifest file '../../build/controller/controller.egg-info/SOURCES.txt'
+[0.743s] reading manifest file '../../build/controller/controller.egg-info/SOURCES.txt'
+[0.745s] writing manifest file '../../build/controller/controller.egg-info/SOURCES.txt'
+[0.745s] running build
+[0.745s] running build_py
+[0.746s] creating /home/ghost/Desktop/dev_ws/build/controller/build
+[0.746s] creating /home/ghost/Desktop/dev_ws/build/controller/build/lib
+[0.746s] creating /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller
+[0.747s] copying controller/auxiliary.py -> /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller
+[0.747s] copying controller/controller.py -> /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller
+[0.747s] copying controller/__init__.py -> /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller
+[0.747s] copying controller/wrappers.py -> /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller
+[0.748s] copying controller/sensor.py -> /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller
+[0.748s] copying controller/visualizer.py -> /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller
+[0.748s] copying controller/stores.py -> /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller
+[0.749s] copying controller/mapper.py -> /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller
+[0.749s] copying controller/planner.py -> /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller
+[0.750s] copying controller/main.py -> /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller
+[0.750s] copying controller/mover.py -> /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller
+[0.750s] copying controller/estimator.py -> /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller
+[0.750s] copying controller/structures.py -> /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller
+[0.750s] copying controller/critical_controller.py -> /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller
+[0.752s] running install
+[0.754s] running install_lib
+[0.755s] creating /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller
+[0.755s] copying /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller/auxiliary.py -> /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller
+[0.756s] copying /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller/controller.py -> /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller
+[0.756s] copying /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller/__init__.py -> /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller
+[0.756s] copying /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller/wrappers.py -> /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller
+[0.757s] copying /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller/sensor.py -> /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller
+[0.757s] copying /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller/visualizer.py -> /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller
+[0.757s] copying /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller/stores.py -> /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller
+[0.757s] copying /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller/mapper.py -> /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller
+[0.758s] copying /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller/planner.py -> /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller
+[0.758s] copying /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller/main.py -> /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller
+[0.758s] copying /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller/mover.py -> /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller
+[0.758s] copying /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller/estimator.py -> /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller
+[0.758s] copying /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller/structures.py -> /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller
+[0.759s] copying /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller/critical_controller.py -> /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller
+[0.759s] byte-compiling /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/auxiliary.py to auxiliary.cpython-38.pyc
+[0.762s] byte-compiling /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/controller.py to controller.cpython-38.pyc
+[0.765s] byte-compiling /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/__init__.py to __init__.cpython-38.pyc
+[0.765s] byte-compiling /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/wrappers.py to wrappers.cpython-38.pyc
+[0.766s] byte-compiling /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/sensor.py to sensor.cpython-38.pyc
+[0.767s] byte-compiling /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/visualizer.py to visualizer.cpython-38.pyc
+[0.768s] byte-compiling /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/stores.py to stores.cpython-38.pyc
+[0.769s] byte-compiling /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/mapper.py to mapper.cpython-38.pyc
+[0.769s] byte-compiling /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/planner.py to planner.cpython-38.pyc
+[0.772s] byte-compiling /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/main.py to main.cpython-38.pyc
+[0.773s] byte-compiling /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/mover.py to mover.cpython-38.pyc
+[0.774s] byte-compiling /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/estimator.py to estimator.cpython-38.pyc
+[0.774s] byte-compiling /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/structures.py to structures.cpython-38.pyc
+[0.780s] byte-compiling /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/critical_controller.py to critical_controller.cpython-38.pyc
+[0.780s] running install_data
+[0.781s] creating /home/ghost/Desktop/dev_ws/install/controller/share/ament_index
+[0.782s] creating /home/ghost/Desktop/dev_ws/install/controller/share/ament_index/resource_index
+[0.783s] creating /home/ghost/Desktop/dev_ws/install/controller/share/ament_index/resource_index/packages
+[0.783s] copying resource/controller -> /home/ghost/Desktop/dev_ws/install/controller/share/ament_index/resource_index/packages
+[0.784s] copying package.xml -> /home/ghost/Desktop/dev_ws/install/controller/share/controller
+[0.784s] running install_egg_info
+[0.787s] Copying ../../build/controller/controller.egg-info to /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller-0.0.1-py3.8.egg-info
+[0.788s] running install_scripts
+[0.820s] Installing controller script to /home/ghost/Desktop/dev_ws/install/controller/lib/controller
+[0.820s] writing list of installed files to '/home/ghost/Desktop/dev_ws/build/controller/install.log'
+[0.852s] Invoked command in '/home/ghost/Desktop/dev_ws/src/controller' returned '0': PYTHONPATH=/home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages: /usr/bin/python3 setup.py egg_info --egg-base ../../build/controller build --build-base /home/ghost/Desktop/dev_ws/build/controller/build install --prefix /home/ghost/Desktop/dev_ws/install/controller --record /home/ghost/Desktop/dev_ws/build/controller/install.log --single-version-externally-managed

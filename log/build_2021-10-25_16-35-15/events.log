@@ -1,0 +1,86 @@
+[0.000000] (-) TimerEvent: {}
+[0.001566] (controller) JobQueued: {'identifier': 'controller', 'dependencies': OrderedDict()}
+[0.001643] (controller) JobStarted: {'identifier': 'controller'}
+[0.098992] (-) TimerEvent: {}
+[0.199488] (-) TimerEvent: {}
+[0.299978] (-) TimerEvent: {}
+[0.322632] (controller) Command: {'cmd': ['/usr/bin/python3', 'setup.py', 'egg_info', '--egg-base', '../../build/controller', 'build', '--build-base', '/home/ghost/Desktop/dev_ws/build/controller/build', 'install', '--prefix', '/home/ghost/Desktop/dev_ws/install/controller', '--record', '/home/ghost/Desktop/dev_ws/build/controller/install.log', '--single-version-externally-managed'], 'cwd': '/home/ghost/Desktop/dev_ws/src/controller', 'env': {'SUDO_GID': '1000', 'MAIL': '/var/mail/root', 'LANGUAGE': 'en_IN:en', 'USER': 'root', 'HOME': '/root', 'COLORTERM': 'truecolor', 'SUDO_UID': '1000', 'LOGNAME': 'root', 'TERM': 'xterm-256color', 'PATH': '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin', 'DISPLAY': ':0', 'LANG': 'en_US.UTF-8', 'XAUTHORITY': '/run/user/1000/gdm/Xauthority', 'SUDO_COMMAND': '/usr/bin/colcon build', 'SHELL': '/bin/bash', 'SUDO_USER': 'ghost', 'LC_ALL': 'en_US.UTF-8', 'PWD': '/home/ghost/Desktop/dev_ws/build/controller', 'COLCON': '1', 'PYTHONPATH': '/home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages:'}, 'shell': False}
+[0.401244] (-) TimerEvent: {}
+[0.501707] (-) TimerEvent: {}
+[0.602129] (-) TimerEvent: {}
+[0.663595] (controller) StdoutLine: {'line': b'running egg_info\n'}
+[0.664518] (controller) StdoutLine: {'line': b'creating ../../build/controller/controller.egg-info\n'}
+[0.664816] (controller) StdoutLine: {'line': b'writing ../../build/controller/controller.egg-info/PKG-INFO\n'}
+[0.665369] (controller) StdoutLine: {'line': b'writing dependency_links to ../../build/controller/controller.egg-info/dependency_links.txt\n'}
+[0.665662] (controller) StdoutLine: {'line': b'writing entry points to ../../build/controller/controller.egg-info/entry_points.txt\n'}
+[0.665905] (controller) StdoutLine: {'line': b'writing requirements to ../../build/controller/controller.egg-info/requires.txt\n'}
+[0.666206] (controller) StdoutLine: {'line': b'writing top-level names to ../../build/controller/controller.egg-info/top_level.txt\n'}
+[0.668057] (controller) StdoutLine: {'line': b"writing manifest file '../../build/controller/controller.egg-info/SOURCES.txt'\n"}
+[0.702348] (-) TimerEvent: {}
+[0.744027] (controller) StdoutLine: {'line': b"reading manifest file '../../build/controller/controller.egg-info/SOURCES.txt'\n"}
+[0.746466] (controller) StdoutLine: {'line': b"writing manifest file '../../build/controller/controller.egg-info/SOURCES.txt'\n"}
+[0.746906] (controller) StdoutLine: {'line': b'running build\n'}
+[0.747077] (controller) StdoutLine: {'line': b'running build_py\n'}
+[0.747556] (controller) StdoutLine: {'line': b'creating /home/ghost/Desktop/dev_ws/build/controller/build\n'}
+[0.747844] (controller) StdoutLine: {'line': b'creating /home/ghost/Desktop/dev_ws/build/controller/build/lib\n'}
+[0.747969] (controller) StdoutLine: {'line': b'creating /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller\n'}
+[0.748174] (controller) StdoutLine: {'line': b'copying controller/auxiliary.py -> /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller\n'}
+[0.748414] (controller) StdoutLine: {'line': b'copying controller/controller.py -> /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller\n'}
+[0.748619] (controller) StdoutLine: {'line': b'copying controller/__init__.py -> /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller\n'}
+[0.748930] (controller) StdoutLine: {'line': b'copying controller/wrappers.py -> /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller\n'}
+[0.749151] (controller) StdoutLine: {'line': b'copying controller/sensor.py -> /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller\n'}
+[0.749459] (controller) StdoutLine: {'line': b'copying controller/visualizer.py -> /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller\n'}
+[0.749758] (controller) StdoutLine: {'line': b'copying controller/stores.py -> /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller\n'}
+[0.750110] (controller) StdoutLine: {'line': b'copying controller/mapper.py -> /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller\n'}
+[0.750918] (controller) StdoutLine: {'line': b'copying controller/planner.py -> /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller\n'}
+[0.751191] (controller) StdoutLine: {'line': b'copying controller/main.py -> /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller\n'}
+[0.751380] (controller) StdoutLine: {'line': b'copying controller/mover.py -> /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller\n'}
+[0.751562] (controller) StdoutLine: {'line': b'copying controller/estimator.py -> /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller\n'}
+[0.751778] (controller) StdoutLine: {'line': b'copying controller/structures.py -> /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller\n'}
+[0.752050] (controller) StdoutLine: {'line': b'copying controller/critical_controller.py -> /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller\n'}
+[0.753479] (controller) StdoutLine: {'line': b'running install\n'}
+[0.755165] (controller) StdoutLine: {'line': b'running install_lib\n'}
+[0.756494] (controller) StdoutLine: {'line': b'creating /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller\n'}
+[0.756782] (controller) StdoutLine: {'line': b'copying /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller/auxiliary.py -> /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller\n'}
+[0.757533] (controller) StdoutLine: {'line': b'copying /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller/controller.py -> /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller\n'}
+[0.757802] (controller) StdoutLine: {'line': b'copying /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller/__init__.py -> /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller\n'}
+[0.758014] (controller) StdoutLine: {'line': b'copying /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller/wrappers.py -> /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller\n'}
+[0.758208] (controller) StdoutLine: {'line': b'copying /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller/sensor.py -> /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller\n'}
+[0.758440] (controller) StdoutLine: {'line': b'copying /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller/visualizer.py -> /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller\n'}
+[0.758692] (controller) StdoutLine: {'line': b'copying /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller/stores.py -> /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller\n'}
+[0.758897] (controller) StdoutLine: {'line': b'copying /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller/mapper.py -> /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller\n'}
+[0.759159] (controller) StdoutLine: {'line': b'copying /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller/planner.py -> /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller\n'}
+[0.759357] (controller) StdoutLine: {'line': b'copying /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller/main.py -> /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller\n'}
+[0.759590] (controller) StdoutLine: {'line': b'copying /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller/mover.py -> /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller\n'}
+[0.759780] (controller) StdoutLine: {'line': b'copying /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller/estimator.py -> /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller\n'}
+[0.759999] (controller) StdoutLine: {'line': b'copying /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller/structures.py -> /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller\n'}
+[0.760187] (controller) StdoutLine: {'line': b'copying /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller/critical_controller.py -> /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller\n'}
+[0.761017] (controller) StdoutLine: {'line': b'byte-compiling /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/auxiliary.py to auxiliary.cpython-38.pyc\n'}
+[0.763441] (controller) StdoutLine: {'line': b'byte-compiling /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/controller.py to controller.cpython-38.pyc\n'}
+[0.766416] (controller) StdoutLine: {'line': b'byte-compiling /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/__init__.py to __init__.cpython-38.pyc\n'}
+[0.766773] (controller) StdoutLine: {'line': b'byte-compiling /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/wrappers.py to wrappers.cpython-38.pyc\n'}
+[0.767545] (controller) StdoutLine: {'line': b'byte-compiling /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/sensor.py to sensor.cpython-38.pyc\n'}
+[0.768091] (controller) StdoutLine: {'line': b'byte-compiling /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/visualizer.py to visualizer.cpython-38.pyc\n'}
+[0.769288] (controller) StdoutLine: {'line': b'byte-compiling /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/stores.py to stores.cpython-38.pyc\n'}
+[0.770187] (controller) StdoutLine: {'line': b'byte-compiling /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/mapper.py to mapper.cpython-38.pyc\n'}
+[0.770810] (controller) StdoutLine: {'line': b'byte-compiling /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/planner.py to planner.cpython-38.pyc\n'}
+[0.773744] (controller) StdoutLine: {'line': b'byte-compiling /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/main.py to main.cpython-38.pyc\n'}
+[0.774780] (controller) StdoutLine: {'line': b'byte-compiling /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/mover.py to mover.cpython-38.pyc\n'}
+[0.775341] (controller) StdoutLine: {'line': b'byte-compiling /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/estimator.py to estimator.cpython-38.pyc\n'}
+[0.775914] (controller) StdoutLine: {'line': b'byte-compiling /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/structures.py to structures.cpython-38.pyc\n'}
+[0.781061] (controller) StdoutLine: {'line': b'byte-compiling /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/critical_controller.py to critical_controller.cpython-38.pyc\n'}
+[0.781733] (controller) StdoutLine: {'line': b'running install_data\n'}
+[0.782987] (controller) StdoutLine: {'line': b'creating /home/ghost/Desktop/dev_ws/install/controller/share/ament_index\n'}
+[0.783742] (controller) StdoutLine: {'line': b'creating /home/ghost/Desktop/dev_ws/install/controller/share/ament_index/resource_index\n'}
+[0.784179] (controller) StdoutLine: {'line': b'creating /home/ghost/Desktop/dev_ws/install/controller/share/ament_index/resource_index/packages\n'}
+[0.784438] (controller) StdoutLine: {'line': b'copying resource/controller -> /home/ghost/Desktop/dev_ws/install/controller/share/ament_index/resource_index/packages\n'}
+[0.785618] (controller) StdoutLine: {'line': b'copying package.xml -> /home/ghost/Desktop/dev_ws/install/controller/share/controller\n'}
+[0.785838] (controller) StdoutLine: {'line': b'running install_egg_info\n'}
+[0.788041] (controller) StdoutLine: {'line': b'Copying ../../build/controller/controller.egg-info to /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller-0.0.1-py3.8.egg-info\n'}
+[0.789321] (controller) StdoutLine: {'line': b'running install_scripts\n'}
+[0.802485] (-) TimerEvent: {}
+[0.821028] (controller) StdoutLine: {'line': b'Installing controller script to /home/ghost/Desktop/dev_ws/install/controller/lib/controller\n'}
+[0.821967] (controller) StdoutLine: {'line': b"writing list of installed files to '/home/ghost/Desktop/dev_ws/build/controller/install.log'\n"}
+[0.853061] (controller) CommandEnded: {'returncode': 0}
+[0.871472] (controller) JobEnded: {'identifier': 'controller', 'rc': 0}
+[0.871988] (-) EventReactorShutdown: {}
