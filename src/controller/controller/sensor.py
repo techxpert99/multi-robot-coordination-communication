@@ -6,7 +6,7 @@ from controller.structures import Patch
 class SensorNode:
     
     def __init__(self,store):
-        self.__wrapper__ = NodeWrapper('sensor',store)
+        self.__wrapper__ = NodeWrapper(store.get('names','sensor'),store)
         self.__wrapper__.create_subscription('laser.in',self.__laser_callback__)
         self._store = store
     

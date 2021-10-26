@@ -9,8 +9,9 @@ class Visualizer:
         store.set('visualizer','callbacks',[])
         self._wait = round(1000*store.get('general','visualizer_node_callback_interval'))
         self._tw = ThreadWrapper(self._callback,0)
-        self._tw.__thread__.setName("visualizer-thread")
-        self.add_visualization_callback(('Map',self.critical_map_matrix_function))
+        self._tw.__thread__.setName(store.get('names','namespace')+'/visualizer')
+        self.add_visualization_callback((store.get('visualizer','window_name'),self.critical_map_matrix_function))
+        self._open_windows = []
         self._tw.start()
 
     def _callback(self):
@@ -21,11 +22,13 @@ class Visualizer:
             matrix = callback()
             if matrix is not None:
                 cv2.imshow(window_name,matrix)
+                self._open_windows.append(window_name)
         cv2.waitKey(self._wait)
     
     def destroy(self):
         self._tw.stop()
-        cv2.destroyAllWindows()
+        for window in self._open_windows:
+            cv2.destroyWindow(window)
 
     def cv2_tf(self,point):
         return point[1],point[0]
@@ -66,6 +69,8 @@ class Visualizer:
             elif x == 1: return (0,128,255)
             elif x == 2: return (255,255,0)
             elif x == 3: return (255,255,255)
+            elif x == 5:
+                return (200,100,150)
             return (128,128,128)
 
         current_cell = cmap.itf(cx,cy)
@@ -74,12 +79,14 @@ class Visualizer:
 
         image = self.draw_point(image,current_cell,(0,0,255))
 
-        if self._store.has('planner','plan'):
-            plan,plan_tf = self._store.get('planner','plan')
-            if plan:
-                image = self.draw_path(image,plan,(255,0,0))
-                image = self.draw_point(image,plan[0],(0,255,255))
-                image = self.draw_point(image,plan[-1],(0,255,0))
+        plan_tf = self._store.get('planner','plan')
+        if plan_tf and len(plan_tf) >= 2:
+            plan = []
+            for x,y in plan_tf:
+                plan.append(cmap.itf(x,y))
+            image = self.draw_path(image,plan,(255,0,0))
+            image = self.draw_point(image,plan[0],(0,255,255))
+            image = self.draw_point(image,plan[-1],(0,255,0))
         
         image = cv2.resize(image,(800,800))
         return image

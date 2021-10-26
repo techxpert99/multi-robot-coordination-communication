@@ -6,7 +6,7 @@ from math import pi,sqrt,floor,atan2
 class ControllerNode:
     
     def __init__(self, store):
-        self.__wrapper__ = NodeWrapper('controller',store)
+        self.__wrapper__ = NodeWrapper(store.get('names','controller'),store)
         self.__publisher__ = self.__wrapper__.create_publisher('vel.out')
         store.set('controller','velocity',store.get('general','initial_velocity'))
         self._store = store

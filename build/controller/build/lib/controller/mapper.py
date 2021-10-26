@@ -6,7 +6,7 @@ class Mapper:
 
     def __init__(self,store):
         self.__threadw__ = ThreadWrapper(self.__callback__,store.get('general','mapper_node_callback_interval'))
-        self.__threadw__.__thread__.setName("mapper-thread")
+        self.__threadw__.__thread__.setName(store.get('names','namespace')+'/mapper')
         map = Map(store.get('general','sensor_radius'),store.get('general','map_resolution'),store.get('general','map_obstacle_lookup_radius'))
         cmap = CriticalMap(map,store.get('general','critical_radius'),store.get('general','hyper_critical_radius'))
         self._store = store

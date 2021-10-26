@@ -1,0 +1,33 @@
+[0.329s] Invoking command in '/home/ghost/Desktop/dev_ws/src/controller': PYTHONPATH=/home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages: /usr/bin/python3 setup.py egg_info --egg-base ../../build/controller build --build-base /home/ghost/Desktop/dev_ws/build/controller/build install --prefix /home/ghost/Desktop/dev_ws/install/controller --record /home/ghost/Desktop/dev_ws/build/controller/install.log --single-version-externally-managed
+[0.588s] running egg_info
+[0.588s] writing ../../build/controller/controller.egg-info/PKG-INFO
+[0.589s] writing dependency_links to ../../build/controller/controller.egg-info/dependency_links.txt
+[0.589s] writing entry points to ../../build/controller/controller.egg-info/entry_points.txt
+[0.589s] writing requirements to ../../build/controller/controller.egg-info/requires.txt
+[0.589s] writing top-level names to ../../build/controller/controller.egg-info/top_level.txt
+[0.636s] reading manifest file '../../build/controller/controller.egg-info/SOURCES.txt'
+[0.637s] writing manifest file '../../build/controller/controller.egg-info/SOURCES.txt'
+[0.637s] running build
+[0.638s] running build_py
+[0.638s] copying controller/visualizer.py -> /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller
+[0.638s] copying controller/mapper.py -> /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller
+[0.638s] copying controller/planner.py -> /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller
+[0.638s] copying controller/critical_controller.py -> /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller
+[0.639s] running install
+[0.640s] running install_lib
+[0.641s] copying /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller/visualizer.py -> /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller
+[0.641s] copying /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller/mapper.py -> /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller
+[0.641s] copying /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller/planner.py -> /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller
+[0.641s] copying /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller/critical_controller.py -> /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller
+[0.642s] byte-compiling /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/visualizer.py to visualizer.cpython-38.pyc
+[0.645s] byte-compiling /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/mapper.py to mapper.cpython-38.pyc
+[0.646s] byte-compiling /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/planner.py to planner.cpython-38.pyc
+[0.649s] byte-compiling /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/critical_controller.py to critical_controller.cpython-38.pyc
+[0.650s] running install_data
+[0.650s] running install_egg_info
+[0.653s] removing '/home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller-0.0.1-py3.8.egg-info' (and everything under it)
+[0.653s] Copying ../../build/controller/controller.egg-info to /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller-0.0.1-py3.8.egg-info
+[0.654s] running install_scripts
+[0.677s] Installing controller script to /home/ghost/Desktop/dev_ws/install/controller/lib/controller
+[0.678s] writing list of installed files to '/home/ghost/Desktop/dev_ws/build/controller/install.log'
+[0.708s] Invoked command in '/home/ghost/Desktop/dev_ws/src/controller' returned '0': PYTHONPATH=/home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages: /usr/bin/python3 setup.py egg_info --egg-base ../../build/controller build --build-base /home/ghost/Desktop/dev_ws/build/controller/build install --prefix /home/ghost/Desktop/dev_ws/install/controller --record /home/ghost/Desktop/dev_ws/build/controller/install.log --single-version-externally-managed

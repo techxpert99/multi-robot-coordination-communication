@@ -6,7 +6,7 @@ from controller.auxiliary import euler_from_quaternion
 class EstimatorNode:
 
     def __init__(self,store):
-        self.__wrapper__ = NodeWrapper('estimator',store)
+        self.__wrapper__ = NodeWrapper(store.get('names','estimator'),store)
         self.__wrapper__.create_subscription('odom.in',self.__odometry_callback__)
         self._store = store
     

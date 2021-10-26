@@ -5,7 +5,7 @@ from controller.auxiliary import wait
 class NodeWrapper:
 
     def __init__(self, name, store):
-        self.__node__ = Node(name)
+        self.__node__ = Node(name,namespace=store.get('names','namespace'),context=store.get('general','context'))
         store.get('general','executor').add_node(self.__node__)
         self._store = store
 

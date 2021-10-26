@@ -6,7 +6,7 @@ class CriticalController:
         self._store = store
         self._store.set('critical','interrupt',False)
         self.__threadw__ = ThreadWrapper(self.__critical_callback__,store.get('general','critical_node_callback_interval'))
-        self.__threadw__.__thread__.setName("critical-thread")
+        self.__threadw__.__thread__.setName(store.get('names','namespace')+'/critical-controller')
         self.__controller__ = controller
         self.__threadw__.start()
         self.__critical_radius__ = store.get('general','critical_radius')

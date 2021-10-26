@@ -7,7 +7,7 @@ class Mover:
     def __init__(self,store,controller):
         self._store = store
         self._tw = ThreadWrapper(self._cb,store.get('general','mover_node_callback_interval'))
-        self._tw.__thread__.setName("mover-thread")
+        self._tw.__thread__.setName(store.get('names','namespace')+'/mover')
         self._controller = controller
         self._tw.start()
 
@@ -33,15 +33,11 @@ class Mover:
         return min_i+1
 
     def _cb(self):
-        if self._store.has('general','shutdown'):
-            if not self._store.get('general','executor')._is_shutdown:
-                self._store.get('general','executor').shutdown()
-            return
         if self._store.get('critical','interrupt'):
             return
         if self._store.has('estimator','position'):
-            plan,plan_tf = self._store.get('planner','plan')
-            if not plan or len(plan) < 2: return
+            plan_tf = self._store.get('planner','plan')
+            if not plan_tf or len(plan_tf) < 2: return
             index = self._find_index_in_plan(plan_tf,self._store.get('estimator','position'))
             for point in plan_tf[index:]:
                 if self._controller.move_to(point):

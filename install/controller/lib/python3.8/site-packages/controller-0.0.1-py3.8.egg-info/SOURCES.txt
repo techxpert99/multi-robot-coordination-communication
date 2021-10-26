@@ -14,9 +14,11 @@ controller/controller.py
 controller/critical_controller.py
 controller/estimator.py
 controller/main.py
+controller/main_old.py
 controller/mapper.py
 controller/mover.py
 controller/planner.py
+controller/robot.py
 controller/sensor.py
 controller/stores.py
 controller/structures.py

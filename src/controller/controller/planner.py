@@ -7,9 +7,9 @@ class LocalPlanner:
 
     def __init__(self,controller_node,store):
         self._store = store
-        self._store.set('planner','plan',([],[]))
+        self._store.set('planner','plan',[])
         self.__tw__ = ThreadWrapper(self.__callback__,store.get('general','planner_node_callback_interval'))
-        self.__tw__.__thread__.setName("planner-thread")
+        self.__tw__.__thread__.setName(store.get('names','namespace')+'/planner')
         self.__tw__.start()
         self.__controller__ = controller_node
         self._analysis_radius = round(store.get('general','planner_path_analysis_radius')/store.get('general','map_resolution'))
@@ -114,11 +114,10 @@ class LocalPlanner:
         return False
 
     def _is_segment_blocked(self,i1,j1,i2,j2,t,map):
-        
-        i1,i2 = min(i1,i2),max(i1,i2)
-        j1,j2 = min(j1,j2),max(j1,j2)
-
         if i1 != i2:
+            if i1>i2:
+                i1,i2 = i2,i1
+                j1,j2 = j2,j1
             m = (j2-j1)/(i2-i1)
             for i in range(i1,i2+1):
                 j = floor(m*(i-i1)+j1)
@@ -126,6 +125,8 @@ class LocalPlanner:
                     return True
 
         elif j1 != j2:
+            if j1>j2:
+                j1,j2 = j2,j1
             for j in range(j1,j2+1):
                 if self._is_cell_blocked(i1,j,t,map):
                     return True
@@ -143,37 +144,33 @@ class LocalPlanner:
     
     def __callback__(self):
         if self._store.get('mapper','cmap').get_critical_map() is None or not self._store.has('planner','goal'): return
-        
         goal_point = self._store.get('planner','goal')
         start_point = self._store.get('estimator','position')
-        plan,plan_tf = self._store.get('planner','plan')
+        plan_tf = self._store.get('planner','plan')
 
         self._store.lock('mapper')
         cmap = self._store.unsafe_get('mapper','cmap')        
         
-        interrupted = False
-        if plan and len(plan) >= 2:
-            path = []
+        if plan_tf and len(plan_tf) >= 2:
+            plan = []
             for x,y in plan_tf:
-                path.append(cmap.itf(x,y))
-            if not self._is_path_blocked(path,cmap.get_critical_map(),self._analysis_radius):
+                plan.append(cmap.itf(x,y))
+            if not self._is_path_blocked(plan,cmap.get_critical_map(),self._analysis_radius):
                 self._store.release('mapper')
-                self._store.set('planner','plan',(path,plan_tf))
                 return
-            self._store.release('mapper')
-            self._store.set('critical','interrupt',True)
-            self.__controller__.critical_stop()
-            interrupted = True
-            print('plan_change_interrupt')
-            self._store.lock('mapper')
+        
+        self._store.release('mapper')
+        self._store.set('critical','interrupt',True)
+        self.__controller__.critical_stop()
+        print('plan_change_interrupt')
+        self._store.lock('mapper')
         
         start = cmap.itf(start_point[0],start_point[1])
         goal = cmap.itf(goal_point[0],goal_point[1])
-        path = self.__reduce_path__( self.__find_path__(start,goal,cmap.get_critical_map(),start_point[2]))
-        tf_path = []
-        for i,j in path:
-            tf_path.append(cmap.tf(i,j))
+        plan = self.__reduce_path__( self.__find_path__(start,goal,cmap.get_critical_map(),start_point[2]))
+        plan_tf = []
+        for i,j in plan:
+            plan_tf.append(cmap.tf(i,j))
         self._store.release('mapper')
-        self._store.set('planner','plan',(path,tf_path))
-        if interrupted:
-            self._store.set('critical','interrupt',False)
+        self._store.set('planner','plan',plan_tf)
+        self._store.set('critical','interrupt',False)
