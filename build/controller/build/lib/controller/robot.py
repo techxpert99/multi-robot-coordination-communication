@@ -19,11 +19,17 @@ from controller.mapper import Mapper
 from controller.critical_controller import CriticalController
 from controller.planner import LocalPlanner
 from controller.visualizer import Visualizer
+from controller.configuration_parser import read_conf
 
 class Robot:
 
     def __init__(self, name, laser_in='/demo/laser/out', odom_in='/demo/odom', vel_out='/demo/cmd_vel'):
-    
+        
+        cfg = read_conf()
+        laser_in = '/'+name+'/'+cfg['robot_laser_out']+'/out'
+        odom_in = '/'+name+'/'+cfg['robot_odometery']
+        vel_out = '/'+name+'/'+cfg['robot_velocity']
+
         TOPIC_MAP = {'laser.in': (laser_in,LaserScan,qos_profile_sensor_data), 'odom.in': (odom_in,Odometry,10), 'vel.out':(vel_out,Twist,10)}
 
         STORE = SafeParameterStore()
@@ -110,7 +116,7 @@ class Robot:
 
         PLANNER_NODE = LocalPlanner(CONTROLLER_NODE,STORE)
 
-        #VISUALIZER_NODE = Visualizer(STORE)
+        VISUALIZER_NODE = Visualizer(STORE)
 
         MOVER_NODE = Mover(STORE,CONTROLLER_NODE)
 
@@ -134,7 +140,7 @@ class Robot:
         final_executor.start()
 
         MOVER_NODE.destroy()
-        #VISUALIZER_NODE.destroy()
+        VISUALIZER_NODE.destroy()
         PLANNER_NODE.destroy()
         MAPPER_NODE.destroy()
         CRITICAL_NODE.destroy()
@@ -153,3 +159,4 @@ class Robot:
     
     def set_goal(self,goal):
         self._STORE.set('planner','goal',goal)
+        self._STORE.set('planner','plan',[])
