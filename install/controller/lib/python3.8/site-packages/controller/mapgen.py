@@ -132,7 +132,7 @@ def main():
     author_name = c['author_name'][0] + ' ' + c['author_name'][1]
     author_email = c['author_email']
 
-    ground_link = cuboid_link('arena_frame::ground_link',(0,0,0,0,0,0),(arena_stretch_x+2*wall_thickness,arena_stretch_y+2*wall_thickness,ground_thickness),heavy_mass,ground_material)
+    ground_link = cuboid_link('arena_frame::ground_link',(0,0,ground_thickness/2,0,0,0),(arena_stretch_x+2*wall_thickness,arena_stretch_y+2*wall_thickness,ground_thickness),heavy_mass,ground_material)
 
     wall_yz_front_link = cuboid_link('arena_frame::wall_yz_front_link',((arena_stretch_x+wall_thickness)/2,0,wall_height/2+ground_thickness,0,0,0),(wall_thickness,arena_stretch_y,wall_height),heavy_mass,wall_material)
     wall_yz_back_link = cuboid_link('arena_frame::wall_yz_back_link',((-arena_stretch_x-wall_thickness)/2,0,wall_height/2+ground_thickness,0,0,0),(wall_thickness,arena_stretch_y,wall_height),heavy_mass,wall_material)

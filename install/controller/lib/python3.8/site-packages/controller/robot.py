@@ -23,7 +23,7 @@ from controller.configuration_parser import read_conf
 
 class Robot:
 
-    def __init__(self, name, laser_in='/demo/laser/out', odom_in='/demo/odom', vel_out='/demo/cmd_vel'):
+    def __init__(self, name, viz_data_dict):
         
         cfg = read_conf()
         laser_in = '/'+name+'/'+cfg['robot_laser_out']+'/out'
@@ -69,6 +69,7 @@ class Robot:
         STORE.set('names','controller','controller')
 
         STORE.set('visualizer','window_name',f'Map: {name}')
+        STORE.set('visualizer','viz_data_dict',viz_data_dict)
         
         self._MAIN_THREAD = Thread(name=STORE.get('names','namespace')+'/main',target=self.__execution_function__)
         self._LOCK = Lock()

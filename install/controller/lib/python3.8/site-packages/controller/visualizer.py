@@ -1,3 +1,4 @@
+from controller.auxiliary import wait
 from controller.wrappers import ThreadWrapper
 import numpy as np
 import cv2
@@ -7,11 +8,11 @@ class Visualizer:
     def __init__(self,store):
         self._store = store
         store.set('visualizer','callbacks',[])
-        self._wait = round(1000*store.get('general','visualizer_node_callback_interval'))
-        self._tw = ThreadWrapper(self._callback,0)
+        self._wait = store.get('general','visualizer_node_callback_interval')
+        self._tw = ThreadWrapper(self._callback,self._wait)
         self._tw.__thread__.setName(store.get('names','namespace')+'/visualizer')
         self.add_visualization_callback((store.get('visualizer','window_name'),self.critical_map_matrix_function))
-        self._open_windows = []
+        self._viz_data_dict = store.get('visualizer','viz_data_dict')
         self._tw.start()
 
     def _callback(self):
@@ -21,14 +22,13 @@ class Visualizer:
         for window_name,callback in callbacks:
             matrix = callback()
             if matrix is not None:
-                cv2.imshow(window_name,matrix)
-                self._open_windows.append(window_name)
-        cv2.waitKey(self._wait)
+                self._viz_data_dict['lock'].acquire()
+                self._viz_data_dict['window_name'] = window_name
+                self._viz_data_dict['data'] = matrix.copy()
+                self._viz_data_dict['lock'].release()
     
     def destroy(self):
         self._tw.stop()
-        for window in self._open_windows:
-            cv2.destroyWindow(window)
 
     def cv2_tf(self,point):
         return point[1],point[0]
@@ -55,9 +55,7 @@ class Visualizer:
         self._store.release('visualizer')
 
     def critical_map_matrix_function(self):
-
         if self._store.get('mapper','cmap').get_critical_map() is None: return None
-
         cx,cy,ct = self._store.get('estimator','position')
 
         self._store.lock('mapper')
