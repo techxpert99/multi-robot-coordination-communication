@@ -1,0 +1,12 @@
+string message_type
+string robot_id
+float64[3] position
+string receiver_robot_id
+string[<=1024] suitability_robots
+string[<=1024] suitability_roles
+float32[<=1024] suitability_values
+uint32[<=1024] teams_tid
+string[<=1024] teams_id
+string[<=1024] teams_rol
+float32[<=1024] teams_su 
+uint64 exchange_number

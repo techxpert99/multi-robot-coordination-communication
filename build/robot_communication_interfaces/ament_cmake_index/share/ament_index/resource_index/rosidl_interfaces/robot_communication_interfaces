@@ -1,0 +1,6 @@
+msg/CommunicationMessage.idl
+msg/CommunicationMessage.msg
+srv/CommunicationService.idl
+srv/CommunicationService.srv
+srv/CommunicationService_Request.msg
+srv/CommunicationService_Response.msg

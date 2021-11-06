@@ -1,0 +1,21 @@
+[0.191s] Invoking command in '/home/ghost/Desktop/dev_ws/src/controller': PYTHONPATH=/home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages: /usr/bin/python3 setup.py egg_info --egg-base ../../build/controller build --build-base /home/ghost/Desktop/dev_ws/build/controller/build install --prefix /home/ghost/Desktop/dev_ws/install/controller --record /home/ghost/Desktop/dev_ws/build/controller/install.log --single-version-externally-managed
+[0.348s] running egg_info
+[0.349s] writing ../../build/controller/controller.egg-info/PKG-INFO
+[0.349s] writing dependency_links to ../../build/controller/controller.egg-info/dependency_links.txt
+[0.349s] writing entry points to ../../build/controller/controller.egg-info/entry_points.txt
+[0.349s] writing requirements to ../../build/controller/controller.egg-info/requires.txt
+[0.350s] writing top-level names to ../../build/controller/controller.egg-info/top_level.txt
+[0.383s] reading manifest file '../../build/controller/controller.egg-info/SOURCES.txt'
+[0.384s] writing manifest file '../../build/controller/controller.egg-info/SOURCES.txt'
+[0.384s] running build
+[0.384s] running build_py
+[0.385s] running install
+[0.386s] running install_lib
+[0.388s] running install_data
+[0.388s] running install_egg_info
+[0.390s] removing '/home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller-0.0.1-py3.8.egg-info' (and everything under it)
+[0.390s] Copying ../../build/controller/controller.egg-info to /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller-0.0.1-py3.8.egg-info
+[0.391s] running install_scripts
+[0.407s] Installing controller script to /home/ghost/Desktop/dev_ws/install/controller/lib/controller
+[0.408s] writing list of installed files to '/home/ghost/Desktop/dev_ws/build/controller/install.log'
+[0.426s] Invoked command in '/home/ghost/Desktop/dev_ws/src/controller' returned '0': PYTHONPATH=/home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages: /usr/bin/python3 setup.py egg_info --egg-base ../../build/controller build --build-base /home/ghost/Desktop/dev_ws/build/controller/build install --prefix /home/ghost/Desktop/dev_ws/install/controller --record /home/ghost/Desktop/dev_ws/build/controller/install.log --single-version-externally-managed

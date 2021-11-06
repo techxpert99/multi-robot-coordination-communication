@@ -1,0 +1,4 @@
+Invoking command in '/home/ghost/Desktop/dev_ws/build/robot_communication_interfaces': /usr/bin/cmake --build /home/ghost/Desktop/dev_ws/build/robot_communication_interfaces -- -j4 -l4
+Invoked command in '/home/ghost/Desktop/dev_ws/build/robot_communication_interfaces' returned '0': /usr/bin/cmake --build /home/ghost/Desktop/dev_ws/build/robot_communication_interfaces -- -j4 -l4
+Invoking command in '/home/ghost/Desktop/dev_ws/build/robot_communication_interfaces': /usr/bin/cmake --install /home/ghost/Desktop/dev_ws/build/robot_communication_interfaces
+Invoked command in '/home/ghost/Desktop/dev_ws/build/robot_communication_interfaces' returned '0': /usr/bin/cmake --install /home/ghost/Desktop/dev_ws/build/robot_communication_interfaces

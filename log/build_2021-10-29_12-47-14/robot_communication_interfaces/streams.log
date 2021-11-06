@@ -1,0 +1,41 @@
+[0.173s] Invoking command in '/home/ghost/Desktop/dev_ws/build/robot_communication_interfaces': /usr/bin/cmake /home/ghost/Desktop/dev_ws/src/robot_communication_interfaces -DCMAKE_INSTALL_PREFIX=/home/ghost/Desktop/dev_ws/install/robot_communication_interfaces
+[0.203s] CMake Warning (dev) at CMakeLists.txt:25:
+[0.204s]   Syntax Warning in cmake code at column 32
+[0.204s] 
+[0.204s]   Argument not separated from preceding token by whitespace.
+[0.204s] This warning is for project developers.  Use -Wno-dev to suppress it.
+[0.204s] 
+[0.327s] -- The C compiler identification is GNU 9.3.0
+[0.442s] -- The CXX compiler identification is GNU 9.3.0
+[0.455s] -- Check for working C compiler: /usr/bin/cc
+[0.527s] -- Check for working C compiler: /usr/bin/cc -- works
+[0.530s] -- Detecting C compiler ABI info
+[0.595s] -- Detecting C compiler ABI info - done
+[0.605s] -- Detecting C compile features
+[0.605s] -- Detecting C compile features - done
+[0.611s] -- Check for working CXX compiler: /usr/bin/c++
+[0.685s] -- Check for working CXX compiler: /usr/bin/c++ -- works
+[0.686s] -- Detecting CXX compiler ABI info
+[0.763s] -- Detecting CXX compiler ABI info - done
+[0.772s] -- Detecting CXX compile features
+[0.772s] -- Detecting CXX compile features - done
+[0.786s] CMake Error at CMakeLists.txt:19 (find_package):
+[0.786s]   By not providing "Findament_cmake.cmake" in CMAKE_MODULE_PATH this project
+[0.786s]   has asked CMake to find a package configuration file provided by
+[0.786s]   "ament_cmake", but CMake did not find one.
+[0.786s] 
+[0.786s]   Could not find a package configuration file provided by "ament_cmake" with
+[0.786s]   any of the following names:
+[0.786s] 
+[0.786s]     ament_cmakeConfig.cmake
+[0.786s]     ament_cmake-config.cmake
+[0.786s] 
+[0.786s]   Add the installation prefix of "ament_cmake" to CMAKE_PREFIX_PATH or set
+[0.786s]   "ament_cmake_DIR" to a directory containing one of the above files.  If
+[0.786s]   "ament_cmake" provides a separate development package or SDK, be sure it
+[0.786s]   has been installed.
+[0.786s] 
+[0.786s] 
+[0.787s] -- Configuring incomplete, errors occurred!
+[0.787s] See also "/home/ghost/Desktop/dev_ws/build/robot_communication_interfaces/CMakeFiles/CMakeOutput.log".
+[0.790s] Invoked command in '/home/ghost/Desktop/dev_ws/build/robot_communication_interfaces' returned '1': /usr/bin/cmake /home/ghost/Desktop/dev_ws/src/robot_communication_interfaces -DCMAKE_INSTALL_PREFIX=/home/ghost/Desktop/dev_ws/install/robot_communication_interfaces

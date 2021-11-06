@@ -1,0 +1,27 @@
+[0.911s] Invoking command in '/home/ghost/Desktop/dev_ws/src/controller': PYTHONPATH=/home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages: /usr/bin/python3 setup.py egg_info --egg-base ../../build/controller build --build-base /home/ghost/Desktop/dev_ws/build/controller/build install --prefix /home/ghost/Desktop/dev_ws/install/controller --record /home/ghost/Desktop/dev_ws/build/controller/install.log --single-version-externally-managed
+[1.530s] running egg_info
+[1.531s] writing ../../build/controller/controller.egg-info/PKG-INFO
+[1.532s] writing dependency_links to ../../build/controller/controller.egg-info/dependency_links.txt
+[1.533s] writing entry points to ../../build/controller/controller.egg-info/entry_points.txt
+[1.533s] writing requirements to ../../build/controller/controller.egg-info/requires.txt
+[1.534s] writing top-level names to ../../build/controller/controller.egg-info/top_level.txt
+[1.721s] reading manifest file '../../build/controller/controller.egg-info/SOURCES.txt'
+[1.728s] writing manifest file '../../build/controller/controller.egg-info/SOURCES.txt'
+[1.728s] running build
+[1.729s] running build_py
+[1.734s] copying controller/coco.py -> /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller
+[1.734s] copying controller/robot.py -> /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller
+[1.735s] running install
+[1.741s] running install_lib
+[1.741s] copying /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller/coco.py -> /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller
+[1.742s] copying /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller/robot.py -> /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller
+[1.744s] byte-compiling /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/coco.py to coco.cpython-38.pyc
+[1.753s] byte-compiling /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/robot.py to robot.cpython-38.pyc
+[1.759s] running install_data
+[1.762s] running install_egg_info
+[1.771s] removing '/home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller-0.0.1-py3.8.egg-info' (and everything under it)
+[1.772s] Copying ../../build/controller/controller.egg-info to /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller-0.0.1-py3.8.egg-info
+[1.774s] running install_scripts
+[1.858s] Installing controller script to /home/ghost/Desktop/dev_ws/install/controller/lib/controller
+[1.863s] writing list of installed files to '/home/ghost/Desktop/dev_ws/build/controller/install.log'
+[1.934s] Invoked command in '/home/ghost/Desktop/dev_ws/src/controller' returned '0': PYTHONPATH=/home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages: /usr/bin/python3 setup.py egg_info --egg-base ../../build/controller build --build-base /home/ghost/Desktop/dev_ws/build/controller/build install --prefix /home/ghost/Desktop/dev_ws/install/controller --record /home/ghost/Desktop/dev_ws/build/controller/install.log --single-version-externally-managed

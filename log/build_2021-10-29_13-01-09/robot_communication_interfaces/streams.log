@@ -1,0 +1,149 @@
+[0.173s] Invoking command in '/home/ghost/Desktop/dev_ws/build/robot_communication_interfaces': /usr/bin/cmake --build /home/ghost/Desktop/dev_ws/build/robot_communication_interfaces -- -j4 -l4
+[0.231s] [  2%] Built target robot_communication_interfaces__cpp
+[0.241s] [ 12%] Built target robot_communication_interfaces__rosidl_generator_c
+[0.269s] [ 23%] Built target robot_communication_interfaces__rosidl_typesupport_fastrtps_cpp
+[0.273s] [ 33%] Built target robot_communication_interfaces__rosidl_typesupport_cpp
+[0.277s] [ 43%] Built target robot_communication_interfaces__rosidl_typesupport_introspection_cpp
+[0.290s] [ 53%] Built target robot_communication_interfaces__rosidl_typesupport_introspection_c
+[0.304s] [ 64%] Built target robot_communication_interfaces__rosidl_typesupport_fastrtps_c
+[0.306s] [ 74%] Built target robot_communication_interfaces__rosidl_typesupport_c
+[0.330s] [ 74%] Built target robot_communication_interfaces
+[0.352s] [ 76%] Built target robot_communication_interfaces__py
+[0.384s] [ 84%] Built target robot_communication_interfaces__python
+[0.409s] [ 89%] Built target robot_communication_interfaces__rosidl_typesupport_introspection_c__pyext
+[0.417s] [ 94%] Built target robot_communication_interfaces__rosidl_typesupport_c__pyext
+[0.418s] [100%] Built target robot_communication_interfaces__rosidl_typesupport_fastrtps_c__pyext
+[0.435s] Invoked command in '/home/ghost/Desktop/dev_ws/build/robot_communication_interfaces' returned '0': /usr/bin/cmake --build /home/ghost/Desktop/dev_ws/build/robot_communication_interfaces -- -j4 -l4
+[0.506s] Invoking command in '/home/ghost/Desktop/dev_ws/build/robot_communication_interfaces': /usr/bin/cmake --install /home/ghost/Desktop/dev_ws/build/robot_communication_interfaces
+[0.517s] -- Install configuration: ""
+[0.517s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/share/ament_index/resource_index/rosidl_interfaces/robot_communication_interfaces
+[0.517s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces
+[0.517s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/srv
+[0.517s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/srv/communication_service.h
+[0.517s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/srv/detail
+[0.517s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/srv/detail/communication_service__struct.h
+[0.517s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/srv/detail/communication_service__functions.c
+[0.517s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/srv/detail/communication_service__type_support.h
+[0.517s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/srv/detail/communication_service__functions.h
+[0.517s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/msg
+[0.518s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/msg/rosidl_generator_c__visibility_control.h
+[0.518s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/msg/communication_message.h
+[0.518s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/msg/detail
+[0.518s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/msg/detail/communication_message__type_support.h
+[0.518s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/msg/detail/communication_message__functions.h
+[0.518s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/msg/detail/communication_message__struct.h
+[0.518s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/msg/detail/communication_message__functions.c
+[0.518s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/share/robot_communication_interfaces/environment/library_path.sh
+[0.519s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/share/robot_communication_interfaces/environment/library_path.dsv
+[0.519s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/lib/librobot_communication_interfaces__rosidl_generator_c.so
+[0.519s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces
+[0.519s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/srv
+[0.519s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/srv/detail
+[0.519s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/srv/detail/communication_service__rosidl_typesupport_fastrtps_c.h
+[0.519s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/msg
+[0.519s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/msg/rosidl_typesupport_fastrtps_c__visibility_control.h
+[0.519s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/msg/detail
+[0.519s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/msg/detail/communication_message__rosidl_typesupport_fastrtps_c.h
+[0.520s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/lib/librobot_communication_interfaces__rosidl_typesupport_fastrtps_c.so
+[0.520s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces
+[0.520s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/srv
+[0.520s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/srv/detail
+[0.520s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/srv/detail/dds_fastrtps
+[0.520s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/srv/detail/communication_service__rosidl_typesupport_fastrtps_cpp.hpp
+[0.520s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/msg
+[0.520s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/msg/detail
+[0.520s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/msg/detail/dds_fastrtps
+[0.520s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/msg/detail/communication_message__rosidl_typesupport_fastrtps_cpp.hpp
+[0.520s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/msg/rosidl_typesupport_fastrtps_cpp__visibility_control.h
+[0.520s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/lib/librobot_communication_interfaces__rosidl_typesupport_fastrtps_cpp.so
+[0.520s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces
+[0.520s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/srv
+[0.520s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/srv/detail
+[0.520s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/srv/detail/communication_service__rosidl_typesupport_introspection_c.h
+[0.521s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/srv/detail/communication_service__type_support.c
+[0.521s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/msg
+[0.521s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/msg/detail
+[0.521s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/msg/detail/communication_message__rosidl_typesupport_introspection_c.h
+[0.521s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/msg/detail/communication_message__type_support.c
+[0.521s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/msg/rosidl_typesupport_introspection_c__visibility_control.h
+[0.521s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/lib/librobot_communication_interfaces__rosidl_typesupport_introspection_c.so
+[0.521s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/lib/librobot_communication_interfaces__rosidl_typesupport_c.so
+[0.521s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces
+[0.521s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/srv
+[0.522s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/srv/communication_service.hpp
+[0.522s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/srv/detail
+[0.522s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/srv/detail/communication_service__traits.hpp
+[0.522s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/srv/detail/communication_service__struct.hpp
+[0.522s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/srv/detail/communication_service__builder.hpp
+[0.522s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/msg
+[0.522s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/msg/detail
+[0.522s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/msg/detail/communication_message__builder.hpp
+[0.522s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/msg/detail/communication_message__traits.hpp
+[0.522s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/msg/detail/communication_message__struct.hpp
+[0.522s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/msg/communication_message.hpp
+[0.522s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces
+[0.522s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/srv
+[0.523s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/srv/detail
+[0.523s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/srv/detail/communication_service__rosidl_typesupport_introspection_cpp.hpp
+[0.523s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/srv/detail/communication_service__type_support.cpp
+[0.523s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/msg
+[0.523s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/msg/detail
+[0.523s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/msg/detail/communication_message__rosidl_typesupport_introspection_cpp.hpp
+[0.523s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/msg/detail/communication_message__type_support.cpp
+[0.523s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/lib/librobot_communication_interfaces__rosidl_typesupport_introspection_cpp.so
+[0.523s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/lib/librobot_communication_interfaces__rosidl_typesupport_cpp.so
+[0.523s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/share/robot_communication_interfaces/environment/pythonpath.sh
+[0.523s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/share/robot_communication_interfaces/environment/pythonpath.dsv
+[0.523s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/lib/python3.8/site-packages/robot_communication_interfaces/__init__.py
+[0.555s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/lib/python3.8/site-packages/robot_communication_interfaces/msg
+[0.555s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/lib/python3.8/site-packages/robot_communication_interfaces/msg/__init__.py
+[0.555s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/lib/python3.8/site-packages/robot_communication_interfaces/msg/_communication_message_s.c
+[0.555s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/lib/python3.8/site-packages/robot_communication_interfaces/msg/_communication_message.py
+[0.555s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/lib/python3.8/site-packages/robot_communication_interfaces/srv
+[0.555s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/lib/python3.8/site-packages/robot_communication_interfaces/srv/__init__.py
+[0.555s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/lib/python3.8/site-packages/robot_communication_interfaces/srv/_communication_service.py
+[0.555s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/lib/python3.8/site-packages/robot_communication_interfaces/srv/_communication_service_s.c
+[0.555s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/lib/python3.8/site-packages/robot_communication_interfaces/robot_communication_interfaces_s__rosidl_typesupport_fastrtps_c.cpython-38-x86_64-linux-gnu.so
+[0.556s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/lib/python3.8/site-packages/robot_communication_interfaces/robot_communication_interfaces_s__rosidl_typesupport_introspection_c.cpython-38-x86_64-linux-gnu.so
+[0.557s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/lib/python3.8/site-packages/robot_communication_interfaces/robot_communication_interfaces_s__rosidl_typesupport_c.cpython-38-x86_64-linux-gnu.so
+[0.557s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/lib/librobot_communication_interfaces__python.so
+[0.557s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/share/robot_communication_interfaces/msg/CommunicationMessage.idl
+[0.557s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/share/robot_communication_interfaces/srv/CommunicationService.idl
+[0.558s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/share/robot_communication_interfaces/msg/CommunicationMessage.msg
+[0.558s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/share/robot_communication_interfaces/srv/CommunicationService.srv
+[0.558s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/share/robot_communication_interfaces/srv/CommunicationService_Request.msg
+[0.558s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/share/robot_communication_interfaces/srv/CommunicationService_Response.msg
+[0.558s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/share/ament_index/resource_index/package_run_dependencies/robot_communication_interfaces
+[0.558s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/share/ament_index/resource_index/parent_prefix_path/robot_communication_interfaces
+[0.558s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/share/robot_communication_interfaces/environment/ament_prefix_path.sh
+[0.558s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/share/robot_communication_interfaces/environment/ament_prefix_path.dsv
+[0.558s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/share/robot_communication_interfaces/environment/path.sh
+[0.558s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/share/robot_communication_interfaces/environment/path.dsv
+[0.559s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/share/robot_communication_interfaces/local_setup.bash
+[0.559s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/share/robot_communication_interfaces/local_setup.sh
+[0.559s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/share/robot_communication_interfaces/local_setup.zsh
+[0.559s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/share/robot_communication_interfaces/local_setup.dsv
+[0.559s] -- Installing: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/share/robot_communication_interfaces/package.dsv
+[0.559s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/share/ament_index/resource_index/packages/robot_communication_interfaces
+[0.559s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/share/robot_communication_interfaces/cmake/robot_communication_interfaces__rosidl_generator_cExport.cmake
+[0.559s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/share/robot_communication_interfaces/cmake/robot_communication_interfaces__rosidl_generator_cExport-noconfig.cmake
+[0.559s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/share/robot_communication_interfaces/cmake/robot_communication_interfaces__rosidl_typesupport_introspection_cExport.cmake
+[0.559s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/share/robot_communication_interfaces/cmake/robot_communication_interfaces__rosidl_typesupport_introspection_cExport-noconfig.cmake
+[0.559s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/share/robot_communication_interfaces/cmake/robot_communication_interfaces__rosidl_typesupport_cExport.cmake
+[0.559s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/share/robot_communication_interfaces/cmake/robot_communication_interfaces__rosidl_typesupport_cExport-noconfig.cmake
+[0.559s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/share/robot_communication_interfaces/cmake/robot_communication_interfaces__rosidl_generator_cppExport.cmake
+[0.559s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/share/robot_communication_interfaces/cmake/robot_communication_interfaces__rosidl_typesupport_introspection_cppExport.cmake
+[0.559s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/share/robot_communication_interfaces/cmake/robot_communication_interfaces__rosidl_typesupport_introspection_cppExport-noconfig.cmake
+[0.560s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/share/robot_communication_interfaces/cmake/robot_communication_interfaces__rosidl_typesupport_cppExport.cmake
+[0.560s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/share/robot_communication_interfaces/cmake/robot_communication_interfaces__rosidl_typesupport_cppExport-noconfig.cmake
+[0.560s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/share/robot_communication_interfaces/cmake/rosidl_cmake-extras.cmake
+[0.560s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/share/robot_communication_interfaces/cmake/ament_cmake_export_dependencies-extras.cmake
+[0.560s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/share/robot_communication_interfaces/cmake/ament_cmake_export_libraries-extras.cmake
+[0.560s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/share/robot_communication_interfaces/cmake/ament_cmake_export_targets-extras.cmake
+[0.560s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/share/robot_communication_interfaces/cmake/ament_cmake_export_include_directories-extras.cmake
+[0.560s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/share/robot_communication_interfaces/cmake/rosidl_cmake_export_typesupport_libraries-extras.cmake
+[0.560s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/share/robot_communication_interfaces/cmake/rosidl_cmake_export_typesupport_targets-extras.cmake
+[0.561s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/share/robot_communication_interfaces/cmake/robot_communication_interfacesConfig.cmake
+[0.561s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/share/robot_communication_interfaces/cmake/robot_communication_interfacesConfig-version.cmake
+[0.561s] -- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/share/robot_communication_interfaces/package.xml
+[0.567s] Invoked command in '/home/ghost/Desktop/dev_ws/build/robot_communication_interfaces' returned '0': /usr/bin/cmake --install /home/ghost/Desktop/dev_ws/build/robot_communication_interfaces

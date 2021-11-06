@@ -1,0 +1,33 @@
+[1.719s] Invoking command in '/home/ghost/Desktop/dev_ws/src/controller': PYTHONPATH=/home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages: /usr/bin/python3 setup.py egg_info --egg-base ../../build/controller build --build-base /home/ghost/Desktop/dev_ws/build/controller/build install --prefix /home/ghost/Desktop/dev_ws/install/controller --record /home/ghost/Desktop/dev_ws/build/controller/install.log --single-version-externally-managed
+[3.301s] running egg_info
+[3.305s] writing ../../build/controller/controller.egg-info/PKG-INFO
+[3.307s] writing dependency_links to ../../build/controller/controller.egg-info/dependency_links.txt
+[3.310s] writing entry points to ../../build/controller/controller.egg-info/entry_points.txt
+[3.312s] writing requirements to ../../build/controller/controller.egg-info/requires.txt
+[3.313s] writing top-level names to ../../build/controller/controller.egg-info/top_level.txt
+[3.586s] reading manifest file '../../build/controller/controller.egg-info/SOURCES.txt'
+[3.592s] writing manifest file '../../build/controller/controller.egg-info/SOURCES.txt'
+[3.594s] running build
+[3.594s] running build_py
+[3.597s] copying controller/communication.py -> /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller
+[3.598s] copying controller/robot.py -> /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller
+[3.598s] copying controller/vector_clocks.py -> /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller
+[3.602s] copying controller/coordination.py -> /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller
+[3.603s] running install
+[3.607s] running install_lib
+[3.613s] copying /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller/communication.py -> /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller
+[3.615s] copying /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller/robot.py -> /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller
+[3.616s] copying /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller/vector_clocks.py -> /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller
+[3.619s] copying /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller/coordination.py -> /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller
+[3.622s] byte-compiling /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/communication.py to communication.cpython-38.pyc
+[3.635s] byte-compiling /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/robot.py to robot.cpython-38.pyc
+[3.644s] byte-compiling /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/vector_clocks.py to vector_clocks.cpython-38.pyc
+[3.652s] byte-compiling /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/coordination.py to coordination.cpython-38.pyc
+[3.654s] running install_data
+[3.657s] running install_egg_info
+[3.664s] removing '/home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller-0.0.1-py3.8.egg-info' (and everything under it)
+[3.666s] Copying ../../build/controller/controller.egg-info to /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller-0.0.1-py3.8.egg-info
+[3.671s] running install_scripts
+[3.796s] Installing controller script to /home/ghost/Desktop/dev_ws/install/controller/lib/controller
+[3.799s] writing list of installed files to '/home/ghost/Desktop/dev_ws/build/controller/install.log'
+[3.901s] Invoked command in '/home/ghost/Desktop/dev_ws/src/controller' returned '0': PYTHONPATH=/home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages: /usr/bin/python3 setup.py egg_info --egg-base ../../build/controller build --build-base /home/ghost/Desktop/dev_ws/build/controller/build install --prefix /home/ghost/Desktop/dev_ws/install/controller --record /home/ghost/Desktop/dev_ws/build/controller/install.log --single-version-externally-managed

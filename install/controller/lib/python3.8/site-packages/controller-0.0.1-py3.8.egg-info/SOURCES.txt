@@ -10,10 +10,14 @@ setup.py
 ../../build/controller/controller.egg-info/zip-safe
 controller/__init__.py
 controller/auxiliary.py
+controller/coco.py
+controller/communication.py
 controller/configuration_parser.py
 controller/controller.py
+controller/coordination.py
 controller/critical_controller.py
 controller/estimator.py
+controller/global_communicator.py
 controller/main.py
 controller/main_old.py
 controller/mapgen.py
@@ -26,6 +30,7 @@ controller/robotgen.py
 controller/sensor.py
 controller/stores.py
 controller/structures.py
+controller/vector_clocks.py
 controller/visualizer.py
 controller/worldgen.py
 controller/wrappers.py

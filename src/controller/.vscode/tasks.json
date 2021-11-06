@@ -6,7 +6,7 @@
         {
             "label": "build-controller",
             "type": "shell",
-            "command": "cd ${workspaceFolder}/../.. && echo root | sudo -S colcon build",
+            "command": "cd ${workspaceFolder}/../.. && echo root | sudo -S colcon build --packages-select controller",
             "problemMatcher": [],
             "presentation": {
                 "echo": true,

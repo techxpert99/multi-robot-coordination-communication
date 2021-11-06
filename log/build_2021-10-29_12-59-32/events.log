@@ -1,0 +1,195 @@
+[0.000000] (-) TimerEvent: {}
+[0.000270] (controller) JobQueued: {'identifier': 'controller', 'dependencies': OrderedDict()}
+[0.000337] (robot_communication_interfaces) JobQueued: {'identifier': 'robot_communication_interfaces', 'dependencies': OrderedDict()}
+[0.001359] (controller) JobStarted: {'identifier': 'controller'}
+[0.019740] (robot_communication_interfaces) JobStarted: {'identifier': 'robot_communication_interfaces'}
+[0.100766] (-) TimerEvent: {}
+[0.201257] (-) TimerEvent: {}
+[0.304142] (-) TimerEvent: {}
+[0.310639] (robot_communication_interfaces) JobProgress: {'identifier': 'robot_communication_interfaces', 'progress': 'cmake'}
+[0.313457] (robot_communication_interfaces) JobProgress: {'identifier': 'robot_communication_interfaces', 'progress': 'build'}
+[0.313583] (robot_communication_interfaces) Command: {'cmd': ['/usr/bin/cmake', '--build', '/home/ghost/Desktop/dev_ws/build/robot_communication_interfaces', '--', '-j4', '-l4'], 'cwd': '/home/ghost/Desktop/dev_ws/build/robot_communication_interfaces', 'env': OrderedDict([('SUDO_GID', '1000'), ('MAIL', '/var/mail/root'), ('LANGUAGE', 'en_IN:en'), ('USER', 'root'), ('HOME', '/root'), ('COLORTERM', 'truecolor'), ('SUDO_UID', '1000'), ('LOGNAME', 'root'), ('TERM', 'xterm-256color'), ('PATH', '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin'), ('DISPLAY', ':0'), ('LANG', 'en_US.UTF-8'), ('XAUTHORITY', '/run/user/1000/gdm/Xauthority'), ('SUDO_COMMAND', '/usr/bin/colcon build'), ('SHELL', '/bin/bash'), ('SUDO_USER', 'ghost'), ('LC_ALL', 'en_US.UTF-8'), ('PWD', '/home/ghost/Desktop/dev_ws/build/robot_communication_interfaces'), ('COLCON', '1')]), 'shell': False}
+[0.328081] (controller) Command: {'cmd': ['/usr/bin/python3', 'setup.py', 'egg_info', '--egg-base', '../../build/controller', 'build', '--build-base', '/home/ghost/Desktop/dev_ws/build/controller/build', 'install', '--prefix', '/home/ghost/Desktop/dev_ws/install/controller', '--record', '/home/ghost/Desktop/dev_ws/build/controller/install.log', '--single-version-externally-managed'], 'cwd': '/home/ghost/Desktop/dev_ws/src/controller', 'env': {'SUDO_GID': '1000', 'MAIL': '/var/mail/root', 'LANGUAGE': 'en_IN:en', 'USER': 'root', 'HOME': '/root', 'COLORTERM': 'truecolor', 'SUDO_UID': '1000', 'LOGNAME': 'root', 'TERM': 'xterm-256color', 'PATH': '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin', 'DISPLAY': ':0', 'LANG': 'en_US.UTF-8', 'XAUTHORITY': '/run/user/1000/gdm/Xauthority', 'SUDO_COMMAND': '/usr/bin/colcon build', 'SHELL': '/bin/bash', 'SUDO_USER': 'ghost', 'LC_ALL': 'en_US.UTF-8', 'PWD': '/home/ghost/Desktop/dev_ws/build/controller', 'COLCON': '1', 'PYTHONPATH': '/home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages:'}, 'shell': False}
+[0.405044] (-) TimerEvent: {}
+[0.412907] (robot_communication_interfaces) StdoutLine: {'line': b'[  2%] Built target robot_communication_interfaces__cpp\n'}
+[0.418900] (robot_communication_interfaces) StdoutLine: {'line': b'[ 12%] Built target robot_communication_interfaces__rosidl_generator_c\n'}
+[0.485355] (robot_communication_interfaces) StdoutLine: {'line': b'[ 23%] Built target robot_communication_interfaces__rosidl_typesupport_introspection_cpp\n'}
+[0.486282] (robot_communication_interfaces) StdoutLine: {'line': b'[ 33%] Built target robot_communication_interfaces__rosidl_typesupport_introspection_c\n'}
+[0.495936] (robot_communication_interfaces) StdoutLine: {'line': b'[ 43%] Built target robot_communication_interfaces__rosidl_typesupport_fastrtps_cpp\n'}
+[0.505115] (robot_communication_interfaces) StdoutLine: {'line': b'[ 53%] Built target robot_communication_interfaces__rosidl_typesupport_cpp\n'}
+[0.505440] (-) TimerEvent: {}
+[0.574502] (robot_communication_interfaces) StdoutLine: {'line': b'[ 64%] Built target robot_communication_interfaces__rosidl_typesupport_c\n'}
+[0.603948] (robot_communication_interfaces) StdoutLine: {'line': b'[ 74%] Built target robot_communication_interfaces__rosidl_typesupport_fastrtps_c\n'}
+[0.605817] (-) TimerEvent: {}
+[0.668161] (robot_communication_interfaces) StdoutLine: {'line': b'[ 74%] Built target robot_communication_interfaces\n'}
+[0.705995] (-) TimerEvent: {}
+[0.738211] (robot_communication_interfaces) StdoutLine: {'line': b'[ 76%] Built target robot_communication_interfaces__py\n'}
+[0.806506] (-) TimerEvent: {}
+[0.816619] (robot_communication_interfaces) StdoutLine: {'line': b'[ 84%] Built target robot_communication_interfaces__python\n'}
+[0.846941] (controller) StdoutLine: {'line': b'running egg_info\n'}
+[0.851265] (controller) StdoutLine: {'line': b'writing ../../build/controller/controller.egg-info/PKG-INFO\n'}
+[0.853065] (controller) StdoutLine: {'line': b'writing dependency_links to ../../build/controller/controller.egg-info/dependency_links.txt\n'}
+[0.855159] (controller) StdoutLine: {'line': b'writing entry points to ../../build/controller/controller.egg-info/entry_points.txt\n'}
+[0.855424] (controller) StdoutLine: {'line': b'writing requirements to ../../build/controller/controller.egg-info/requires.txt\n'}
+[0.856697] (controller) StdoutLine: {'line': b'writing top-level names to ../../build/controller/controller.egg-info/top_level.txt\n'}
+[0.904624] (robot_communication_interfaces) StdoutLine: {'line': b'[ 89%] Built target robot_communication_interfaces__rosidl_typesupport_c__pyext\n'}
+[0.907548] (-) TimerEvent: {}
+[0.953818] (robot_communication_interfaces) StdoutLine: {'line': b'[ 94%] Built target robot_communication_interfaces__rosidl_typesupport_introspection_c__pyext\n'}
+[0.958651] (robot_communication_interfaces) StdoutLine: {'line': b'[100%] Built target robot_communication_interfaces__rosidl_typesupport_fastrtps_c__pyext\n'}
+[0.990446] (robot_communication_interfaces) CommandEnded: {'returncode': 0}
+[1.000604] (controller) StdoutLine: {'line': b"reading manifest file '../../build/controller/controller.egg-info/SOURCES.txt'\n"}
+[1.003850] (controller) StdoutLine: {'line': b"writing manifest file '../../build/controller/controller.egg-info/SOURCES.txt'\n"}
+[1.004675] (controller) StdoutLine: {'line': b'running build\n'}
+[1.004872] (controller) StdoutLine: {'line': b'running build_py\n'}
+[1.007634] (controller) StdoutLine: {'line': b'running install\n'}
+[1.007791] (-) TimerEvent: {}
+[1.011766] (controller) StdoutLine: {'line': b'running install_lib\n'}
+[1.014668] (controller) StdoutLine: {'line': b'running install_data\n'}
+[1.014828] (controller) StdoutLine: {'line': b'running install_egg_info\n'}
+[1.021387] (controller) StdoutLine: {'line': b"removing '/home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller-0.0.1-py3.8.egg-info' (and everything under it)\n"}
+[1.022257] (controller) StdoutLine: {'line': b'Copying ../../build/controller/controller.egg-info to /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller-0.0.1-py3.8.egg-info\n'}
+[1.025172] (controller) StdoutLine: {'line': b'running install_scripts\n'}
+[1.057676] (controller) StdoutLine: {'line': b'Installing controller script to /home/ghost/Desktop/dev_ws/install/controller/lib/controller\n'}
+[1.058078] (controller) StdoutLine: {'line': b"writing list of installed files to '/home/ghost/Desktop/dev_ws/build/controller/install.log'\n"}
+[1.103089] (controller) CommandEnded: {'returncode': 0}
+[1.107963] (-) TimerEvent: {}
+[1.127214] (controller) JobEnded: {'identifier': 'controller', 'rc': 0}
+[1.194538] (robot_communication_interfaces) JobProgress: {'identifier': 'robot_communication_interfaces', 'progress': 'install'}
+[1.208169] (-) TimerEvent: {}
+[1.213118] (robot_communication_interfaces) Command: {'cmd': ['/usr/bin/cmake', '--install', '/home/ghost/Desktop/dev_ws/build/robot_communication_interfaces'], 'cwd': '/home/ghost/Desktop/dev_ws/build/robot_communication_interfaces', 'env': OrderedDict([('SUDO_GID', '1000'), ('MAIL', '/var/mail/root'), ('LANGUAGE', 'en_IN:en'), ('USER', 'root'), ('HOME', '/root'), ('COLORTERM', 'truecolor'), ('SUDO_UID', '1000'), ('LOGNAME', 'root'), ('TERM', 'xterm-256color'), ('PATH', '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin'), ('DISPLAY', ':0'), ('LANG', 'en_US.UTF-8'), ('XAUTHORITY', '/run/user/1000/gdm/Xauthority'), ('SUDO_COMMAND', '/usr/bin/colcon build'), ('SHELL', '/bin/bash'), ('SUDO_USER', 'ghost'), ('LC_ALL', 'en_US.UTF-8'), ('PWD', '/home/ghost/Desktop/dev_ws/build/robot_communication_interfaces'), ('COLCON', '1')]), 'shell': False}
+[1.225930] (robot_communication_interfaces) StdoutLine: {'line': b'-- Install configuration: ""\n'}
+[1.226893] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/share/ament_index/resource_index/rosidl_interfaces/robot_communication_interfaces\n'}
+[1.227082] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces\n'}
+[1.227189] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/srv\n'}
+[1.227289] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/srv/communication_service.h\n'}
+[1.227824] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/srv/detail\n'}
+[1.228124] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/srv/detail/communication_service__struct.h\n'}
+[1.228279] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/srv/detail/communication_service__functions.c\n'}
+[1.228451] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/srv/detail/communication_service__type_support.h\n'}
+[1.228857] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/srv/detail/communication_service__functions.h\n'}
+[1.228955] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/msg\n'}
+[1.229207] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/msg/rosidl_generator_c__visibility_control.h\n'}
+[1.229320] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/msg/communication_message.h\n'}
+[1.229718] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/msg/detail\n'}
+[1.229883] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/msg/detail/communication_message__type_support.h\n'}
+[1.230162] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/msg/detail/communication_message__functions.h\n'}
+[1.230299] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/msg/detail/communication_message__struct.h\n'}
+[1.230697] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/msg/detail/communication_message__functions.c\n'}
+[1.230814] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/share/robot_communication_interfaces/environment/library_path.sh\n'}
+[1.230954] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/share/robot_communication_interfaces/environment/library_path.dsv\n'}
+[1.231037] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/lib/librobot_communication_interfaces__rosidl_generator_c.so\n'}
+[1.231573] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces\n'}
+[1.232017] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/srv\n'}
+[1.232505] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/srv/detail\n'}
+[1.232787] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/srv/detail/communication_service__rosidl_typesupport_fastrtps_c.h\n'}
+[1.232883] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/msg\n'}
+[1.232969] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/msg/rosidl_typesupport_fastrtps_c__visibility_control.h\n'}
+[1.233708] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/msg/detail\n'}
+[1.233829] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/msg/detail/communication_message__rosidl_typesupport_fastrtps_c.h\n'}
+[1.233916] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/lib/librobot_communication_interfaces__rosidl_typesupport_fastrtps_c.so\n'}
+[1.234001] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces\n'}
+[1.234087] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/srv\n'}
+[1.234549] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/srv/detail\n'}
+[1.234646] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/srv/detail/dds_fastrtps\n'}
+[1.234727] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/srv/detail/communication_service__rosidl_typesupport_fastrtps_cpp.hpp\n'}
+[1.234808] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/msg\n'}
+[1.234890] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/msg/detail\n'}
+[1.234987] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/msg/detail/dds_fastrtps\n'}
+[1.236414] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/msg/detail/communication_message__rosidl_typesupport_fastrtps_cpp.hpp\n'}
+[1.236567] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/msg/rosidl_typesupport_fastrtps_cpp__visibility_control.h\n'}
+[1.236653] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/lib/librobot_communication_interfaces__rosidl_typesupport_fastrtps_cpp.so\n'}
+[1.236738] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces\n'}
+[1.236832] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/srv\n'}
+[1.236919] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/srv/detail\n'}
+[1.237406] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/srv/detail/communication_service__rosidl_typesupport_introspection_c.h\n'}
+[1.237538] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/srv/detail/communication_service__type_support.c\n'}
+[1.237622] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/msg\n'}
+[1.237705] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/msg/detail\n'}
+[1.237823] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/msg/detail/communication_message__rosidl_typesupport_introspection_c.h\n'}
+[1.238458] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/msg/detail/communication_message__type_support.c\n'}
+[1.238608] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/msg/rosidl_typesupport_introspection_c__visibility_control.h\n'}
+[1.238707] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/lib/librobot_communication_interfaces__rosidl_typesupport_introspection_c.so\n'}
+[1.238796] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/lib/librobot_communication_interfaces__rosidl_typesupport_c.so\n'}
+[1.239300] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces\n'}
+[1.239397] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/srv\n'}
+[1.239481] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/srv/communication_service.hpp\n'}
+[1.239575] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/srv/detail\n'}
+[1.239662] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/srv/detail/communication_service__traits.hpp\n'}
+[1.239782] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/srv/detail/communication_service__struct.hpp\n'}
+[1.240333] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/srv/detail/communication_service__builder.hpp\n'}
+[1.240417] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/msg\n'}
+[1.240496] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/msg/detail\n'}
+[1.240571] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/msg/detail/communication_message__builder.hpp\n'}
+[1.240647] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/msg/detail/communication_message__traits.hpp\n'}
+[1.240723] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/msg/detail/communication_message__struct.hpp\n'}
+[1.240800] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/msg/communication_message.hpp\n'}
+[1.240874] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces\n'}
+[1.240950] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/srv\n'}
+[1.241590] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/srv/detail\n'}
+[1.242588] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/srv/detail/communication_service__rosidl_typesupport_introspection_cpp.hpp\n'}
+[1.242674] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/srv/detail/communication_service__type_support.cpp\n'}
+[1.242758] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/msg\n'}
+[1.242838] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/msg/detail\n'}
+[1.242923] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/msg/detail/communication_message__rosidl_typesupport_introspection_cpp.hpp\n'}
+[1.243057] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/include/robot_communication_interfaces/msg/detail/communication_message__type_support.cpp\n'}
+[1.243633] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/lib/librobot_communication_interfaces__rosidl_typesupport_introspection_cpp.so\n'}
+[1.247726] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/lib/librobot_communication_interfaces__rosidl_typesupport_cpp.so\n'}
+[1.248052] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/share/robot_communication_interfaces/environment/pythonpath.sh\n'}
+[1.248291] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/share/robot_communication_interfaces/environment/pythonpath.dsv\n'}
+[1.248403] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/lib/python3.8/site-packages/robot_communication_interfaces/__init__.py\n'}
+[1.294552] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/lib/python3.8/site-packages/robot_communication_interfaces/msg\n'}
+[1.294913] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/lib/python3.8/site-packages/robot_communication_interfaces/msg/__init__.py\n'}
+[1.295069] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/lib/python3.8/site-packages/robot_communication_interfaces/msg/_communication_message_s.c\n'}
+[1.295213] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/lib/python3.8/site-packages/robot_communication_interfaces/msg/_communication_message.py\n'}
+[1.295597] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/lib/python3.8/site-packages/robot_communication_interfaces/srv\n'}
+[1.295743] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/lib/python3.8/site-packages/robot_communication_interfaces/srv/__init__.py\n'}
+[1.295942] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/lib/python3.8/site-packages/robot_communication_interfaces/srv/_communication_service.py\n'}
+[1.296117] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/lib/python3.8/site-packages/robot_communication_interfaces/srv/_communication_service_s.c\n'}
+[1.296257] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/lib/python3.8/site-packages/robot_communication_interfaces/robot_communication_interfaces_s__rosidl_typesupport_fastrtps_c.cpython-38-x86_64-linux-gnu.so\n'}
+[1.297392] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/lib/python3.8/site-packages/robot_communication_interfaces/robot_communication_interfaces_s__rosidl_typesupport_introspection_c.cpython-38-x86_64-linux-gnu.so\n'}
+[1.299288] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/lib/python3.8/site-packages/robot_communication_interfaces/robot_communication_interfaces_s__rosidl_typesupport_c.cpython-38-x86_64-linux-gnu.so\n'}
+[1.300877] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/lib/librobot_communication_interfaces__python.so\n'}
+[1.301256] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/share/robot_communication_interfaces/msg/CommunicationMessage.idl\n'}
+[1.301416] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/share/robot_communication_interfaces/srv/CommunicationService.idl\n'}
+[1.301566] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/share/robot_communication_interfaces/msg/CommunicationMessage.msg\n'}
+[1.301711] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/share/robot_communication_interfaces/srv/CommunicationService.srv\n'}
+[1.301823] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/share/robot_communication_interfaces/srv/CommunicationService_Request.msg\n'}
+[1.301946] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/share/robot_communication_interfaces/srv/CommunicationService_Response.msg\n'}
+[1.302321] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/share/ament_index/resource_index/package_run_dependencies/robot_communication_interfaces\n'}
+[1.302475] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/share/ament_index/resource_index/parent_prefix_path/robot_communication_interfaces\n'}
+[1.302644] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/share/robot_communication_interfaces/environment/ament_prefix_path.sh\n'}
+[1.302918] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/share/robot_communication_interfaces/environment/ament_prefix_path.dsv\n'}
+[1.303063] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/share/robot_communication_interfaces/environment/path.sh\n'}
+[1.303269] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/share/robot_communication_interfaces/environment/path.dsv\n'}
+[1.303373] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/share/robot_communication_interfaces/local_setup.bash\n'}
+[1.303479] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/share/robot_communication_interfaces/local_setup.sh\n'}
+[1.303625] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/share/robot_communication_interfaces/local_setup.zsh\n'}
+[1.303757] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/share/robot_communication_interfaces/local_setup.dsv\n'}
+[1.304032] (robot_communication_interfaces) StdoutLine: {'line': b'-- Installing: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/share/robot_communication_interfaces/package.dsv\n'}
+[1.304330] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/share/ament_index/resource_index/packages/robot_communication_interfaces\n'}
+[1.304491] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/share/robot_communication_interfaces/cmake/robot_communication_interfaces__rosidl_generator_cExport.cmake\n'}
+[1.304762] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/share/robot_communication_interfaces/cmake/robot_communication_interfaces__rosidl_generator_cExport-noconfig.cmake\n'}
+[1.308531] (-) TimerEvent: {}
+[1.308915] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/share/robot_communication_interfaces/cmake/robot_communication_interfaces__rosidl_typesupport_introspection_cExport.cmake\n'}
+[1.309132] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/share/robot_communication_interfaces/cmake/robot_communication_interfaces__rosidl_typesupport_introspection_cExport-noconfig.cmake\n'}
+[1.309297] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/share/robot_communication_interfaces/cmake/robot_communication_interfaces__rosidl_typesupport_cExport.cmake\n'}
+[1.309452] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/share/robot_communication_interfaces/cmake/robot_communication_interfaces__rosidl_typesupport_cExport-noconfig.cmake\n'}
+[1.309581] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/share/robot_communication_interfaces/cmake/robot_communication_interfaces__rosidl_generator_cppExport.cmake\n'}
+[1.309832] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/share/robot_communication_interfaces/cmake/robot_communication_interfaces__rosidl_typesupport_introspection_cppExport.cmake\n'}
+[1.309968] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/share/robot_communication_interfaces/cmake/robot_communication_interfaces__rosidl_typesupport_introspection_cppExport-noconfig.cmake\n'}
+[1.310146] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/share/robot_communication_interfaces/cmake/robot_communication_interfaces__rosidl_typesupport_cppExport.cmake\n'}
+[1.310272] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/share/robot_communication_interfaces/cmake/robot_communication_interfaces__rosidl_typesupport_cppExport-noconfig.cmake\n'}
+[1.310582] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/share/robot_communication_interfaces/cmake/rosidl_cmake-extras.cmake\n'}
+[1.310764] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/share/robot_communication_interfaces/cmake/ament_cmake_export_dependencies-extras.cmake\n'}
+[1.310871] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/share/robot_communication_interfaces/cmake/ament_cmake_export_libraries-extras.cmake\n'}
+[1.311001] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/share/robot_communication_interfaces/cmake/ament_cmake_export_targets-extras.cmake\n'}
+[1.311160] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/share/robot_communication_interfaces/cmake/ament_cmake_export_include_directories-extras.cmake\n'}
+[1.311293] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/share/robot_communication_interfaces/cmake/rosidl_cmake_export_typesupport_libraries-extras.cmake\n'}
+[1.311406] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/share/robot_communication_interfaces/cmake/rosidl_cmake_export_typesupport_targets-extras.cmake\n'}
+[1.311511] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/share/robot_communication_interfaces/cmake/robot_communication_interfacesConfig.cmake\n'}
+[1.311647] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/share/robot_communication_interfaces/cmake/robot_communication_interfacesConfig-version.cmake\n'}
+[1.311753] (robot_communication_interfaces) StdoutLine: {'line': b'-- Up-to-date: /home/ghost/Desktop/dev_ws/install/robot_communication_interfaces/share/robot_communication_interfaces/package.xml\n'}
+[1.316159] (robot_communication_interfaces) CommandEnded: {'returncode': 0}
+[1.409027] (-) TimerEvent: {}
+[1.481261] (robot_communication_interfaces) JobEnded: {'identifier': 'robot_communication_interfaces', 'rc': 0}
+[1.482069] (-) EventReactorShutdown: {}

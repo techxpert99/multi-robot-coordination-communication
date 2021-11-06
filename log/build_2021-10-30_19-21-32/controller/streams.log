@@ -1,0 +1,24 @@
+[0.229s] Invoking command in '/home/ghost/Desktop/dev_ws/src/controller': PYTHONPATH=/home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages: /usr/bin/python3 setup.py egg_info --egg-base ../../build/controller build --build-base /home/ghost/Desktop/dev_ws/build/controller/build install --prefix /home/ghost/Desktop/dev_ws/install/controller --record /home/ghost/Desktop/dev_ws/build/controller/install.log --single-version-externally-managed
+[0.440s] running egg_info
+[0.440s] writing ../../build/controller/controller.egg-info/PKG-INFO
+[0.440s] writing dependency_links to ../../build/controller/controller.egg-info/dependency_links.txt
+[0.441s] writing entry points to ../../build/controller/controller.egg-info/entry_points.txt
+[0.441s] writing requirements to ../../build/controller/controller.egg-info/requires.txt
+[0.441s] writing top-level names to ../../build/controller/controller.egg-info/top_level.txt
+[0.489s] reading manifest file '../../build/controller/controller.egg-info/SOURCES.txt'
+[0.491s] writing manifest file '../../build/controller/controller.egg-info/SOURCES.txt'
+[0.491s] running build
+[0.491s] running build_py
+[0.491s] copying controller/coco.py -> /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller
+[0.493s] running install
+[0.494s] running install_lib
+[0.495s] copying /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller/coco.py -> /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller
+[0.496s] byte-compiling /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/coco.py to coco.cpython-38.pyc
+[0.499s] running install_data
+[0.500s] running install_egg_info
+[0.501s] removing '/home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller-0.0.1-py3.8.egg-info' (and everything under it)
+[0.502s] Copying ../../build/controller/controller.egg-info to /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller-0.0.1-py3.8.egg-info
+[0.503s] running install_scripts
+[0.524s] Installing controller script to /home/ghost/Desktop/dev_ws/install/controller/lib/controller
+[0.525s] writing list of installed files to '/home/ghost/Desktop/dev_ws/build/controller/install.log'
+[0.548s] Invoked command in '/home/ghost/Desktop/dev_ws/src/controller' returned '0': PYTHONPATH=/home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages: /usr/bin/python3 setup.py egg_info --egg-base ../../build/controller build --build-base /home/ghost/Desktop/dev_ws/build/controller/build install --prefix /home/ghost/Desktop/dev_ws/install/controller --record /home/ghost/Desktop/dev_ws/build/controller/install.log --single-version-externally-managed

@@ -1,0 +1,41 @@
+[0.000000] (-) TimerEvent: {}
+[0.000535] (-) JobUnselected: {'identifier': 'robot_communication_interfaces'}
+[0.000642] (controller) JobQueued: {'identifier': 'controller', 'dependencies': OrderedDict()}
+[0.006501] (controller) JobStarted: {'identifier': 'controller'}
+[0.099163] (-) TimerEvent: {}
+[0.200185] (-) TimerEvent: {}
+[0.300864] (-) TimerEvent: {}
+[0.401831] (-) TimerEvent: {}
+[0.502461] (-) TimerEvent: {}
+[0.603214] (-) TimerEvent: {}
+[0.703936] (-) TimerEvent: {}
+[0.760332] (controller) Command: {'cmd': ['/usr/bin/python3', 'setup.py', 'egg_info', '--egg-base', '../../build/controller', 'build', '--build-base', '/home/ghost/Desktop/dev_ws/build/controller/build', 'install', '--prefix', '/home/ghost/Desktop/dev_ws/install/controller', '--record', '/home/ghost/Desktop/dev_ws/build/controller/install.log', '--single-version-externally-managed'], 'cwd': '/home/ghost/Desktop/dev_ws/src/controller', 'env': {'SUDO_GID': '1000', 'MAIL': '/var/mail/root', 'LANGUAGE': 'en_IN:en', 'USER': 'root', 'HOME': '/root', 'COLORTERM': 'truecolor', 'SUDO_UID': '1000', 'LOGNAME': 'root', 'TERM': 'xterm-256color', 'PATH': '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin', 'DISPLAY': ':0', 'LANG': 'en_US.UTF-8', 'XAUTHORITY': '/run/user/1000/gdm/Xauthority', 'SUDO_COMMAND': '/usr/bin/colcon build --packages-select controller', 'SHELL': '/bin/bash', 'SUDO_USER': 'ghost', 'LC_ALL': 'en_US.UTF-8', 'PWD': '/home/ghost/Desktop/dev_ws/build/controller', 'COLCON': '1', 'PYTHONPATH': '/home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages:'}, 'shell': False}
+[0.804308] (-) TimerEvent: {}
+[0.905023] (-) TimerEvent: {}
+[1.005673] (-) TimerEvent: {}
+[1.106143] (-) TimerEvent: {}
+[1.206852] (-) TimerEvent: {}
+[1.288280] (controller) StdoutLine: {'line': b'running egg_info\n'}
+[1.289385] (controller) StdoutLine: {'line': b'writing ../../build/controller/controller.egg-info/PKG-INFO\n'}
+[1.289927] (controller) StdoutLine: {'line': b'writing dependency_links to ../../build/controller/controller.egg-info/dependency_links.txt\n'}
+[1.290324] (controller) StdoutLine: {'line': b'writing entry points to ../../build/controller/controller.egg-info/entry_points.txt\n'}
+[1.290621] (controller) StdoutLine: {'line': b'writing requirements to ../../build/controller/controller.egg-info/requires.txt\n'}
+[1.290853] (controller) StdoutLine: {'line': b'writing top-level names to ../../build/controller/controller.egg-info/top_level.txt\n'}
+[1.307017] (-) TimerEvent: {}
+[1.379089] (controller) StdoutLine: {'line': b"reading manifest file '../../build/controller/controller.egg-info/SOURCES.txt'\n"}
+[1.381496] (controller) StdoutLine: {'line': b"writing manifest file '../../build/controller/controller.egg-info/SOURCES.txt'\n"}
+[1.382034] (controller) StdoutLine: {'line': b'running build\n'}
+[1.382186] (controller) StdoutLine: {'line': b'running build_py\n'}
+[1.384716] (controller) StdoutLine: {'line': b'running install\n'}
+[1.386451] (controller) StdoutLine: {'line': b'running install_lib\n'}
+[1.390865] (controller) StdoutLine: {'line': b'running install_data\n'}
+[1.391636] (controller) StdoutLine: {'line': b'running install_egg_info\n'}
+[1.394797] (controller) StdoutLine: {'line': b"removing '/home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller-0.0.1-py3.8.egg-info' (and everything under it)\n"}
+[1.395305] (controller) StdoutLine: {'line': b'Copying ../../build/controller/controller.egg-info to /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller-0.0.1-py3.8.egg-info\n'}
+[1.396787] (controller) StdoutLine: {'line': b'running install_scripts\n'}
+[1.407399] (-) TimerEvent: {}
+[1.433606] (controller) StdoutLine: {'line': b'Installing controller script to /home/ghost/Desktop/dev_ws/install/controller/lib/controller\n'}
+[1.435212] (controller) StdoutLine: {'line': b"writing list of installed files to '/home/ghost/Desktop/dev_ws/build/controller/install.log'\n"}
+[1.480207] (controller) CommandEnded: {'returncode': 0}
+[1.503521] (controller) JobEnded: {'identifier': 'controller', 'rc': 0}
+[1.505894] (-) EventReactorShutdown: {}

@@ -1,13 +1,17 @@
 from threading import Lock, Thread
+
 from controller.robot import Robot
 from controller.auxiliary import wait
 from controller.configuration_parser import read_conf
+from controller.global_communicator import GlobalCommunicator
+
 import cv2
+
 
 def cv2_thread_start():
     global vthrd,vlock,vrun,vdata
-
     def cb():
+        prev = None
         while True:
             vlock.acquire()
             if not vrun:
@@ -20,7 +24,6 @@ def cv2_thread_start():
             else:
                 vlock.release()
                 wait(0.1)
-        vlock.acquire()
         cv2.destroyAllWindows()    
     vlock = Lock()
     vrun = True
@@ -35,15 +38,27 @@ def cv2_thread_end():
     vlock.release()
     vthrd.join()
 
+def global_communication_start():
+    global comnode
+    comnode = GlobalCommunicator()
+
+def global_communication_end():
+    comnode.destroy()
 
 def entry_point():
 
     cv2_thread_start()
 
+    global_communication_start()
+
     c = read_conf()
     robots = []
 
-    for bot in c['spawn_robots']:
+    if type(c['spawn_robots']) == str:
+        bot_names = [c['spawn_robots']]
+    else:
+        bot_names = c['spawn_robots']
+    for bot in bot_names:
         robots.append(Robot(bot,vdata))
     for bot in robots:
         bot.start()
@@ -64,7 +79,8 @@ def entry_point():
     
     for bot in robots:
         bot.destroy()
-    
+
+    global_communication_end()
     cv2_thread_end()
 
 if __name__ == '__main__':

@@ -1,7 +1,10 @@
 /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/auxiliary.py
+/home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/communication.py
 /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/controller.py
 /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/worldgen.py
 /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/mapgen.py
+/home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/coco.py
+/home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/global_communicator.py
 /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/__init__.py
 /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/wrappers.py
 /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/obstaclegen.py
@@ -9,6 +12,7 @@
 /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/visualizer.py
 /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/stores.py
 /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/robot.py
+/home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/vector_clocks.py
 /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/main_old.py
 /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/robotgen.py
 /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/mapper.py
@@ -19,10 +23,14 @@
 /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/structures.py
 /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/configuration_parser.py
 /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/critical_controller.py
+/home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/coordination.py
 /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/__pycache__/auxiliary.cpython-38.pyc
+/home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/__pycache__/communication.cpython-38.pyc
 /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/__pycache__/controller.cpython-38.pyc
 /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/__pycache__/worldgen.cpython-38.pyc
 /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/__pycache__/mapgen.cpython-38.pyc
+/home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/__pycache__/coco.cpython-38.pyc
+/home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/__pycache__/global_communicator.cpython-38.pyc
 /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/__pycache__/__init__.cpython-38.pyc
 /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/__pycache__/wrappers.cpython-38.pyc
 /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/__pycache__/obstaclegen.cpython-38.pyc
@@ -30,6 +38,7 @@
 /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/__pycache__/visualizer.cpython-38.pyc
 /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/__pycache__/stores.cpython-38.pyc
 /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/__pycache__/robot.cpython-38.pyc
+/home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/__pycache__/vector_clocks.cpython-38.pyc
 /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/__pycache__/main_old.cpython-38.pyc
 /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/__pycache__/robotgen.cpython-38.pyc
 /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/__pycache__/mapper.cpython-38.pyc
@@ -40,6 +49,7 @@
 /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/__pycache__/structures.cpython-38.pyc
 /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/__pycache__/configuration_parser.cpython-38.pyc
 /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/__pycache__/critical_controller.cpython-38.pyc
+/home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/__pycache__/coordination.cpython-38.pyc
 /home/ghost/Desktop/dev_ws/install/controller/share/ament_index/resource_index/packages/controller
 /home/ghost/Desktop/dev_ws/install/controller/share/controller/package.xml
 /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller-0.0.1-py3.8.egg-info/requires.txt

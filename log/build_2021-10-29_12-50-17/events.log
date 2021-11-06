@@ -1,0 +1,91 @@
+[0.000000] (-) TimerEvent: {}
+[0.000562] (controller) JobQueued: {'identifier': 'controller', 'dependencies': OrderedDict()}
+[0.000606] (robot_communication_interfaces) JobQueued: {'identifier': 'robot_communication_interfaces', 'dependencies': OrderedDict()}
+[0.000633] (controller) JobStarted: {'identifier': 'controller'}
+[0.012921] (robot_communication_interfaces) JobStarted: {'identifier': 'robot_communication_interfaces'}
+[0.098785] (-) TimerEvent: {}
+[0.198846] (robot_communication_interfaces) JobProgress: {'identifier': 'robot_communication_interfaces', 'progress': 'cmake'}
+[0.198947] (-) TimerEvent: {}
+[0.199845] (robot_communication_interfaces) Command: {'cmd': ['/usr/bin/cmake', '/home/ghost/Desktop/dev_ws/src/robot_communication_interfaces', '-DCMAKE_INSTALL_PREFIX=/home/ghost/Desktop/dev_ws/install/robot_communication_interfaces'], 'cwd': '/home/ghost/Desktop/dev_ws/build/robot_communication_interfaces', 'env': OrderedDict([('SUDO_GID', '1000'), ('LESSOPEN', '| /usr/bin/lesspipe %s'), ('MAIL', '/var/mail/root'), ('LANGUAGE', 'en_IN:en'), ('USER', 'root'), ('SHLVL', '1'), ('LD_LIBRARY_PATH', '/usr/lib/x86_64-linux-gnu/gazebo-11/plugins:/opt/ros/foxy/opt/yaml_cpp_vendor/lib:/opt/ros/foxy/opt/rviz_ogre_vendor/lib:/opt/ros/foxy/lib/x86_64-linux-gnu:/opt/ros/foxy/lib'), ('HOME', '/root'), ('ROS_PYTHON_VERSION', '3'), ('COLORTERM', 'truecolor'), ('_colcon_cd_root', '/root/ros2_install'), ('COLCON_PREFIX_PATH', '/home/ghost/Desktop/dev_ws/install'), ('SUDO_UID', '1000'), ('ROS_DISTRO', 'foxy'), ('LOGNAME', 'root'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('TERM', 'xterm-256color'), ('ROS_LOCALHOST_ONLY', '0'), ('PATH', '/opt/ros/foxy/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin'), ('DISPLAY', ':0'), ('LANG', 'en_US.UTF-8'), ('XAUTHORITY', '/run/user/1000/gdm/Xauthority'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('SUDO_COMMAND', '/usr/bin/su'), ('AMENT_PREFIX_PATH', '/home/ghost/Desktop/dev_ws/install/controller:/opt/ros/foxy'), ('SHELL', '/bin/bash'), ('SUDO_USER', 'ghost'), ('LESSCLOSE', '/usr/bin/lesspipe %s %s'), ('PWD', '/home/ghost/Desktop/dev_ws/build/robot_communication_interfaces'), ('LC_ALL', 'en_US.UTF-8'), ('PYTHONPATH', '/home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages:/opt/ros/foxy/lib/python3.8/site-packages'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/home/ghost/Desktop/dev_ws/install/controller:/opt/ros/foxy')]), 'shell': False}
+[0.210718] (controller) Command: {'cmd': ['/usr/bin/python3', 'setup.py', 'egg_info', '--egg-base', '../../build/controller', 'build', '--build-base', '/home/ghost/Desktop/dev_ws/build/controller/build', 'install', '--prefix', '/home/ghost/Desktop/dev_ws/install/controller', '--record', '/home/ghost/Desktop/dev_ws/build/controller/install.log', '--single-version-externally-managed'], 'cwd': '/home/ghost/Desktop/dev_ws/src/controller', 'env': {'SUDO_GID': '1000', 'LESSOPEN': '| /usr/bin/lesspipe %s', 'MAIL': '/var/mail/root', 'LANGUAGE': 'en_IN:en', 'USER': 'root', 'SHLVL': '1', 'LD_LIBRARY_PATH': '/usr/lib/x86_64-linux-gnu/gazebo-11/plugins:/opt/ros/foxy/opt/yaml_cpp_vendor/lib:/opt/ros/foxy/opt/rviz_ogre_vendor/lib:/opt/ros/foxy/lib/x86_64-linux-gnu:/opt/ros/foxy/lib', 'HOME': '/root', 'ROS_PYTHON_VERSION': '3', 'COLORTERM': 'truecolor', '_colcon_cd_root': '/root/ros2_install', 'COLCON_PREFIX_PATH': '/home/ghost/Desktop/dev_ws/install', 'SUDO_UID': '1000', 'ROS_DISTRO': 'foxy', 'LOGNAME': 'root', '_': '/usr/bin/colcon', 'ROS_VERSION': '2', 'TERM': 'xterm-256color', 'ROS_LOCALHOST_ONLY': '0', 'PATH': '/opt/ros/foxy/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin', 'DISPLAY': ':0', 'LANG': 'en_US.UTF-8', 'XAUTHORITY': '/run/user/1000/gdm/Xauthority', 'LS_COLORS': 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:', 'SUDO_COMMAND': '/usr/bin/su', 'AMENT_PREFIX_PATH': '/home/ghost/Desktop/dev_ws/install/controller:/opt/ros/foxy', 'SHELL': '/bin/bash', 'SUDO_USER': 'ghost', 'LESSCLOSE': '/usr/bin/lesspipe %s %s', 'PWD': '/home/ghost/Desktop/dev_ws/build/controller', 'LC_ALL': 'en_US.UTF-8', 'PYTHONPATH': '/home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages:/home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages:/opt/ros/foxy/lib/python3.8/site-packages', 'COLCON': '1'}, 'shell': False}
+[0.227062] (robot_communication_interfaces) StdoutLine: {'line': b'-- Found ament_cmake: 0.9.9 (/opt/ros/foxy/share/ament_cmake/cmake)\n'}
+[0.257015] (robot_communication_interfaces) StdoutLine: {'line': b'-- Found PythonInterp: /usr/bin/python3 (found suitable version "3.8.10", minimum required is "3") \n'}
+[0.257241] (robot_communication_interfaces) StdoutLine: {'line': b'-- Using PYTHON_EXECUTABLE: /usr/bin/python3\n'}
+[0.299212] (-) TimerEvent: {}
+[0.396515] (controller) StdoutLine: {'line': b'running egg_info\n'}
+[0.396933] (controller) StdoutLine: {'line': b'writing ../../build/controller/controller.egg-info/PKG-INFO\n'}
+[0.397164] (controller) StdoutLine: {'line': b'writing dependency_links to ../../build/controller/controller.egg-info/dependency_links.txt\n'}
+[0.397380] (controller) StdoutLine: {'line': b'writing entry points to ../../build/controller/controller.egg-info/entry_points.txt\n'}
+[0.397519] (controller) StdoutLine: {'line': b'writing requirements to ../../build/controller/controller.egg-info/requires.txt\n'}
+[0.397607] (controller) StdoutLine: {'line': b'writing top-level names to ../../build/controller/controller.egg-info/top_level.txt\n'}
+[0.399506] (-) TimerEvent: {}
+[0.432134] (controller) StdoutLine: {'line': b"reading manifest file '../../build/controller/controller.egg-info/SOURCES.txt'\n"}
+[0.433174] (controller) StdoutLine: {'line': b"writing manifest file '../../build/controller/controller.egg-info/SOURCES.txt'\n"}
+[0.433583] (controller) StdoutLine: {'line': b'running build\n'}
+[0.433690] (controller) StdoutLine: {'line': b'running build_py\n'}
+[0.434912] (controller) StdoutLine: {'line': b'running install\n'}
+[0.435850] (controller) StdoutLine: {'line': b'running install_lib\n'}
+[0.437764] (controller) StdoutLine: {'line': b'running install_data\n'}
+[0.438173] (controller) StdoutLine: {'line': b'running install_egg_info\n'}
+[0.440024] (controller) StdoutLine: {'line': b"removing '/home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller-0.0.1-py3.8.egg-info' (and everything under it)\n"}
+[0.440251] (controller) StdoutLine: {'line': b'Copying ../../build/controller/controller.egg-info to /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller-0.0.1-py3.8.egg-info\n'}
+[0.440994] (controller) StdoutLine: {'line': b'running install_scripts\n'}
+[0.456440] (controller) StdoutLine: {'line': b'Installing controller script to /home/ghost/Desktop/dev_ws/install/controller/lib/controller\n'}
+[0.457016] (controller) StdoutLine: {'line': b"writing list of installed files to '/home/ghost/Desktop/dev_ws/build/controller/install.log'\n"}
+[0.459149] (robot_communication_interfaces) StdoutLine: {'line': b'-- Found rosidl_default_generators: 1.0.1 (/opt/ros/foxy/share/rosidl_default_generators/cmake)\n'}
+[0.466217] (robot_communication_interfaces) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c\n'}
+[0.475098] (controller) CommandEnded: {'returncode': 0}
+[0.480993] (robot_communication_interfaces) StdoutLine: {'line': b'-- Found rosidl_adapter: 1.2.1 (/opt/ros/foxy/share/rosidl_adapter/cmake)\n'}
+[0.486497] (controller) JobEnded: {'identifier': 'controller', 'rc': 0}
+[0.499557] (-) TimerEvent: {}
+[0.599792] (-) TimerEvent: {}
+[0.612535] (robot_communication_interfaces) StdoutLine: {'line': b'-- Found OpenSSL: /usr/lib/x86_64-linux-gnu/libcrypto.so (found version "1.1.1f")  \n'}
+[0.643167] (robot_communication_interfaces) StdoutLine: {'line': b'-- Found FastRTPS: /opt/ros/foxy/include  \n'}
+[0.699989] (-) TimerEvent: {}
+[0.751363] (robot_communication_interfaces) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp\n'}
+[0.800419] (-) TimerEvent: {}
+[0.803178] (robot_communication_interfaces) StdoutLine: {'line': b'-- Found PythonInterp: /usr/bin/python3 (found version "3.8.10") \n'}
+[0.900421] (-) TimerEvent: {}
+[0.964317] (robot_communication_interfaces) StderrLine: {'line': b'CMake Error at /opt/ros/foxy/share/rosidl_adapter/cmake/rosidl_adapt_interfaces.cmake:60 (message):\n'}
+[0.964551] (robot_communication_interfaces) StderrLine: {'line': b'  execute_process(/usr/bin/python3 -m rosidl_adapter --package-name\n'}
+[0.964618] (robot_communication_interfaces) StderrLine: {'line': b'  robot_communication_interfaces --arguments-file\n'}
+[0.964707] (robot_communication_interfaces) StderrLine: {'line': b'  /home/ghost/Desktop/dev_ws/build/robot_communication_interfaces/rosidl_adapter__arguments__robot_communication_interfaces.json\n'}
+[0.964761] (robot_communication_interfaces) StderrLine: {'line': b'  --output-dir\n'}
+[0.964807] (robot_communication_interfaces) StderrLine: {'line': b'  /home/ghost/Desktop/dev_ws/build/robot_communication_interfaces/rosidl_adapter/robot_communication_interfaces\n'}
+[0.964851] (robot_communication_interfaces) StderrLine: {'line': b'  --output-file\n'}
+[0.964895] (robot_communication_interfaces) StderrLine: {'line': b'  /home/ghost/Desktop/dev_ws/build/robot_communication_interfaces/rosidl_adapter/robot_communication_interfaces.idls)\n'}
+[0.964936] (robot_communication_interfaces) StderrLine: {'line': b'  returned error code 1:\n'}
+[0.964977] (robot_communication_interfaces) StderrLine: {'line': b'\n'}
+[0.965018] (robot_communication_interfaces) StderrLine: {'line': b'  Traceback (most recent call last):\n'}
+[0.965107] (robot_communication_interfaces) StderrLine: {'line': b'\n'}
+[0.965152] (robot_communication_interfaces) StderrLine: {'line': b'    File "/usr/lib/python3.8/runpy.py", line 194, in _run_module_as_main\n'}
+[0.965195] (robot_communication_interfaces) StderrLine: {'line': b'      return _run_code(code, main_globals, None,\n'}
+[0.965242] (robot_communication_interfaces) StderrLine: {'line': b'    File "/usr/lib/python3.8/runpy.py", line 87, in _run_code\n'}
+[0.965286] (robot_communication_interfaces) StderrLine: {'line': b'      exec(code, run_globals)\n'}
+[0.965328] (robot_communication_interfaces) StderrLine: {'line': b'    File "/opt/ros/foxy/lib/python3.8/site-packages/rosidl_adapter/__main__.py", line 19, in <module>\n'}
+[0.965378] (robot_communication_interfaces) StderrLine: {'line': b'      sys.exit(main())\n'}
+[0.965419] (robot_communication_interfaces) StderrLine: {'line': b'    File "/opt/ros/foxy/lib/python3.8/site-packages/rosidl_adapter/main.py", line 53, in main\n'}
+[0.965460] (robot_communication_interfaces) StderrLine: {'line': b'      abs_idl_file = convert_to_idl(\n'}
+[0.965518] (robot_communication_interfaces) StderrLine: {'line': b'    File "/opt/ros/foxy/lib/python3.8/site-packages/rosidl_adapter/__init__.py", line 19, in convert_to_idl\n'}
+[0.965566] (robot_communication_interfaces) StderrLine: {'line': b'      return convert_msg_to_idl(\n'}
+[0.965608] (robot_communication_interfaces) StderrLine: {'line': b'    File "/opt/ros/foxy/lib/python3.8/site-packages/rosidl_adapter/msg/__init__.py", line 28, in convert_msg_to_idl\n'}
+[0.965652] (robot_communication_interfaces) StderrLine: {'line': b'      msg = parse_message_string(package_name, input_file.stem, content)\n'}
+[0.965692] (robot_communication_interfaces) StderrLine: {'line': b'    File "/opt/ros/foxy/lib/python3.8/site-packages/rosidl_adapter/parser.py", line 531, in parse_message_string\n'}
+[0.965739] (robot_communication_interfaces) StderrLine: {'line': b'      constants.append(Constant(type_string, name, value))\n'}
+[0.965906] (robot_communication_interfaces) StderrLine: {'line': b'    File "/opt/ros/foxy/lib/python3.8/site-packages/rosidl_adapter/parser.py", line 319, in __init__\n'}
+[0.965967] (robot_communication_interfaces) StderrLine: {'line': b'      raise NameError(\n'}
+[0.966036] (robot_communication_interfaces) StderrLine: {'line': b'\n'}
+[0.966118] (robot_communication_interfaces) StderrLine: {'line': b"  NameError: 'clock[<' is an invalid constant name.  It should have the\n"}
+[0.966165] (robot_communication_interfaces) StderrLine: {'line': b"  pattern '^[A-Z]([A-Z0-9_]?[A-Z0-9]+)*$'\n"}
+[0.966465] (robot_communication_interfaces) StderrLine: {'line': b'\n'}
+[0.966535] (robot_communication_interfaces) StderrLine: {'line': b'Call Stack (most recent call first):\n'}
+[0.966585] (robot_communication_interfaces) StderrLine: {'line': b'  /opt/ros/foxy/share/rosidl_cmake/cmake/rosidl_generate_interfaces.cmake:130 (rosidl_adapt_interfaces)\n'}
+[0.966633] (robot_communication_interfaces) StderrLine: {'line': b'  CMakeLists.txt:24 (rosidl_generate_interfaces)\n'}
+[0.966683] (robot_communication_interfaces) StderrLine: {'line': b'\n'}
+[0.966730] (robot_communication_interfaces) StderrLine: {'line': b'\n'}
+[0.966774] (robot_communication_interfaces) StdoutLine: {'line': b'-- Configuring incomplete, errors occurred!\n'}
+[0.966828] (robot_communication_interfaces) StdoutLine: {'line': b'See also "/home/ghost/Desktop/dev_ws/build/robot_communication_interfaces/CMakeFiles/CMakeOutput.log".\n'}
+[0.973813] (robot_communication_interfaces) CommandEnded: {'returncode': 1}
+[0.991422] (robot_communication_interfaces) JobEnded: {'identifier': 'robot_communication_interfaces', 'rc': 1}
+[1.000889] (-) TimerEvent: {}
+[1.004309] (-) EventReactorShutdown: {}

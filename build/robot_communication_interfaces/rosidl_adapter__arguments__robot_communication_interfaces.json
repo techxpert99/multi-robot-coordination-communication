@@ -1,0 +1,7 @@
+{
+  "package_name": "robot_communication_interfaces",
+  "non_idl_tuples": [
+    "/home/ghost/Desktop/dev_ws/src/robot_communication_interfaces:msg/CommunicationMessage.msg",
+    "/home/ghost/Desktop/dev_ws/src/robot_communication_interfaces:srv/CommunicationService.srv"
+  ]
+}

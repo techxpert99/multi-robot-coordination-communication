@@ -1,0 +1,5 @@
+  File "/home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/coco.py", line 53
+    def
+       ^
+SyntaxError: invalid syntax
+

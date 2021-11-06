@@ -1,0 +1,35 @@
+// generated from rosidl_adapter/resource/msg.idl.em
+// with input from robot_communication_interfaces/msg/CommunicationMessage.msg
+// generated code does not contain a copyright notice
+
+
+module robot_communication_interfaces {
+  module msg {
+    typedef double double__3[3];
+    struct CommunicationMessage {
+      string message_type;
+
+      string robot_id;
+
+      double__3 position;
+
+      string receiver_robot_id;
+
+      sequence<string, 1024> suitability_robots;
+
+      sequence<string, 1024> suitability_roles;
+
+      sequence<float, 1024> suitability_values;
+
+      sequence<uint32, 1024> teams_tid;
+
+      sequence<string, 1024> teams_id;
+
+      sequence<string, 1024> teams_rol;
+
+      sequence<float, 1024> teams_su;
+
+      uint64 exchange_number;
+    };
+  };
+};

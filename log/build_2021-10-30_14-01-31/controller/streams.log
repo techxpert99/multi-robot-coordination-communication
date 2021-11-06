@@ -1,0 +1,36 @@
+[0.150s] Invoking command in '/home/ghost/Desktop/dev_ws/src/controller': PYTHONPATH=/home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages: /usr/bin/python3 setup.py egg_info --egg-base ../../build/controller build --build-base /home/ghost/Desktop/dev_ws/build/controller/build install --prefix /home/ghost/Desktop/dev_ws/install/controller --record /home/ghost/Desktop/dev_ws/build/controller/install.log --single-version-externally-managed
+[0.277s] running egg_info
+[0.277s] writing ../../build/controller/controller.egg-info/PKG-INFO
+[0.278s] writing dependency_links to ../../build/controller/controller.egg-info/dependency_links.txt
+[0.278s] writing entry points to ../../build/controller/controller.egg-info/entry_points.txt
+[0.278s] writing requirements to ../../build/controller/controller.egg-info/requires.txt
+[0.278s] writing top-level names to ../../build/controller/controller.egg-info/top_level.txt
+[0.304s] reading manifest file '../../build/controller/controller.egg-info/SOURCES.txt'
+[0.305s] writing manifest file '../../build/controller/controller.egg-info/SOURCES.txt'
+[0.305s] running build
+[0.305s] running build_py
+[0.305s] copying controller/communication.py -> /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller
+[0.305s] copying controller/global_communicator.py -> /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller
+[0.306s] copying controller/robot.py -> /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller
+[0.306s] copying controller/vector_clocks.py -> /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller
+[0.306s] copying controller/coordination.py -> /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller
+[0.306s] running install
+[0.307s] running install_lib
+[0.308s] copying /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller/communication.py -> /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller
+[0.308s] copying /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller/global_communicator.py -> /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller
+[0.308s] copying /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller/robot.py -> /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller
+[0.308s] copying /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller/vector_clocks.py -> /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller
+[0.308s] copying /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller/coordination.py -> /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller
+[0.309s] byte-compiling /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/communication.py to communication.cpython-38.pyc
+[0.310s] byte-compiling /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/global_communicator.py to global_communicator.cpython-38.pyc
+[0.311s] byte-compiling /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/robot.py to robot.cpython-38.pyc
+[0.312s] byte-compiling /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/vector_clocks.py to vector_clocks.cpython-38.pyc
+[0.313s] byte-compiling /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/coordination.py to coordination.cpython-38.pyc
+[0.314s] running install_data
+[0.314s] running install_egg_info
+[0.315s] removing '/home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller-0.0.1-py3.8.egg-info' (and everything under it)
+[0.315s] Copying ../../build/controller/controller.egg-info to /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller-0.0.1-py3.8.egg-info
+[0.316s] running install_scripts
+[0.327s] Installing controller script to /home/ghost/Desktop/dev_ws/install/controller/lib/controller
+[0.328s] writing list of installed files to '/home/ghost/Desktop/dev_ws/build/controller/install.log'
+[0.343s] Invoked command in '/home/ghost/Desktop/dev_ws/src/controller' returned '0': PYTHONPATH=/home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages: /usr/bin/python3 setup.py egg_info --egg-base ../../build/controller build --build-base /home/ghost/Desktop/dev_ws/build/controller/build install --prefix /home/ghost/Desktop/dev_ws/install/controller --record /home/ghost/Desktop/dev_ws/build/controller/install.log --single-version-externally-managed

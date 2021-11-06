@@ -1,0 +1,60 @@
+[0.000000] (-) TimerEvent: {}
+[0.000555] (controller) JobQueued: {'identifier': 'controller', 'dependencies': OrderedDict()}
+[0.000607] (robot_communication_interfaces) JobQueued: {'identifier': 'robot_communication_interfaces', 'dependencies': OrderedDict()}
+[0.000630] (controller) JobStarted: {'identifier': 'controller'}
+[0.019753] (robot_communication_interfaces) JobStarted: {'identifier': 'robot_communication_interfaces'}
+[0.097450] (-) TimerEvent: {}
+[0.199388] (-) TimerEvent: {}
+[0.204131] (robot_communication_interfaces) JobProgress: {'identifier': 'robot_communication_interfaces', 'progress': 'cmake'}
+[0.204913] (robot_communication_interfaces) JobProgress: {'identifier': 'robot_communication_interfaces', 'progress': 'build'}
+[0.205676] (robot_communication_interfaces) Command: {'cmd': ['/usr/bin/cmake', '--build', '/home/ghost/Desktop/dev_ws/build/robot_communication_interfaces', '--', '-j4', '-l4'], 'cwd': '/home/ghost/Desktop/dev_ws/build/robot_communication_interfaces', 'env': OrderedDict([('SUDO_GID', '1000'), ('MAIL', '/var/mail/root'), ('LANGUAGE', 'en_IN:en'), ('USER', 'root'), ('HOME', '/root'), ('COLORTERM', 'truecolor'), ('SUDO_UID', '1000'), ('LOGNAME', 'root'), ('TERM', 'xterm-256color'), ('PATH', '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin'), ('DISPLAY', ':0'), ('LANG', 'en_US.UTF-8'), ('XAUTHORITY', '/run/user/1000/gdm/Xauthority'), ('SUDO_COMMAND', '/usr/bin/colcon build'), ('SHELL', '/bin/bash'), ('SUDO_USER', 'ghost'), ('LC_ALL', 'en_US.UTF-8'), ('PWD', '/home/ghost/Desktop/dev_ws/build/robot_communication_interfaces'), ('COLCON', '1')]), 'shell': False}
+[0.214838] (controller) Command: {'cmd': ['/usr/bin/python3', 'setup.py', 'egg_info', '--egg-base', '../../build/controller', 'build', '--build-base', '/home/ghost/Desktop/dev_ws/build/controller/build', 'install', '--prefix', '/home/ghost/Desktop/dev_ws/install/controller', '--record', '/home/ghost/Desktop/dev_ws/build/controller/install.log', '--single-version-externally-managed'], 'cwd': '/home/ghost/Desktop/dev_ws/src/controller', 'env': {'SUDO_GID': '1000', 'MAIL': '/var/mail/root', 'LANGUAGE': 'en_IN:en', 'USER': 'root', 'HOME': '/root', 'COLORTERM': 'truecolor', 'SUDO_UID': '1000', 'LOGNAME': 'root', 'TERM': 'xterm-256color', 'PATH': '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin', 'DISPLAY': ':0', 'LANG': 'en_US.UTF-8', 'XAUTHORITY': '/run/user/1000/gdm/Xauthority', 'SUDO_COMMAND': '/usr/bin/colcon build', 'SHELL': '/bin/bash', 'SUDO_USER': 'ghost', 'LC_ALL': 'en_US.UTF-8', 'PWD': '/home/ghost/Desktop/dev_ws/build/controller', 'COLCON': '1', 'PYTHONPATH': '/home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages:'}, 'shell': False}
+[0.234907] (robot_communication_interfaces) StdoutLine: {'line': b'-- Found ament_cmake: 0.9.9 (/opt/ros/foxy/share/ament_cmake/cmake)\n'}
+[0.259193] (robot_communication_interfaces) StdoutLine: {'line': b'-- Found PythonInterp: /usr/bin/python3 (found suitable version "3.8.10", minimum required is "3") \n'}
+[0.259374] (robot_communication_interfaces) StdoutLine: {'line': b'-- Using PYTHON_EXECUTABLE: /usr/bin/python3\n'}
+[0.304406] (-) TimerEvent: {}
+[0.381904] (controller) StdoutLine: {'line': b'running egg_info\n'}
+[0.383005] (controller) StdoutLine: {'line': b'writing ../../build/controller/controller.egg-info/PKG-INFO\n'}
+[0.383195] (controller) StdoutLine: {'line': b'writing dependency_links to ../../build/controller/controller.egg-info/dependency_links.txt\n'}
+[0.383500] (controller) StdoutLine: {'line': b'writing entry points to ../../build/controller/controller.egg-info/entry_points.txt\n'}
+[0.383714] (controller) StdoutLine: {'line': b'writing requirements to ../../build/controller/controller.egg-info/requires.txt\n'}
+[0.383784] (controller) StdoutLine: {'line': b'writing top-level names to ../../build/controller/controller.egg-info/top_level.txt\n'}
+[0.392061] (robot_communication_interfaces) StderrLine: {'line': b'Traceback (most recent call last):\n'}
+[0.392246] (robot_communication_interfaces) StderrLine: {'line': b'  File "/opt/ros/foxy/share/ament_cmake_core/cmake/package_templates/templates_2_cmake.py", line 21, in <module>\n'}
+[0.392338] (robot_communication_interfaces) StderrLine: {'line': b'    from ament_package.templates import get_environment_hook_template_path\n'}
+[0.392388] (robot_communication_interfaces) StderrLine: {'line': b"ModuleNotFoundError: No module named 'ament_package'\n"}
+[0.404574] (-) TimerEvent: {}
+[0.410288] (robot_communication_interfaces) StderrLine: {'line': b'CMake Error at /opt/ros/foxy/share/ament_cmake_core/cmake/ament_cmake_package_templates-extras.cmake:41 (message):\n'}
+[0.410470] (robot_communication_interfaces) StderrLine: {'line': b'  execute_process(/usr/bin/python3\n'}
+[0.410639] (robot_communication_interfaces) StderrLine: {'line': b'  /opt/ros/foxy/share/ament_cmake_core/cmake/package_templates/templates_2_cmake.py\n'}
+[0.410697] (robot_communication_interfaces) StderrLine: {'line': b'  /home/ghost/Desktop/dev_ws/build/robot_communication_interfaces/ament_cmake_package_templates/templates.cmake)\n'}
+[0.410777] (robot_communication_interfaces) StderrLine: {'line': b'  returned error code 1\n'}
+[0.410829] (robot_communication_interfaces) StderrLine: {'line': b'Call Stack (most recent call first):\n'}
+[0.410876] (robot_communication_interfaces) StderrLine: {'line': b'  /opt/ros/foxy/share/ament_cmake_core/cmake/ament_cmake_coreConfig.cmake:41 (include)\n'}
+[0.410921] (robot_communication_interfaces) StderrLine: {'line': b'  /opt/ros/foxy/share/ament_cmake/cmake/ament_cmake_export_dependencies-extras.cmake:15 (find_package)\n'}
+[0.410972] (robot_communication_interfaces) StderrLine: {'line': b'  /opt/ros/foxy/share/ament_cmake/cmake/ament_cmakeConfig.cmake:41 (include)\n'}
+[0.411016] (robot_communication_interfaces) StderrLine: {'line': b'  CMakeLists.txt:19 (find_package)\n'}
+[0.411061] (robot_communication_interfaces) StderrLine: {'line': b'\n'}
+[0.411140] (robot_communication_interfaces) StderrLine: {'line': b'\n'}
+[0.411199] (robot_communication_interfaces) StdoutLine: {'line': b'-- Configuring incomplete, errors occurred!\n'}
+[0.411273] (robot_communication_interfaces) StdoutLine: {'line': b'See also "/home/ghost/Desktop/dev_ws/build/robot_communication_interfaces/CMakeFiles/CMakeOutput.log".\n'}
+[0.412651] (robot_communication_interfaces) StderrLine: {'line': b'make: *** [Makefile:988: cmake_check_build_system] Error 1\n'}
+[0.415115] (robot_communication_interfaces) CommandEnded: {'returncode': 2}
+[0.417766] (controller) StdoutLine: {'line': b"reading manifest file '../../build/controller/controller.egg-info/SOURCES.txt'\n"}
+[0.418153] (controller) StdoutLine: {'line': b"writing manifest file '../../build/controller/controller.egg-info/SOURCES.txt'\n"}
+[0.418235] (controller) StdoutLine: {'line': b'running build\n'}
+[0.418294] (controller) StdoutLine: {'line': b'running build_py\n'}
+[0.419216] (controller) StdoutLine: {'line': b'running install\n'}
+[0.419836] (controller) StdoutLine: {'line': b'running install_lib\n'}
+[0.421521] (controller) StdoutLine: {'line': b'running install_data\n'}
+[0.421658] (controller) StdoutLine: {'line': b'running install_egg_info\n'}
+[0.423015] (controller) StdoutLine: {'line': b"removing '/home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller-0.0.1-py3.8.egg-info' (and everything under it)\n"}
+[0.423492] (controller) StdoutLine: {'line': b'Copying ../../build/controller/controller.egg-info to /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller-0.0.1-py3.8.egg-info\n'}
+[0.423940] (controller) StdoutLine: {'line': b'running install_scripts\n'}
+[0.440507] (controller) StdoutLine: {'line': b'Installing controller script to /home/ghost/Desktop/dev_ws/install/controller/lib/controller\n'}
+[0.441138] (controller) StdoutLine: {'line': b"writing list of installed files to '/home/ghost/Desktop/dev_ws/build/controller/install.log'\n"}
+[0.461693] (controller) CommandEnded: {'returncode': 0}
+[0.474147] (controller) JobEnded: {'identifier': 'controller', 'rc': 0}
+[0.495576] (robot_communication_interfaces) JobEnded: {'identifier': 'robot_communication_interfaces', 'rc': 2}
+[0.504937] (-) TimerEvent: {}
+[0.506351] (-) EventReactorShutdown: {}

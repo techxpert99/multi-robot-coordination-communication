@@ -86,6 +86,6 @@ class Visualizer:
             image = self.draw_point(image,plan[0],(0,255,255))
             image = self.draw_point(image,plan[-1],(0,255,0))
         
-        image = cv2.resize(image,(800,800))
+        image = cv2.resize(image,(200,200))
         return image
     

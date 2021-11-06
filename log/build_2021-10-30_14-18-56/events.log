@@ -1,0 +1,44 @@
+[0.000000] (-) TimerEvent: {}
+[0.000937] (-) JobUnselected: {'identifier': 'robot_communication_interfaces'}
+[0.000991] (controller) JobQueued: {'identifier': 'controller', 'dependencies': OrderedDict()}
+[0.001019] (controller) JobStarted: {'identifier': 'controller'}
+[0.099625] (-) TimerEvent: {}
+[0.200540] (-) TimerEvent: {}
+[0.301318] (-) TimerEvent: {}
+[0.402160] (-) TimerEvent: {}
+[0.502645] (-) TimerEvent: {}
+[0.603297] (-) TimerEvent: {}
+[0.675839] (controller) Command: {'cmd': ['/usr/bin/python3', 'setup.py', 'egg_info', '--egg-base', '../../build/controller', 'build', '--build-base', '/home/ghost/Desktop/dev_ws/build/controller/build', 'install', '--prefix', '/home/ghost/Desktop/dev_ws/install/controller', '--record', '/home/ghost/Desktop/dev_ws/build/controller/install.log', '--single-version-externally-managed'], 'cwd': '/home/ghost/Desktop/dev_ws/src/controller', 'env': {'SUDO_GID': '1000', 'MAIL': '/var/mail/root', 'LANGUAGE': 'en_IN:en', 'USER': 'root', 'HOME': '/root', 'COLORTERM': 'truecolor', 'SUDO_UID': '1000', 'LOGNAME': 'root', 'TERM': 'xterm-256color', 'PATH': '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin', 'DISPLAY': ':0', 'LANG': 'en_US.UTF-8', 'XAUTHORITY': '/run/user/1000/gdm/Xauthority', 'SUDO_COMMAND': '/usr/bin/colcon build --packages-select controller', 'SHELL': '/bin/bash', 'SUDO_USER': 'ghost', 'LC_ALL': 'en_US.UTF-8', 'PWD': '/home/ghost/Desktop/dev_ws/build/controller', 'COLCON': '1', 'PYTHONPATH': '/home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages:'}, 'shell': False}
+[0.703725] (-) TimerEvent: {}
+[0.805793] (-) TimerEvent: {}
+[0.906956] (-) TimerEvent: {}
+[1.007776] (-) TimerEvent: {}
+[1.108856] (-) TimerEvent: {}
+[1.209395] (-) TimerEvent: {}
+[1.212681] (controller) StdoutLine: {'line': b'running egg_info\n'}
+[1.213762] (controller) StdoutLine: {'line': b'writing ../../build/controller/controller.egg-info/PKG-INFO\n'}
+[1.214360] (controller) StdoutLine: {'line': b'writing dependency_links to ../../build/controller/controller.egg-info/dependency_links.txt\n'}
+[1.214701] (controller) StdoutLine: {'line': b'writing entry points to ../../build/controller/controller.egg-info/entry_points.txt\n'}
+[1.215207] (controller) StdoutLine: {'line': b'writing requirements to ../../build/controller/controller.egg-info/requires.txt\n'}
+[1.216019] (controller) StdoutLine: {'line': b'writing top-level names to ../../build/controller/controller.egg-info/top_level.txt\n'}
+[1.309521] (controller) StdoutLine: {'line': b"reading manifest file '../../build/controller/controller.egg-info/SOURCES.txt'\n"}
+[1.309872] (-) TimerEvent: {}
+[1.312297] (controller) StdoutLine: {'line': b"writing manifest file '../../build/controller/controller.egg-info/SOURCES.txt'\n"}
+[1.312897] (controller) StdoutLine: {'line': b'running build\n'}
+[1.313139] (controller) StdoutLine: {'line': b'running build_py\n'}
+[1.315146] (controller) StdoutLine: {'line': b'copying controller/coordination.py -> /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller\n'}
+[1.316410] (controller) StdoutLine: {'line': b'running install\n'}
+[1.318296] (controller) StdoutLine: {'line': b'running install_lib\n'}
+[1.322684] (controller) StdoutLine: {'line': b'copying /home/ghost/Desktop/dev_ws/build/controller/build/lib/controller/coordination.py -> /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller\n'}
+[1.324755] (controller) StdoutLine: {'line': b'byte-compiling /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller/coordination.py to coordination.cpython-38.pyc\n'}
+[1.329536] (controller) StdoutLine: {'line': b'running install_data\n'}
+[1.330681] (controller) StdoutLine: {'line': b'running install_egg_info\n'}
+[1.334475] (controller) StdoutLine: {'line': b"removing '/home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller-0.0.1-py3.8.egg-info' (and everything under it)\n"}
+[1.335210] (controller) StdoutLine: {'line': b'Copying ../../build/controller/controller.egg-info to /home/ghost/Desktop/dev_ws/install/controller/lib/python3.8/site-packages/controller-0.0.1-py3.8.egg-info\n'}
+[1.336921] (controller) StdoutLine: {'line': b'running install_scripts\n'}
+[1.392769] (controller) StdoutLine: {'line': b'Installing controller script to /home/ghost/Desktop/dev_ws/install/controller/lib/controller\n'}
+[1.394234] (controller) StdoutLine: {'line': b"writing list of installed files to '/home/ghost/Desktop/dev_ws/build/controller/install.log'\n"}
+[1.410082] (-) TimerEvent: {}
+[1.456176] (controller) CommandEnded: {'returncode': 0}
+[1.502716] (controller) JobEnded: {'identifier': 'controller', 'rc': 0}
+[1.504295] (-) EventReactorShutdown: {}

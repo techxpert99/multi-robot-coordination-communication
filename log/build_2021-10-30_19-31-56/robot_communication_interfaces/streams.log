@@ -1,0 +1,24 @@
+[0.134s] Invoking command in '/home/ghost/Desktop/dev_ws/build/robot_communication_interfaces': /usr/bin/cmake --build /home/ghost/Desktop/dev_ws/build/robot_communication_interfaces -- -j4 -l4
+[0.213s] -- Found ament_cmake: 0.9.9 (/opt/ros/foxy/share/ament_cmake/cmake)
+[0.234s] -- Found PythonInterp: /usr/bin/python3 (found suitable version "3.8.10", minimum required is "3") 
+[0.234s] -- Using PYTHON_EXECUTABLE: /usr/bin/python3
+[0.340s] Traceback (most recent call last):
+[0.340s]   File "/opt/ros/foxy/share/ament_cmake_core/cmake/package_templates/templates_2_cmake.py", line 21, in <module>
+[0.340s]     from ament_package.templates import get_environment_hook_template_path
+[0.340s] ModuleNotFoundError: No module named 'ament_package'
+[0.353s] CMake Error at /opt/ros/foxy/share/ament_cmake_core/cmake/ament_cmake_package_templates-extras.cmake:41 (message):
+[0.353s]   execute_process(/usr/bin/python3
+[0.353s]   /opt/ros/foxy/share/ament_cmake_core/cmake/package_templates/templates_2_cmake.py
+[0.353s]   /home/ghost/Desktop/dev_ws/build/robot_communication_interfaces/ament_cmake_package_templates/templates.cmake)
+[0.353s]   returned error code 1
+[0.353s] Call Stack (most recent call first):
+[0.353s]   /opt/ros/foxy/share/ament_cmake_core/cmake/ament_cmake_coreConfig.cmake:41 (include)
+[0.353s]   /opt/ros/foxy/share/ament_cmake/cmake/ament_cmake_export_dependencies-extras.cmake:15 (find_package)
+[0.353s]   /opt/ros/foxy/share/ament_cmake/cmake/ament_cmakeConfig.cmake:41 (include)
+[0.353s]   CMakeLists.txt:19 (find_package)
+[0.353s] 
+[0.354s] 
+[0.354s] -- Configuring incomplete, errors occurred!
+[0.354s] See also "/home/ghost/Desktop/dev_ws/build/robot_communication_interfaces/CMakeFiles/CMakeOutput.log".
+[0.358s] make: *** [Makefile:988: cmake_check_build_system] Error 1
+[0.361s] Invoked command in '/home/ghost/Desktop/dev_ws/build/robot_communication_interfaces' returned '2': /usr/bin/cmake --build /home/ghost/Desktop/dev_ws/build/robot_communication_interfaces -- -j4 -l4

@@ -1,3 +1,4 @@
+import cv2
 from controller.wrappers import ThreadWrapper
 from controller.structures import Map,CriticalMap
 
@@ -25,4 +26,3 @@ class Mapper:
 
     def destroy(self):
         self.__threadw__.stop()
-

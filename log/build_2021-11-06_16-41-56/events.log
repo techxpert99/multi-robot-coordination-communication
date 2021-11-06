@@ -1,0 +1,4 @@
+[0.000000] (-) TimerEvent: {}
+[0.000388] (-) JobUnselected: {'identifier': 'controller'}
+[0.000419] (-) JobUnselected: {'identifier': 'robot_communication_interfaces'}
+[0.000623] (-) EventReactorShutdown: {}
