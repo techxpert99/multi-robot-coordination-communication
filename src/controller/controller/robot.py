@@ -136,13 +136,13 @@ class Robot:
 
         CONTROLLER_NODE = ControllerNode(STORE)
 
-        CRITICAL_NODE = CriticalController(CONTROLLER_NODE,STORE)
+        #CRITICAL_NODE = CriticalController(CONTROLLER_NODE,STORE)
 
-        MAPPER_NODE = Mapper(STORE)
+        #MAPPER_NODE = Mapper(STORE)
 
-        PLANNER_NODE = LocalPlanner(CONTROLLER_NODE,STORE)
+        #PLANNER_NODE = LocalPlanner(CONTROLLER_NODE,STORE)
 
-        VISUALIZER_NODE = Visualizer(STORE)
+        #VISUALIZER_NODE = Visualizer(STORE)
 
         MOVER_NODE = Mover(STORE,CONTROLLER_NODE)
 
@@ -150,7 +150,7 @@ class Robot:
 
         #COORDINATION_NODE = CoordinationNode(COMMUNICATION_NODE,CONTROLLER_NODE,STORE)
 
-        COCO_NODE = CoCoNode(STORE)
+        #COCO_NODE = CoCoNode(STORE)
 
         interval = self._STORE.get('general','executor_callback_interval')
         while self.isRunnable():
