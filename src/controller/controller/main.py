@@ -1,10 +1,10 @@
 from threading import Lock, Thread
-
-from controller.robot import Robot
-from controller.auxiliary import wait
-from controller.configuration_parser import read_conf
-from controller.global_communicator import GlobalCommunicator
-
+#from controller.robot import Robot
+#from controller.auxiliary import wait
+#from controller.configuration_parser import read_conf
+#from controller.global_communicator import GlobalCommunicator
+from controller.controller import Controller
+import rclpy
 import cv2
 
 def cv2_thread_start():
@@ -45,7 +45,13 @@ def global_communication_end():
     comnode.destroy()
 
 def entry_point():
-
+    rclpy.init()
+    robot_namespace = '/bot1'
+    controller = Controller(None,robot_namespace,1.0,0.5)
+    while True:
+        controller.RunController()
+    rclpy.shutdown()
+    return
     cv2_thread_start()
 
     global_communication_start()
