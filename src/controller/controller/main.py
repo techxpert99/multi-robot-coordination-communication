@@ -45,13 +45,13 @@ def global_communication_end():
     comnode.destroy()
 
 inth = None
-target = None
+goal = None
 target_lock = Lock()
 in_lock = Lock()
 def InpuThreadStart():
     global inth,flag
     def infunc():
-        global target,flag
+        global goal,flag
         while True:
             in_lock.acquire()
             this_flag = flag
@@ -63,14 +63,14 @@ def InpuThreadStart():
             else:
                 temp = this_target.split(',')
                 target_lock.acquire()
-                target = (float(temp[0]),float(temp[1]),None)
+                goal = (float(temp[0]),float(temp[1]),None)
                 target_lock.release()
     flag = True            
     inth = Thread(target=infunc)
     inth.start()
 
 def entry_point():
-    global target
+    global goal
     rclpy.init()
     robot_namespace = '/bot1'
     InpuThreadStart()
@@ -78,12 +78,12 @@ def entry_point():
     
     while True:
         target_lock.acquire()
-        my_target = target
-        target = None
+        my_goal = goal
+        goal = None
         target_lock.release()
-        if my_target is not None:
-            controller.target = my_target
-            controller.new_target = True
+        if my_goal is not None:
+            controller.goal = my_goal
+            controller.goal_changed = True
         controller.RunController()
         in_lock.acquire()
         this_flag = flag

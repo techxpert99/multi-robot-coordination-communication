@@ -1,18 +1,17 @@
-from math import asin,acos,atan2, ceil, cos, exp, floor, log, sin,sqrt,pi, tan
+from math import asin, acos, atan2, cos, exp, floor, log, sin, sqrt, pi
 from queue import PriorityQueue
 from geometry_msgs.msg import Twist
 from nav_msgs.msg import Odometry
 from rclpy.node import Node
 from rclpy.qos import qos_profile_system_default
 from rclpy.qos import qos_profile_sensor_data
-from os import makedirs,remove,listdir
+from os import makedirs,remove
 from os.path import isdir,isfile
 import numpy as np
 from collections import OrderedDict
 from sensor_msgs.msg import LaserScan
 import cv2
 import rclpy
-import re
 
 def EuclideanDistance(source, target):
     dx = source[0]-target[0]
@@ -84,7 +83,7 @@ class RegionCache:
             if len(self.cached_regions) == self.cache_size:
                 if self.cache_size > self.memory_cache_size:
                     delete_region_id = self.cached_regions.popitem(False)[0]
-                    remove(self.cache_location+'/'+str(delete_region_id[0])+','+str(delete_region_id[1]))
+                    remove(self.cache_location+'/'+str(delete_region_id[0])+','+str(delete_region_id[1])+'.npy')
                     evict_region_id,evict_region_data = self.regions_in_memory.popitem(False)
                     if self.cached_regions[evict_region_id]:
                         np.save(self.cache_location+'/'+str(evict_region_id[0])+','+str(evict_region_id[1]),evict_region_data,allow_pickle=False)
@@ -204,7 +203,15 @@ class World:
         # Try global planning
 
 
-    def LocalPlanPath(self,source_position,target_position,allow_unknown=True,obstacle_expansion=3):
+    def LocalPlanPath(self,source_position,target_position):
+        
+        # Constants
+        max_prob = 0.8
+        min_prob = 0.2
+        prob_tolerance = 0.2
+        occupied_prob_limit = (max_prob+min_prob+prob_tolerance)/2
+        occupied_prob_log_limit = log(occupied_prob_limit/(1-occupied_prob_limit))
+        obstacle_expansion=3
 
         source_region_id = self.TransformPositionToRegion(source_position)
         target_region_id = self.TransformPositionToRegion(target_position)
@@ -216,11 +223,7 @@ class World:
         target_cell = self.TransformPositionToLocalCoordinates(target_position)
         region_data = self.GetRegion(source_region_id)
 
-        disallowed_cells = [0]
-        if not allow_unknown:
-            disallowed_cells.append(1)
-
-        if region_data[target_cell[0]][target_cell[1]] in disallowed_cells: return None
+        if region_data[target_cell[0]][target_cell[1]] > occupied_prob_log_limit: return None
 
         frontier = PriorityQueue()
         explored = set()
@@ -245,6 +248,7 @@ class World:
                 while intermediate_cell is not None:
                     path.append(self.TransformLocalCoordinatesToPosition(source_region_id,intermediate_cell))
                     intermediate_cell = parents[intermediate_cell]
+                path.reverse()
                 return path
             
             i,j = cell
@@ -253,11 +257,11 @@ class World:
                 child_cell = (i2,j2)
                 if i2 >= 0 and j2 >= 0 and i2 < num_rows and j2 < num_cols and child_cell not in explored:
                     if not np.allclose(child_cell,source_cell,atol=2):
-                        if region_data[child_cell] in disallowed_cells: continue
+                        if region_data[child_cell] > occupied_prob_log_limit: continue
                         obstacle = False
                         for i3 in range(i2-obstacle_expansion,i2+obstacle_expansion+1):
                             for j3 in range(j2-obstacle_expansion,j2+obstacle_expansion+1):
-                                if region_data[i3,j3] in disallowed_cells:
+                                if region_data[i3,j3] > occupied_prob_log_limit:
                                     obstacle = True
                                     break
                             if obstacle:
@@ -300,19 +304,44 @@ class Controller:
 
         self.position = None
         self.plan = None
-        self.plan_index = None
         self.target = None
         self.velocity = Twist()
-        self.initial_point = None
-        self.initial_index = None
-        self.target_reached = True
-        self.new_target = False
 
-        self.plan_changed = False
+        self.goal_changed = False
+        self.goal = None
 
         self.sensor_time = 0
         self.visualization_time = 0
         self.cache_flush_time = 0
+        self.replanning_time = 0
+
+        self.interrupted = None
+    
+    def IsInterrupted(self): return self.interrupted is not None
+
+    def HandleInterrupt(self):
+        
+        if self.interrupted is None: return
+        
+        # Constants
+        maximum_linear_velocity = 1.5
+        linear_velocity_smoothing=80
+        float_precision=0.0001
+        max_interrupt_id_plus_1 = 256
+        
+        # Stop the robot before processing the interrupt
+        if abs(self.velocity.angular.z) >= float_precision or self.velocity.linear.x >= float_precision:
+            self.velocity.angular.z = 0.
+            self.velocity.linear.x = max(0.,self.velocity.linear.x-maximum_linear_velocity/linear_velocity_smoothing)
+            self.interrupted -= max_interrupt_id_plus_1
+        elif self.interrupted < 0:
+            self.interrupted += max_interrupt_id_plus_1
+    
+    def Interrupt(self,interrupt_id = 0):
+        self.interrupted = interrupt_id
+    
+    def Uninterrupt(self):
+        self.interrupted = None
 
     def UpdatePosition(self, msg: Odometry):
         self.position = UnmarshalPosition(msg)
@@ -367,6 +396,8 @@ class Controller:
                 self.world.SetRegion(region_id,region_data)
 
     def ComputeVelocity(self):
+        
+        if self.IsInterrupted(): return
 
         # Constants
         linear_tolerance=0.5
@@ -376,19 +407,20 @@ class Controller:
         angular_velocity_smoothing=1
         maximum_linear_velocity = 1.5
         maximum_angular_velocity = 0.75
+        float_precision=0.0001
 
         if not self.position or not self.target:
             self.velocity.linear.x = 0.
             self.velocity.angular.z = 0.
             return
         current_source = self.position
-        current_target = self.target
+        current_target = self.target[0],self.target[1],self.target[2]
+        new_target = self.target[3]
+        self.target = self.target[0],self.target[1],self.target[2],False
         current_linear_velocity = self.velocity.linear.x
         current_angular_velocity = self.velocity.angular.z
         current_distance_from_target = EuclideanDistance(current_source, current_target)
         target_reached = True
-        new_target = self.new_target
-        self.new_target = False
         next_linear_velocity = 0.
         next_angular_velocity = 0.
         if current_distance_from_target >= linear_tolerance:
@@ -398,7 +430,7 @@ class Controller:
             current_angle_difference = AngleDifference(current_angle_from_target,current_source[2])
             if (new_target and abs(current_angle_difference) >= angular_tolerance) or (not new_target and abs(current_angle_difference) >= reorientation_tolerance):
                 next_linear_velocity = max(0.,current_linear_velocity-maximum_linear_velocity/linear_velocity_smoothing)
-                if current_linear_velocity < maximum_linear_velocity/linear_velocity_smoothing:
+                if current_linear_velocity < float_precision:
                     if current_angle_difference > 0:
                         next_angular_velocity = max(current_angular_velocity-maximum_angular_velocity/angular_velocity_smoothing,-maximum_angular_velocity)
                     else:
@@ -408,84 +440,80 @@ class Controller:
                     next_angular_velocity = min(current_angular_velocity+maximum_angular_velocity/angular_velocity_smoothing,0.)
                 else:
                     next_angular_velocity = max(current_angular_velocity-maximum_angular_velocity/angular_velocity_smoothing,0.)
-                if abs(current_angular_velocity) < maximum_angular_velocity/angular_velocity_smoothing:
+                if abs(current_angular_velocity) < float_precision:
                     next_linear_velocity = min(maximum_linear_velocity,current_linear_velocity+maximum_linear_velocity/linear_velocity_smoothing)
-            
             target_reached = False
         else:
-            next_linear_velocity = max(0.,current_linear_velocity-maximum_linear_velocity/linear_velocity_smoothing)    
+            next_linear_velocity = max(0.,current_linear_velocity-maximum_linear_velocity/linear_velocity_smoothing)
+            if current_linear_velocity >= float_precision:
+                target_reached = False
         self.velocity.linear.x = next_linear_velocity
         self.velocity.angular.z = next_angular_velocity
-        self.target_reached = target_reached
+        if target_reached: self.target = None
     
     def UpdatePlan(self):
 
-        if self.plan_changed:
-            self.plan_changed = False
-            self.plan_index = None
-            self.initial_point = None
-            self.initial_index = None
-            self.target_reached = False
-        
-        if self.plan is not None and self.plan_index is None and self.position:
-            
-            px,py,_ = self.position
-            cache = None
+        if self.interrupted not in [None,1]: return
 
-            for i in range(1,len(self.plan)):
+        #Constants
+        replanning_period = 50000
 
-                ax,ay = self.plan[i-1]
-                bx,by = self.plan[i]
-                
-                if bx == ax:
-                    entry = (abs(ax-px),(ax,by),i)
-                
-                else:
-                    m = (by-ay)/(bx-ax)
-                    x = (m*(py-ay)+m*m*ax+px)/(1+m*m)
-                    y = m*(x-ax)+ay
-                    d = EuclideanDistance((px,py),(x,y))
-                    entry = (d,(x,y),i)
+        self.replanning_time = (self.replanning_time+1)%replanning_period
 
-                if cache is None or entry[0] < cache[0]:
-                    cache = entry
+        if not self.position or not self.goal or (not self.goal_changed and self.replanning_time): return
 
-            self.initial_point = cache[1]
-            self.initial_index = cache[2]
-            self.plan_index = -1
+        if not self.replanning_time:
+            if not self.IsInterrupted():
+                self.Interrupt(1)
+                self.replanning_time = -1
+            else:
+                self.target = None
+                self.Uninterrupt()
 
+        self.goal_changed = False
+        self.target_reached = False
+        plan = self.world.PlanPath(self.position,self.goal)
+        if not plan: return
+        px,py,_ = self.position
+        cache = None
+        for i in range(1,len(plan)):
+            ax,ay = plan[i-1]
+            bx,by = plan[i]
+            if bx == ax:
+                entry = (abs(ax-px),(ax,by),i)
+            else:
+                m = (by-ay)/(bx-ax)
+                x = (m*(py-ay)+m*m*ax+px)/(1+m*m)
+                y = m*(x-ax)+ay
+                d = EuclideanDistance((px,py),(x,y))
+                entry = (d,(x,y),i)
+            if cache is None or entry[0] < cache[0]:
+                cache = entry
+        plan = plan[cache[2]:]
+        plan.insert(0,cache[1])
+        self.plan = plan
+    
     def DecideTarget(self):
+        #Constants
+        num_skip_poses = 10
 
         if not self.plan: return
-        if self.plan_index == -1:
-            self.target = self.initial_point
-            self.plan_index = self.initial_index
-            self.target_reached = False
-            self.new_target = True
-        elif self.target_reached:
-            if self.plan_index < len(self.plan):
-                self.target = self.plan[self.plan_index]
-                self.plan_index += 1
-                self.target_reached = False
-                self.new_target = True
-            else:
-                self.plan = None
-                self.plan_index = None
-                self.target = None
-                self.initial_index = None
-                self.initial_point = None
-                self.plan = None
-                self.new_target = False
+        if not self.target:
+            skip_poses = num_skip_poses
+            while skip_poses and self.plan:
+                pose = self.plan.pop(0)
+                skip_poses -= 1
+            if self.plan:
+                pose = self.plan.pop(0)
+            self.target = pose[0],pose[1],None,True
 
     def ExecutePlan(self):
         self.UpdatePlan()
         self.DecideTarget()
         self.ComputeVelocity()
-        if self.velocity is not None:
-            self.velocity_publisher.publish(self.velocity)
+        self.velocity_publisher.publish(self.velocity)
 
     def FlushCache(self):
-
         #Constants
         cache_flush_time_period = 1200000
 
@@ -494,8 +522,6 @@ class Controller:
 
         self.world.cache.Flush()
         print('Flushing cache')
-
-        
 
     def RunController(self):
         rclpy.spin_once(self.node,timeout_sec=0.01)        
@@ -508,6 +534,8 @@ class Controller:
         print('Flushing cache')
     
     def VisualizeCurrentRegion(self):
+    
+        if self.IsInterrupted(): return
 
         #Constants
         max_prob = 0.8
@@ -518,6 +546,8 @@ class Controller:
         free_prob_log_limit = log(free_prob_limit/(1-free_prob_limit))
         occupied_prob_log_limit = log(occupied_prob_limit/(1-occupied_prob_limit))
         callback_period = 1000
+        plan_line_thickness = 3
+        plan_point_radius = 3
 
         self.visualization_time = (self.visualization_time+1)%callback_period
         if self.visualization_time: return
@@ -526,16 +556,28 @@ class Controller:
             return
         region_id = self.world.TransformPositionToRegion(self.position)
         region_data = self.world.GetRegion(region_id)
-        image_map = np.zeros(region_data.shape,np.uint8)
+        image_map = np.full((region_data.shape[0],region_data.shape[1],3),128,np.uint8)
+        region_data < free_prob_log_limit
         for i in range(image_map.shape[0]):
             for j in range(image_map.shape[1]):
                 if region_data[i,j] < free_prob_log_limit:
-                    image_map[i,j] = 255
+                    image_map[i,j] = [255,255,255]
                 elif region_data[i,j] > occupied_prob_log_limit:
-                    image_map[i,j] = 0
-                else:
-                    image_map[i,j] = 128
+                    image_map[i,j] = [0,0,0]
+        if self.plan:
+            prev_local = None
+            for pose in self.plan:
+                if self.world.TransformPositionToRegion(pose) == region_id:
+                    i,j = self.world.TransformPositionToLocalCoordinates(pose)
+                    if prev_local is not None:
+                        image_map = cv2.line(image_map,prev_local,(j,i),(255,0,0),plan_line_thickness)
+                    prev_local = (j,i)
+            begin = self.world.TransformPositionToLocalCoordinates(self.plan[0])
+            end = self.world.TransformPositionToLocalCoordinates(self.plan[-1])
+            image_map = cv2.circle(image_map,(begin[1],begin[0]),plan_point_radius,(0,255,255),cv2.FILLED)
+            cv2.circle(image_map,(end[1],end[0]),plan_point_radius,(0,255,0),cv2.FILLED)
+        
         image_map = np.rot90(image_map,1)
         image_map = np.fliplr(image_map)
         cv2.imshow('Map',image_map)
-        cv2.waitKey(500)
+        cv2.waitKey(100)
