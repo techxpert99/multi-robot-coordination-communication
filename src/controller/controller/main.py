@@ -44,13 +44,57 @@ def global_communication_start():
 def global_communication_end():
     comnode.destroy()
 
+inth = None
+target = None
+target_lock = Lock()
+in_lock = Lock()
+def InpuThreadStart():
+    global inth,flag
+    def infunc():
+        global target,flag
+        while True:
+            in_lock.acquire()
+            this_flag = flag
+            in_lock.release()
+            if not this_flag: break
+            this_target = input()
+            if this_target == 'q':
+                flag = False
+            else:
+                temp = this_target.split(',')
+                target_lock.acquire()
+                target = (float(temp[0]),float(temp[1]),None)
+                target_lock.release()
+    flag = True            
+    inth = Thread(target=infunc)
+    inth.start()
+
 def entry_point():
+    global target
     rclpy.init()
     robot_namespace = '/bot1'
-    controller = Controller(None,robot_namespace,1.0,0.5)
+    InpuThreadStart()
+    controller = Controller(None,robot_namespace)
+    
     while True:
+        target_lock.acquire()
+        my_target = target
+        target = None
+        target_lock.release()
+        if my_target is not None:
+            controller.target = my_target
+            controller.new_target = True
         controller.RunController()
+        in_lock.acquire()
+        this_flag = flag
+        in_lock.release()
+        if not this_flag:
+            break
+    
+    inth.join()
+    controller.DestroyController()
     rclpy.shutdown()
+    
     return
     cv2_thread_start()
 
