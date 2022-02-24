@@ -1,5 +1,7 @@
 from math import asin, acos, atan2, ceil, cos, exp, floor, log, sin, sqrt, pi
 from queue import PriorityQueue
+from sys import stdout
+from time import time
 from geometry_msgs.msg import Twist
 from nav_msgs.msg import Odometry
 from rclpy.node import Node
@@ -24,7 +26,7 @@ free_identifier = 0
 replanning_period = 50000
 num_skip_poses = 10
 cache_flush_period = 1200000
-visualization_callback_period = 100
+visualization_callback_period = 1000
 plan_line_thickness = 3
 plan_point_radius = 3
 max_interrupt_id_plus_1 = 256
@@ -60,7 +62,10 @@ free_prob_log_limit = log(free_prob_limit/(1-free_prob_limit))
 occupied_prob_limit = (max_prob+min_prob+prob_tolerance)/2
 occupied_prob_log_limit = log(occupied_prob_limit/(1-occupied_prob_limit))
 half_resolution = resolution/2.
+half_robot_width = robot_width/2.
 
+average_fps = 0
+num_calls = 0
 
 def EuclideanDistance(source, target):
     dx = source[0]-target[0]
@@ -206,6 +211,7 @@ class World:
         #Region Cache        
         self.cache = RegionCache()
         print('Loading cache')
+        self.cache.InitialLoad()
 
     # Transforms a position (x,y) to a region id (a,b)
     def TransformPositionToRegion(self,position):
@@ -287,37 +293,20 @@ class World:
             for i2,j2 in [(i-1,j),(i+1,j),(i,j-1),(i,j+1),(i-1,j-1),(i+1,j+1),(i-1,j+1),(i+1,j-1)]:
                 child_cell = (i2,j2)
                 if i2 >= 0 and j2 >= 0 and i2 < num_rows and j2 < num_cols and child_cell not in explored:
-                    if not np.allclose(child_cell,source_cell,atol=2):
-                        if region_data[child_cell] == obstacle_identifier: continue
-                        obstacle = False
-                        for i3 in range(i2-obstacle_expansion,i2+obstacle_expansion+1):
-                            for j3 in range(j2-obstacle_expansion,j2+obstacle_expansion+1):
-                                if region_data[i3,j3] == obstacle_identifier:
-                                    obstacle = True
-                                    break
-                            if obstacle:
-                                break
-                        if obstacle: continue
-                    gchild = g + EuclideanDistance(cell,child_cell)
-                    if child_cell not in gcosts or gcosts[child_cell] > gchild:
-                        fchild = gchild + EuclideanDistance(child_cell,target_cell)
-                        frontier.put((fchild,child_cell))
-                        gcosts[child_cell] = gchild
-                        parents[child_cell] = cell
+                    if np.allclose(child_cell,source_cell,atol=2) or region_data[child_cell] != obstacle_identifier:
+                        gchild = g + EuclideanDistance(cell,child_cell)
+                        if child_cell not in gcosts or gcosts[child_cell] > gchild:
+                            fchild = gchild + EuclideanDistance(child_cell,target_cell)
+                            frontier.put((fchild,child_cell))
+                            gcosts[child_cell] = gchild
+                            parents[child_cell] = cell
         
         return None
 
-    # def GetAtPosition(self,position):
-    #     region_id = self.TransformPositionToRegion(position)
-    #     local_coordinates = self.TransformPositionToLocalCoordinates(position)
-    #     return self.GetRegion(region_id)[local_coordinates]
-    
-    # def SetAtPosition(self,position,value):
-    #     region_id = self.TransformPositionToRegion(position)
-    #     local_coordinates = self.TransformPositionToLocalCoordinates(position)
-    #     region_data = self.GetRegion(region_id)
-    #     region_data[local_coordinates] = value
-    #     self.SetRegion(region_id,region_data)
+    def GetAtPosition(self,position):
+        region_id = self.TransformPositionToRegion(position)
+        local_coordinates = self.TransformPositionToLocalCoordinates(position)
+        return self.GetRegion(region_id)[0][local_coordinates]
     
     def RegionBounds(self,region_id):
         return (region_id[0]*region_length,region_id[1]*region_length,(region_id[0]+1)*region_length,(region_id[1]+1)*region_length)
@@ -384,9 +373,6 @@ class Controller:
 
         if not self.position: return
 
-        from time import time
-        _b = time()
-
         sensor_data = msg.ranges
         dt = msg.angle_increment
         dr = resolution
@@ -394,7 +380,6 @@ class Controller:
         max_pose = (self.position[0]+sensor_range,self.position[1]+sensor_range)
         i1,j1 = self.world.TransformPositionToRegion(min_pose)
         i2,j2 = self.world.TransformPositionToRegion(max_pose)
-
 
         for i in range(i1,i2+1):
             for j in range(j1,j2+1):
@@ -475,10 +460,6 @@ class Controller:
 
                 self.world.SetRegion(region_id,complete_region_data)
 
-        _e = time()
-        print((_e-_b)*1000,'ms,',1/(_e-_b),'fps')
-
-
     def ComputeVelocity(self):
         
         if self.IsInterrupted(): return
@@ -544,13 +525,10 @@ class Controller:
 
         self.goal_changed = False
         self.target_reached = False
-        print('Planning start')
-        from time import time
-        b = time()
         plan = self.world.PlanPath(self.position,self.goal)
-        e = time()
-        print('Planning end:',(e-b))
+
         if not plan: return
+
         px,py,_ = self.position
         cache = None
         for i in range(1,len(plan)):
@@ -566,18 +544,10 @@ class Controller:
                 entry = (d,(x,y),i)
             if cache is None or entry[0] < cache[0]:
                 cache = entry
+        
         plan = plan[cache[2]:]
         plan.insert(0,cache[1])
         self.plan = plan
-
-    def TransformRobotRectangularCoordinatesToPosition(self,u,v):
-        dx = self.target[0]-self.position[0]
-        dy = self.target[1]-self.position[1]
-        r = sqrt(dx*dx+dy*dy)
-        if r < float_precision: return (u,v)
-        c = dx/r
-        s = dy/r
-        return self.position[0]+u*c-v*s,self.position[1]+v*c+u*s
 
     def VerifyTargetVisibility(self):
 
@@ -585,30 +555,48 @@ class Controller:
 
         if not self.target: return
 
-        vmin = -robot_width-robot_visibility
-        vmax = robot_width+robot_visibility
-        umin = 0
+        dx = self.target[0]-self.position[0]
+        dy = self.target[1]-self.position[1]
+        r = sqrt(dx*dx+dy*dy)
 
-        from time import time
-        b = time()
-
-        umax = EuclideanDistance(self.position,self.target)+robot_visibility
+        if r < float_precision: return
+        
+        c = dx/r
+        s = dy/r
+        vmin = -half_robot_width+robot_visibility
+        vmax = half_robot_width+robot_visibility
+        umin = -half_robot_width
+        umax = EuclideanDistance(self.position,self.target)+robot_visibility+half_robot_width
         u = umin
+
         while u <= umax:
+            pose1 = self.world.TransformPositionToRegion((self.position[0]+u*c-vmin*s,self.position[1]+u*s+vmin*c))
+            pose2 = self.world.TransformPositionToRegion((self.position[0]+u*c-vmax*s,self.position[1]+u*s+vmax*c))
+            a1 = min(pose1[0],pose2[0])
+            b1 = min(pose1[1],pose2[1])
+            a2 = max(pose1[0],pose2[0])+1
+            b2 = max(pose1[1],pose2[1])+1
             v = vmin
-            while v <= vmax:
-                pose = self.TransformRobotRectangularCoordinatesToPosition(u,v)
-                if self.world.GetAtPosition(pose) > occupied_prob_log_limit:
-                    self.Interrupt(1)
-                    self.replanning_time = -1
-                    self.target = None
-                    print(time()-b)
-                    return
-                v += resolution
+            for a in range(a1,a2):
+                for b in range(b1,b2):
+                    region_id = (a,b)
+                    region_data = self.world.GetRegion(region_id)
+                    region_bounds = self.world.RegionBounds(region_id)
+                    while v <= vmax:
+                        pose = self.position[0]+u*c-v*s,self.position[1]+u*s+v*c
+                        if pose[0] >= region_bounds[0]+float_precision and pose[0] <= region_bounds[0]-float_precision and pose[1] >= region_bounds[1]+float_precision and pose[1] <= region_bounds[1]-float_precision:
+                            local = self.world.TransformPositionToLocalCoordinates(pose)
+                            if region_data[local] > occupied_prob_log_limit:
+                                self.Interrupt(1)
+                                self.replanning_time = -1
+                                self.target = None
+                                return
+                        else:
+                            v += resolution
+                            break
+                        v += resolution
             u += resolution
         
-        print(time()-b)
-
     def DecideTarget(self):
         if not self.plan: return
         if not self.target:
@@ -628,7 +616,6 @@ class Controller:
         self.velocity_publisher.publish(self.velocity)
 
     def FlushCache(self):
-        #Constants
 
         self.cache_flush_time = (self.cache_flush_time+1)%cache_flush_period
         if self.cache_flush_time: return
@@ -637,15 +624,33 @@ class Controller:
         print('Flushing cache')
 
     def RunController(self):
-        rclpy.spin_once(self.node,timeout_sec=0.01)        
+        global num_calls,average_fps
+
+        _1 = time()
+        rclpy.spin_once(self.node,timeout_sec=0.01)
+        _2 = time()
         self.ExecutePlan()
+        _3 = time()
         self.VisualizeCurrentRegion()
+        _4 = time()
         self.HandleInterrupts()
+        _5 = time()
+
+        num_calls += 1
+        average_fps += _5-_1
+
+        stdout.write(f'\rAverage fps:{(num_calls/average_fps)}')
+        # print('FPS:')
+        # print('spin_once:',1/(_2-_1))
+        # print('execute_plan:',1/(_3-_2))
+        # print('visualize:',1/(_4-_3))
+        # print('interrupts:',1/(_5-_4))
+        # print('overall:',1/(_5-_1))
 
     def DestroyController(self):
         self.node.destroy_node()
-        self.world.cache.Flush()
         print('Flushing cache')
+        self.world.cache.Flush()
     
     def VisualizeCurrentRegion(self):
 
@@ -656,16 +661,19 @@ class Controller:
 
         if self.position is None:
             return
+        
         region_id = self.world.TransformPositionToRegion(self.position)
         complete_region_data = self.world.GetRegion(region_id)
         region_data = complete_region_data[0]
         image_map = np.full((region_data.shape[0],region_data.shape[1],3),128,np.uint8)
+
         for i in range(image_map.shape[0]):
             for j in range(image_map.shape[1]):
                 if region_data[i,j] < free_prob_log_limit:
                     image_map[i,j] = [255,255,255]
                 elif region_data[i,j] > occupied_prob_log_limit:
                     image_map[i,j] = [0,0,0]
+        
         if self.plan:
             prev_local = None
             for pose in self.plan:
@@ -679,13 +687,13 @@ class Controller:
             image_map = cv2.circle(image_map,(begin[1],begin[0]),plan_point_radius,(0,255,255),cv2.FILLED)
             cv2.circle(image_map,(end[1],end[0]),plan_point_radius,(0,255,0),cv2.FILLED)
         
-        #image_map = np.rot90(image_map,1)
-        #image_map = np.fliplr(image_map)
+        image_map = np.rot90(image_map,1)
+        image_map = np.fliplr(image_map)
         cv2.imshow('Map',image_map)
         
         region_data = complete_region_data[1]
         image_map = 255*(1-region_data)
-        #image_map = np.rot90(image_map,1)
-        #image_map = np.fliplr(image_map)
+        image_map = np.rot90(image_map,1)
+        image_map = np.fliplr(image_map)
         cv2.imshow('Planning Map',image_map)
         cv2.waitKey(100)
