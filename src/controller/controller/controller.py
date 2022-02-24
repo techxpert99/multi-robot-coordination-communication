@@ -20,6 +20,7 @@ lidar_callback_period = 10
 region_memory_cache_size=16
 region_cache_size=128
 obstacle_identifier = 1
+free_identifier = 0
 replanning_period = 50000
 num_skip_poses = 10
 cache_flush_period = 1200000
@@ -397,11 +398,12 @@ class Controller:
 
         for i in range(i1,i2+1):
             for j in range(j1,j2+1):
-                
+
                 region_id = (i,j)
                 complete_region_data = self.world.GetRegion(region_id)
                 region_data = complete_region_data[0]
                 t = 0
+
                 for z in sensor_data:
                     r=0
                     rmax = min(sensor_range,z+dr2)
@@ -435,32 +437,41 @@ class Controller:
                 lmax2 = min(N,l2+obstacle_expansion+1)
                 kmin2 = max(0,k1-obstacle_expansion)
 
+                # Microoptimization
+                _1 = n+4*obstacle_expansion
+                _2 = l2-obstacle_expansion
+                _3 = -l1+3*obstacle_expansion
+                _4 = -l1+1+5*obstacle_expansion
+                _5 = -_3
+                _6 = l1-obstacle_expansion
+                _7 = -_6
+                _8 = 2*obstacle_expansion+1
+
                 for k in range(kmin,kmax):
-                    for l in range(n+4*obstacle_expansion):
+                    for l in range(_1):
                         cc[l] = 0
                     if k+obstacle_expansion < M:
-                        for l in range(lmin,l2-obstacle_expansion):
+                        for l in range(lmin,_2):
                             if region_data[k+obstacle_expansion,l+obstacle_expansion] > occupied_prob_log_limit:
-                                cc[l-l1+3*obstacle_expansion] += 1
-                                cc[l-l1+1+5*obstacle_expansion] -= 1
-                        for l in range(l2-obstacle_expansion,lmax):
-                            if planning_region_data[k+obstacle_expansion,l+obstacle_expansion] == 1:
-                                cc[l-l1+3*obstacle_expansion] += 1
+                                cc[l+_3] += 1
+                                cc[l+_4] -= 1
+                        for l in range(_2,lmax):
+                            if region_data[k+obstacle_expansion,l+obstacle_expansion] > occupied_prob_log_limit:
+                                cc[l+_3] += 1
                     s = 0
-                    for l in range(l1-3*obstacle_expansion,l1-obstacle_expansion):
-                        s += cc[l-l1+3*obstacle_expansion]
-                    
-                    for l in range(l1-obstacle_expansion,lmax2):
-                        s += cc[l-l1+3*obstacle_expansion]
+                    for l in range(_5,_6):
+                        s += cc[l+_3]
+                    for l in range(_6,lmax2):
+                        s += cc[l+_3]
                         if s:
-                            rc[l-l1+obstacle_expansion] = 2*obstacle_expansion+1
-                        if rc[l-l1+obstacle_expansion]:
-                            rc[l-l1+obstacle_expansion] -= 1
+                            rc[l+_7] = _8
+                        if rc[l+_7]:
+                            rc[l+_7] -= 1
                             if k >= kmin2 and l >= 0:
-                                planning_region_data[k,l] = 1
+                                planning_region_data[k,l] = obstacle_identifier
                         else:
                             if k >= kmin2 and l >= 0:
-                                planning_region_data[k,l] = 0
+                                planning_region_data[k,l] = free_identifier
 
                 self.world.SetRegion(region_id,complete_region_data)
 
