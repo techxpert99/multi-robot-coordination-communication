@@ -1,4 +1,4 @@
-from math import asin, acos, atan2, cos, exp, floor, log, sin, sqrt, pi
+from math import asin, acos, atan2, ceil, cos, exp, floor, log, sin, sqrt, pi
 from queue import PriorityQueue
 from geometry_msgs.msg import Twist
 from nav_msgs.msg import Odometry
@@ -12,6 +12,54 @@ from collections import OrderedDict
 from sensor_msgs.msg import LaserScan
 import cv2
 import rclpy
+
+#Constants
+
+region_data_length = 500
+lidar_callback_period = 10
+region_memory_cache_size=16
+region_cache_size=128
+obstacle_identifier = 1
+replanning_period = 50000
+num_skip_poses = 10
+cache_flush_period = 1200000
+visualization_callback_period = 100
+plan_line_thickness = 3
+plan_point_radius = 3
+max_interrupt_id_plus_1 = 256
+
+resolution = 0.1
+robot_visibility = 1.0
+obstacle_spread = 0.1
+max_prob = 0.8
+min_prob = 0.2
+prob_tolerance = 0.2
+sensor_range = 9.0
+linear_tolerance=0.5
+angular_tolerance=0.05
+reorientation_tolerance=0.2
+linear_velocity_smoothing=80.
+angular_velocity_smoothing=1.
+maximum_linear_velocity = 1.5
+maximum_angular_velocity = 0.75
+float_precision=0.0000000001
+robot_width = 0.5
+
+region_cache_location='cached_regions/'
+
+two_pi = 2*pi
+region_length = region_data_length*resolution
+obstacle_expansion = ceil(robot_visibility/resolution)
+dr1 = sqrt(obstacle_spread*log(max_prob/min_prob))
+dr2 = sqrt(obstacle_spread*log(2*max_prob/(max_prob+min_prob)))
+min_prob_log = log(min_prob/(1-min_prob))
+max_prob_log = log(max_prob/(1-max_prob))
+free_prob_limit = (max_prob+min_prob-prob_tolerance)/2
+free_prob_log_limit = log(free_prob_limit/(1-free_prob_limit))
+occupied_prob_limit = (max_prob+min_prob+prob_tolerance)/2
+occupied_prob_log_limit = log(occupied_prob_limit/(1-occupied_prob_limit))
+half_resolution = resolution/2.
+
 
 def EuclideanDistance(source, target):
     dx = source[0]-target[0]
@@ -29,7 +77,7 @@ def AngleDifference(source_angle, target_angle):
     else:
         adiff = -diff
         sgn = 1
-    return diff if adiff <= pi else sgn*(2*pi-adiff)
+    return diff if adiff <= pi else sgn*(two_pi-adiff)
 
 # Transforms a quaternion to roll,pitch,yaw
 def TransformQuaternion(x, y, z, w):
@@ -55,12 +103,9 @@ def UnmarshalPosition(msg: Odometry):
 
 class RegionCache:
     
-    def __init__(self,memory_cache_size=16,cache_size=128,cache_location='cached_regions/'):
-        self.memory_cache_size = memory_cache_size
-        self.cache_size = cache_size
-        self.cache_location = cache_location
-        if not isdir(cache_location):
-            makedirs(cache_location)
+    def __init__(self):
+        if not isdir(region_cache_location):
+            makedirs(region_cache_location)
         self.cached_regions = OrderedDict()
         self.regions_in_memory = OrderedDict()
 
@@ -80,20 +125,23 @@ class RegionCache:
         elif region_id in self.cached_regions:
             del self.cached_regions[region_id]
         else:
-            if len(self.cached_regions) == self.cache_size:
-                if self.cache_size > self.memory_cache_size:
+            if len(self.cached_regions) == region_cache_size:
+                if region_cache_size > region_memory_cache_size:
                     delete_region_id = self.cached_regions.popitem(False)[0]
-                    remove(self.cache_location+'/'+str(delete_region_id[0])+','+str(delete_region_id[1])+'.npy')
+                    remove(region_cache_location+'/'+str(delete_region_id[0])+','+str(delete_region_id[1])+'.npy')
+                    remove(region_cache_location+'/p'+str(delete_region_id[0])+','+str(delete_region_id[1])+'.npy')
                     evict_region_id,evict_region_data = self.regions_in_memory.popitem(False)
                     if self.cached_regions[evict_region_id]:
-                        np.save(self.cache_location+'/'+str(evict_region_id[0])+','+str(evict_region_id[1]),evict_region_data,allow_pickle=False)
+                        np.save(region_cache_location+'/'+str(evict_region_id[0])+','+str(evict_region_id[1]),evict_region_data[0],allow_pickle=False)
+                        np.save(region_cache_location+'/p'+str(evict_region_id[0])+','+str(evict_region_id[1]),evict_region_data[1],allow_pickle=False)
                 else:
                     self.cached_regions.popitem(False)
                     self.regions_in_memory.popitem(False)
-            elif len(self.regions_in_memory) == self.memory_cache_size:
+            elif len(self.regions_in_memory) == region_memory_cache_size:
                 evict_region_id,evict_region_data = self.regions_in_memory.popitem(False)
                 if self.cached_regions[evict_region_id]:
-                    np.save(self.cache_location+'/'+str(evict_region_id[0])+','+str(evict_region_id[1]),evict_region_data,allow_pickle=False)
+                    np.save(region_cache_location+'/'+str(evict_region_id[0])+','+str(evict_region_id[1]),evict_region_data[0],allow_pickle=False)
+                    np.save(region_cache_location+'/p'+str(evict_region_id[0])+','+str(evict_region_id[1]),evict_region_data[1],allow_pickle=False)
         self.cached_regions[region_id] = True
         self.regions_in_memory[region_id] = region_data
 
@@ -106,11 +154,12 @@ class RegionCache:
             region_data = self.regions_in_memory[region_id]
             del self.regions_in_memory[region_id]
         else:
-            if len(self.regions_in_memory) == self.memory_cache_size:
+            if len(self.regions_in_memory) == region_memory_cache_size:
                 evict_region_id,evict_region_data = self.regions_in_memory.popitem(False)
                 if self.cached_regions[evict_region_id]:
-                    np.save(self.cache_location+'/'+str(evict_region_id[0])+','+str(evict_region_id[1]),evict_region_data,allow_pickle=False)
-            region_data = np.load(self.cache_location+'/'+str(region_id[0])+','+str(region_id[1])+'.npy',None,False)
+                    np.save(region_cache_location+'/'+str(evict_region_id[0])+','+str(evict_region_id[1]),evict_region_data[0],allow_pickle=False)
+                    np.save(region_cache_location+'/p'+str(evict_region_id[0])+','+str(evict_region_id[1]),evict_region_data[1],allow_pickle=False)
+            region_data = np.load(region_cache_location+'/'+str(region_id[0])+','+str(region_id[1])+'.npy',None,False),np.load(region_cache_location+'/p'+str(region_id[0])+','+str(region_id[1])+'.npy',None,False)
             modified = False
         del self.cached_regions[region_id]
         self.cached_regions[region_id] = modified
@@ -119,13 +168,13 @@ class RegionCache:
 
     # Loads the cache with pre-saved information
     def InitialLoad(self):
-        if not isfile(self.cache_location+'/meta.npy'):
+        if not isfile(region_cache_location+'/meta.npy'):
             return
-        region_ids = np.load(self.cache_location+'/meta.npy',None,False)
-        num_loads = min(self.cache_size-len(self.regions_in_memory),len(region_ids))
+        region_ids = np.load(region_cache_location+'/meta.npy',None,False)
+        num_loads = min(region_cache_size-len(self.regions_in_memory),len(region_ids))
         for i in range(num_loads):
             region_id = tuple(region_ids[num_loads-1-i])
-            self.regions_in_memory[region_id] = np.load(self.cache_location+'/'+str(region_id[0])+','+str(region_id[1])+'.npy',None,False)
+            self.regions_in_memory[region_id] = np.load(region_cache_location+'/'+str(region_id[0])+','+str(region_id[1])+'.npy',None,False),np.load(region_cache_location+'/p'+str(region_id[0])+','+str(region_id[1])+'.npy',None,False)
         for i in range(len(region_ids)):
             self.cached_regions[tuple(region_ids[len(region_ids)-1-i])] = False
     
@@ -134,13 +183,14 @@ class RegionCache:
         for region_id in self.regions_in_memory:
             if self.cached_regions[region_id]:
                 region_data = self.regions_in_memory[region_id]
-                np.save(self.cache_location+'/'+str(region_id[0])+','+str(region_id[1]),region_data,allow_pickle=False)
+                np.save(region_cache_location+'/'+str(region_id[0])+','+str(region_id[1]),region_data[0],allow_pickle=False)
+                np.save(region_cache_location+'/p'+str(region_id[0])+','+str(region_id[1]),region_data[1],allow_pickle=False)
         region_ids = np.zeros((len(self.cached_regions),2),np.int32)
         i = 0
         for region_id in self.cached_regions:
             region_ids[i] = region_id
             i += 1
-        np.save(self.cache_location+'/meta',region_ids,allow_pickle=False)
+        np.save(region_cache_location+'/meta',region_ids,allow_pickle=False)
         
 
 # Region denotations:
@@ -152,33 +202,21 @@ class World:
 
     def __init__(self):
 
-        #Constants
-        self.origin = (0,0)
-        self.region_length = 50
-        self.resolution = 0.1
-        self.region_data_length = floor(self.region_length/self.resolution)
-
         #Region Cache        
         self.cache = RegionCache()
-        self.cache.InitialLoad()
         print('Loading cache')
 
     # Transforms a position (x,y) to a region id (a,b)
     def TransformPositionToRegion(self,position):
-        return floor(floor((position[0]-self.origin[0])/self.resolution+0.5)/self.region_data_length),floor(floor((position[1]-self.origin[1])/self.resolution+0.5)/self.region_data_length)
+        return floor(position[0]/region_length),floor(position[1]/region_length)
     
     # Transforms a position (x,y) to local coordinates (i,j)
     def TransformPositionToLocalCoordinates(self,position):
-        l = floor((position[0]-self.origin[0])/self.resolution+0.5)
-        m = floor((position[1]-self.origin[1])/self.resolution+0.5)
-        a = floor(l/self.region_data_length)
-        b = floor(m/self.region_data_length)
-        j = l-a*self.region_data_length
-        i = m-b*self.region_data_length
-        return i,j
-    
+        return floor(position[1]/resolution)-region_data_length*floor(position[1]/region_length),floor(position[0]/resolution)-region_data_length*floor(position[0]/region_length)
+
+    # Transforms local coordinates to position    
     def TransformLocalCoordinatesToPosition(self,region_id,local_coordinates):
-        return self.origin[0]+(self.region_data_length*region_id[0]+local_coordinates[1])*self.resolution,self.origin[1]+(self.region_data_length*region_id[1]+local_coordinates[0])*self.resolution
+        return (local_coordinates[1]+0.5)*resolution+region_length*region_id[0],(local_coordinates[0]+0.5)*resolution+region_length*region_id[1]
 
     def GetRegion(self,region_id):
         region_data = None
@@ -186,7 +224,7 @@ class World:
         if self.cache.HasRegion(region_id):
             region_data = self.cache.GetRegion(region_id)
         else:
-            region_data = np.full((self.region_data_length,self.region_data_length),0,np.float32)
+            region_data = np.full((region_data_length,region_data_length),0.,np.float32),np.full((region_data_length,region_data_length),0,np.uint8)
             self.cache.InsertRegion(region_id,region_data)
         return region_data
 
@@ -205,14 +243,6 @@ class World:
 
     def LocalPlanPath(self,source_position,target_position):
         
-        # Constants
-        max_prob = 0.8
-        min_prob = 0.2
-        prob_tolerance = 0.2
-        occupied_prob_limit = (max_prob+min_prob+prob_tolerance)/2
-        occupied_prob_log_limit = log(occupied_prob_limit/(1-occupied_prob_limit))
-        obstacle_expansion=3
-
         source_region_id = self.TransformPositionToRegion(source_position)
         target_region_id = self.TransformPositionToRegion(target_position)
         
@@ -221,9 +251,9 @@ class World:
         
         source_cell = self.TransformPositionToLocalCoordinates(source_position)
         target_cell = self.TransformPositionToLocalCoordinates(target_position)
-        region_data = self.GetRegion(source_region_id)
+        region_data = self.GetRegion(source_region_id)[1]
 
-        if region_data[target_cell[0]][target_cell[1]] > occupied_prob_log_limit: return None
+        if region_data[target_cell[0]][target_cell[1]] == obstacle_identifier: return None
 
         frontier = PriorityQueue()
         explored = set()
@@ -257,11 +287,11 @@ class World:
                 child_cell = (i2,j2)
                 if i2 >= 0 and j2 >= 0 and i2 < num_rows and j2 < num_cols and child_cell not in explored:
                     if not np.allclose(child_cell,source_cell,atol=2):
-                        if region_data[child_cell] > occupied_prob_log_limit: continue
+                        if region_data[child_cell] == obstacle_identifier: continue
                         obstacle = False
                         for i3 in range(i2-obstacle_expansion,i2+obstacle_expansion+1):
                             for j3 in range(j2-obstacle_expansion,j2+obstacle_expansion+1):
-                                if region_data[i3,j3] > occupied_prob_log_limit:
+                                if region_data[i3,j3] == obstacle_identifier:
                                     obstacle = True
                                     break
                             if obstacle:
@@ -276,20 +306,21 @@ class World:
         
         return None
 
-    def GetAtPosition(self,position):
-        region_id = self.TransformPositionToRegion(position)
-        local_coordinates = self.TransformPositionToLocalCoordinates(position)
-        return self.GetRegion(region_id)[local_coordinates]
+    # def GetAtPosition(self,position):
+    #     region_id = self.TransformPositionToRegion(position)
+    #     local_coordinates = self.TransformPositionToLocalCoordinates(position)
+    #     return self.GetRegion(region_id)[local_coordinates]
     
-    def SetAtPosition(self,position,value):
-        region_id = self.TransformPositionToRegion(position)
-        local_coordinates = self.TransformPositionToLocalCoordinates(position)
-        region_data = self.GetRegion(region_id)
-        region_data[local_coordinates] = value
-        self.SetRegion(region_id,region_data)
+    # def SetAtPosition(self,position,value):
+    #     region_id = self.TransformPositionToRegion(position)
+    #     local_coordinates = self.TransformPositionToLocalCoordinates(position)
+    #     region_data = self.GetRegion(region_id)
+    #     region_data[local_coordinates] = value
+    #     self.SetRegion(region_id,region_data)
     
     def RegionBounds(self,region_id):
-        return self.origin[0]+(region_id[0]-0.5)*self.region_length,self.origin[1]+(region_id[1]-0.5)*self.region_length,self.origin[0]+(region_id[0]+0.5)*self.region_length,self.origin[1]+(region_id[1]+0.5)*self.region_length
+        return (region_id[0]*region_length,region_id[1]*region_length,(region_id[0]+1)*region_length,(region_id[1]+1)*region_length)
+
 
 class Controller:
     
@@ -319,15 +350,11 @@ class Controller:
     
     def IsInterrupted(self): return self.interrupted is not None
 
-    def HandleInterrupt(self):
+    def HandleInterrupts(self):
         
         if self.interrupted is None: return
-        
-        # Constants
-        maximum_linear_velocity = 1.5
-        linear_velocity_smoothing=80
-        float_precision=0.0001
-        max_interrupt_id_plus_1 = 256
+
+        print('interrupted')
         
         # Stop the robot before processing the interrupt
         if abs(self.velocity.angular.z) >= float_precision or self.velocity.linear.x >= float_precision:
@@ -351,22 +378,14 @@ class Controller:
 
     def UpdateMapWithLidarData(self, msg: LaserScan):
 
-        #Constants
-        spread = 0.1
-        max_prob = 0.8
-        min_prob = 0.2
-        sensor_range = 9.0
-        resolution = 0.1
-        dr1 = sqrt(spread*log(max_prob/min_prob))
-        dr2 = sqrt(spread*log(2*max_prob/(max_prob+min_prob)))
-        min_prob_log = log(min_prob/(1-min_prob))
-        max_prob_log = log(max_prob/(1-max_prob))
-        callback_period = 10
-
-        self.sensor_time = (self.sensor_time+1)%callback_period
+        self.sensor_time = (self.sensor_time+1)%lidar_callback_period
         if self.sensor_time: return
 
         if not self.position: return
+
+        from time import time
+        _b = time()
+
         sensor_data = msg.ranges
         dt = msg.angle_increment
         dr = resolution
@@ -374,10 +393,14 @@ class Controller:
         max_pose = (self.position[0]+sensor_range,self.position[1]+sensor_range)
         i1,j1 = self.world.TransformPositionToRegion(min_pose)
         i2,j2 = self.world.TransformPositionToRegion(max_pose)
+
+
         for i in range(i1,i2+1):
             for j in range(j1,j2+1):
+                
                 region_id = (i,j)
-                region_data = self.world.GetRegion(region_id)
+                complete_region_data = self.world.GetRegion(region_id)
+                region_data = complete_region_data[0]
                 t = 0
                 for z in sensor_data:
                     r=0
@@ -389,30 +412,71 @@ class Controller:
                             if r < z-dr1:
                                 region_data[local_position] = max(min_prob_log,region_data[local_position]+min_prob_log)
                             else:
-                                p = max_prob*exp(-(r-z)*(r-z)/spread)
+                                p = max_prob*exp(-(r-z)*(r-z)/obstacle_spread)
                                 region_data[local_position] = max(min_prob_log,min(max_prob_log,region_data[local_position]+log(p/(1-p))))
                         r += dr
                     t += dt
-                self.world.SetRegion(region_id,region_data)
+
+                planning_region_data = complete_region_data[1]
+                region_bounds = self.world.RegionBounds(region_id)
+                begin_pose = max(min_pose[0],region_bounds[0]+float_precision),max(min_pose[1],region_bounds[1]+float_precision)
+                end_pose = min(max_pose[0],region_bounds[2]-float_precision),min(max_pose[1],region_bounds[3]-float_precision)
+                k1,l1 = self.world.TransformPositionToLocalCoordinates(begin_pose)
+                k2,l2 = self.world.TransformPositionToLocalCoordinates(end_pose)
+
+                M,N = planning_region_data.shape
+                n = l2-l1+1
+                rc = [0]*(n+2*obstacle_expansion)
+                cc = [0]*(n+4*obstacle_expansion)
+                kmin = max(-obstacle_expansion,k1-3*obstacle_expansion)
+                lmin = max(-obstacle_expansion,l1-3*obstacle_expansion)
+                lmax = min(N-obstacle_expansion,l2+obstacle_expansion+1)
+                kmax = min(M,k2+obstacle_expansion+1)
+                lmax2 = min(N,l2+obstacle_expansion+1)
+                kmin2 = max(0,k1-obstacle_expansion)
+
+                for k in range(kmin,kmax):
+                    for l in range(n+4*obstacle_expansion):
+                        cc[l] = 0
+                    if k+obstacle_expansion < M:
+                        for l in range(lmin,l2-obstacle_expansion):
+                            if region_data[k+obstacle_expansion,l+obstacle_expansion] > occupied_prob_log_limit:
+                                cc[l-l1+3*obstacle_expansion] += 1
+                                cc[l-l1+1+5*obstacle_expansion] -= 1
+                        for l in range(l2-obstacle_expansion,lmax):
+                            if planning_region_data[k+obstacle_expansion,l+obstacle_expansion] == 1:
+                                cc[l-l1+3*obstacle_expansion] += 1
+                    s = 0
+                    for l in range(l1-3*obstacle_expansion,l1-obstacle_expansion):
+                        s += cc[l-l1+3*obstacle_expansion]
+                    
+                    for l in range(l1-obstacle_expansion,lmax2):
+                        s += cc[l-l1+3*obstacle_expansion]
+                        if s:
+                            rc[l-l1+obstacle_expansion] = 2*obstacle_expansion+1
+                        if rc[l-l1+obstacle_expansion]:
+                            rc[l-l1+obstacle_expansion] -= 1
+                            if k >= kmin2 and l >= 0:
+                                planning_region_data[k,l] = 1
+                        else:
+                            if k >= kmin2 and l >= 0:
+                                planning_region_data[k,l] = 0
+
+                self.world.SetRegion(region_id,complete_region_data)
+
+        _e = time()
+        print((_e-_b)*1000,'ms,',1/(_e-_b),'fps')
+
 
     def ComputeVelocity(self):
         
         if self.IsInterrupted(): return
 
-        # Constants
-        linear_tolerance=0.5
-        angular_tolerance=0.05
-        reorientation_tolerance=0.2
-        linear_velocity_smoothing=80
-        angular_velocity_smoothing=1
-        maximum_linear_velocity = 1.5
-        maximum_angular_velocity = 0.75
-        float_precision=0.0001
-
         if not self.position or not self.target:
             self.velocity.linear.x = 0.
             self.velocity.angular.z = 0.
             return
+
         current_source = self.position
         current_target = self.target[0],self.target[1],self.target[2]
         new_target = self.target[3]
@@ -455,9 +519,6 @@ class Controller:
 
         if self.interrupted not in [None,1]: return
 
-        #Constants
-        replanning_period = 50000
-
         self.replanning_time = (self.replanning_time+1)%replanning_period
 
         if not self.position or not self.goal or (not self.goal_changed and self.replanning_time): return
@@ -472,7 +533,12 @@ class Controller:
 
         self.goal_changed = False
         self.target_reached = False
+        print('Planning start')
+        from time import time
+        b = time()
         plan = self.world.PlanPath(self.position,self.goal)
+        e = time()
+        print('Planning end:',(e-b))
         if not plan: return
         px,py,_ = self.position
         cache = None
@@ -492,11 +558,47 @@ class Controller:
         plan = plan[cache[2]:]
         plan.insert(0,cache[1])
         self.plan = plan
-    
-    def DecideTarget(self):
-        #Constants
-        num_skip_poses = 10
 
+    def TransformRobotRectangularCoordinatesToPosition(self,u,v):
+        dx = self.target[0]-self.position[0]
+        dy = self.target[1]-self.position[1]
+        r = sqrt(dx*dx+dy*dy)
+        if r < float_precision: return (u,v)
+        c = dx/r
+        s = dy/r
+        return self.position[0]+u*c-v*s,self.position[1]+v*c+u*s
+
+    def VerifyTargetVisibility(self):
+
+        if self.IsInterrupted(): return
+
+        if not self.target: return
+
+        vmin = -robot_width-robot_visibility
+        vmax = robot_width+robot_visibility
+        umin = 0
+
+        from time import time
+        b = time()
+
+        umax = EuclideanDistance(self.position,self.target)+robot_visibility
+        u = umin
+        while u <= umax:
+            v = vmin
+            while v <= vmax:
+                pose = self.TransformRobotRectangularCoordinatesToPosition(u,v)
+                if self.world.GetAtPosition(pose) > occupied_prob_log_limit:
+                    self.Interrupt(1)
+                    self.replanning_time = -1
+                    self.target = None
+                    print(time()-b)
+                    return
+                v += resolution
+            u += resolution
+        
+        print(time()-b)
+
+    def DecideTarget(self):
         if not self.plan: return
         if not self.target:
             skip_poses = num_skip_poses
@@ -511,13 +613,13 @@ class Controller:
         self.UpdatePlan()
         self.DecideTarget()
         self.ComputeVelocity()
+        self.VerifyTargetVisibility()
         self.velocity_publisher.publish(self.velocity)
 
     def FlushCache(self):
         #Constants
-        cache_flush_time_period = 1200000
 
-        self.cache_flush_time = (self.cache_flush_time+1)%cache_flush_time_period
+        self.cache_flush_time = (self.cache_flush_time+1)%cache_flush_period
         if self.cache_flush_time: return
 
         self.world.cache.Flush()
@@ -527,6 +629,7 @@ class Controller:
         rclpy.spin_once(self.node,timeout_sec=0.01)        
         self.ExecutePlan()
         self.VisualizeCurrentRegion()
+        self.HandleInterrupts()
 
     def DestroyController(self):
         self.node.destroy_node()
@@ -534,30 +637,18 @@ class Controller:
         print('Flushing cache')
     
     def VisualizeCurrentRegion(self):
-    
+
         if self.IsInterrupted(): return
 
-        #Constants
-        max_prob = 0.8
-        min_prob = 0.2
-        prob_tolerance = 0.2
-        free_prob_limit = (max_prob+min_prob-prob_tolerance)/2
-        occupied_prob_limit = (max_prob+min_prob+prob_tolerance)/2
-        free_prob_log_limit = log(free_prob_limit/(1-free_prob_limit))
-        occupied_prob_log_limit = log(occupied_prob_limit/(1-occupied_prob_limit))
-        callback_period = 1000
-        plan_line_thickness = 3
-        plan_point_radius = 3
-
-        self.visualization_time = (self.visualization_time+1)%callback_period
+        self.visualization_time = (self.visualization_time+1)%visualization_callback_period
         if self.visualization_time: return
 
         if self.position is None:
             return
         region_id = self.world.TransformPositionToRegion(self.position)
-        region_data = self.world.GetRegion(region_id)
+        complete_region_data = self.world.GetRegion(region_id)
+        region_data = complete_region_data[0]
         image_map = np.full((region_data.shape[0],region_data.shape[1],3),128,np.uint8)
-        region_data < free_prob_log_limit
         for i in range(image_map.shape[0]):
             for j in range(image_map.shape[1]):
                 if region_data[i,j] < free_prob_log_limit:
@@ -577,7 +668,13 @@ class Controller:
             image_map = cv2.circle(image_map,(begin[1],begin[0]),plan_point_radius,(0,255,255),cv2.FILLED)
             cv2.circle(image_map,(end[1],end[0]),plan_point_radius,(0,255,0),cv2.FILLED)
         
-        image_map = np.rot90(image_map,1)
-        image_map = np.fliplr(image_map)
+        #image_map = np.rot90(image_map,1)
+        #image_map = np.fliplr(image_map)
         cv2.imshow('Map',image_map)
+        
+        region_data = complete_region_data[1]
+        image_map = 255*(1-region_data)
+        #image_map = np.rot90(image_map,1)
+        #image_map = np.fliplr(image_map)
+        cv2.imshow('Planning Map',image_map)
         cv2.waitKey(100)
