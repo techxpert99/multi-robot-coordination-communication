@@ -26,10 +26,11 @@ free_identifier = 0
 replanning_period = 50000
 num_skip_poses = 10
 cache_flush_period = 1200000
-visualization_callback_period = 1000
+visualization_callback_period = 500
 plan_line_thickness = 3
 plan_point_radius = 3
 max_interrupt_id_plus_1 = 256
+num_buffer_transitions = 30
 
 resolution = 0.1
 robot_visibility = 1.0
@@ -38,21 +39,26 @@ max_prob = 0.8
 min_prob = 0.2
 prob_tolerance = 0.2
 sensor_range = 9.0
-linear_tolerance=0.5
-angular_tolerance=0.05
-reorientation_tolerance=0.2
-linear_velocity_smoothing=80.
+lower_linear_tolerance=0.2
+upper_linear_tolerance=0.4
+lower_angular_tolerance=3*pi/180
+upper_angular_tolerance=6*pi/180
+lower_reorientation_tolerance=10*pi/180
+upper_reorientation_tolerance=20*pi/180
+linear_velocity_smoothing=8.
 angular_velocity_smoothing=1.
-maximum_linear_velocity = 1.5
-maximum_angular_velocity = 0.75
+maximum_linear_velocity = 0.75
+maximum_angular_velocity = 0.5
 float_precision=0.0000000001
 robot_width = 0.5
+obstacle_exclude_distance = 0.4
+angular_cost = 5
 
 region_cache_location='cached_regions/'
 
 two_pi = 2*pi
 region_length = region_data_length*resolution
-obstacle_expansion = ceil(robot_visibility/resolution)
+obstacle_expansion = ceil(1.05*(robot_visibility+robot_width)/resolution)
 dr1 = sqrt(obstacle_spread*log(max_prob/min_prob))
 dr2 = sqrt(obstacle_spread*log(2*max_prob/(max_prob+min_prob)))
 min_prob_log = log(min_prob/(1-min_prob))
@@ -75,15 +81,15 @@ def EuclideanDistance(source, target):
 def PositiveAngle(angle):
 	return (angle+2*pi)%(2*pi)
 
-def AngleDifference(source_angle, target_angle):
-    diff = target_angle - source_angle
-    if diff>=0:
-        adiff = diff
-        sgn = -1
-    else:
-        adiff = -diff
-        sgn = 1
-    return diff if adiff <= pi else sgn*(two_pi-adiff)
+def AngleToTarget(source,target):
+    t0 = (atan2(target[1]-source[1],target[0]-source[0])-source[2]+two_pi)%two_pi
+    t1 = two_pi-t0
+    return t0 if t0 <= t1 else -t1
+
+def ReoirentationAngleToTarget(source,target):
+    t0 = (target[2]-source[2]+two_pi)%two_pi
+    t1 = two_pi-t0
+    return t0 if t0 <= t1 else -t0
 
 # Transforms a quaternion to roll,pitch,yaw
 def TransformQuaternion(x, y, z, w):
@@ -106,6 +112,38 @@ def UnmarshalPosition(msg: Odometry):
     roll,pitch,yaw = TransformQuaternion(msg.pose.pose.orientation.x,msg.pose.pose.orientation.y,msg.pose.pose.orientation.z,msg.pose.pose.orientation.w)
     return (msg.pose.pose.position.x,msg.pose.pose.position.y,yaw)
 
+# Coalesces the plan
+def CoalescePlan(plan):
+    if len(plan) < 3: return plan
+    coalesced_plan = [plan[0]]
+    old_direction = (plan[1][0]-plan[0][0]+float_precision,plan[1][1]-plan[0][1]+float_precision)
+    mod = EuclideanDistance((0,0),old_direction)
+    old_direction = old_direction[0]/mod,old_direction[1]/mod
+    for i in range(2,len(plan)):
+        new_direction = (plan[i][0]-plan[i-1][0]+float_precision,plan[i][1]-plan[i-1][1]+float_precision)
+        mod = EuclideanDistance((0,0),new_direction)
+        new_direction = new_direction[0]/mod,new_direction[1]/mod
+        if abs(old_direction[0]-new_direction[0]) >= float_precision or abs(old_direction[1]-new_direction[1]) >= float_precision:
+            coalesced_plan.append(plan[i-1])
+            old_direction = new_direction
+    coalesced_plan.append(plan[-1])
+    return coalesced_plan
+
+def AccelerateAngular(cangular):
+    if cangular > 0:
+        return min(maximum_angular_velocity,cangular+maximum_angular_velocity/angular_velocity_smoothing)
+    return max(-maximum_angular_velocity,cangular-maximum_angular_velocity/angular_velocity_smoothing)
+
+def DecelerateAngular(cangular):
+    if cangular > 0:
+        return max(0,cangular-maximum_angular_velocity/angular_velocity_smoothing)
+    return min(0,cangular+maximum_angular_velocity/angular_velocity_smoothing)
+
+def AccelerateLinear(clinear):
+    return min(maximum_linear_velocity,clinear+maximum_linear_velocity/linear_velocity_smoothing)
+
+def DecelerateLinear(clinear):
+    return max(0,clinear-maximum_linear_velocity/linear_velocity_smoothing)
 
 class RegionCache:
     
@@ -279,6 +317,7 @@ class World:
             g = gcosts[cell]
             explored.add(cell)
 
+
             if cell == target_cell:
                 intermediate_cell = target_cell
                 path = []
@@ -287,14 +326,18 @@ class World:
                     intermediate_cell = parents[intermediate_cell]
                 path.reverse()
                 return path
-            
+
             i,j = cell
+            parent = parents[cell]
+            if parent is not None: parent_distance = EuclideanDistance(cell,parent)
 
             for i2,j2 in [(i-1,j),(i+1,j),(i,j-1),(i,j+1),(i-1,j-1),(i+1,j+1),(i-1,j+1),(i+1,j-1)]:
                 child_cell = (i2,j2)
                 if i2 >= 0 and j2 >= 0 and i2 < num_rows and j2 < num_cols and child_cell not in explored:
-                    if np.allclose(child_cell,source_cell,atol=2) or region_data[child_cell] != obstacle_identifier:
+                    if EuclideanDistance(source_cell,child_cell)*resolution <= obstacle_exclude_distance or region_data[child_cell] != obstacle_identifier:
                         gchild = g + EuclideanDistance(cell,child_cell)
+                        if parent is not None: 
+                            gchild += angular_cost*acos(((cell[0]-parent[0])*(child_cell[0]-cell[0])+(cell[1]-parent[1])*(child_cell[1]-cell[1]))/(EuclideanDistance(child_cell,cell)*parent_distance))
                         if child_cell not in gcosts or gcosts[child_cell] > gchild:
                             fchild = gchild + EuclideanDistance(child_cell,target_cell)
                             frontier.put((fchild,child_cell))
@@ -326,6 +369,7 @@ class Controller:
         self.position = None
         self.plan = None
         self.target = None
+        self.velocity_controller_state = 0
         self.velocity = Twist()
 
         self.goal_changed = False
@@ -461,51 +505,158 @@ class Controller:
                 self.world.SetRegion(region_id,complete_region_data)
 
     def ComputeVelocity(self):
-        
-        if self.IsInterrupted(): return
-
-        if not self.position or not self.target:
-            self.velocity.linear.x = 0.
-            self.velocity.angular.z = 0.
-            return
-
-        current_source = self.position
-        current_target = self.target[0],self.target[1],self.target[2]
-        new_target = self.target[3]
-        self.target = self.target[0],self.target[1],self.target[2],False
-        current_linear_velocity = self.velocity.linear.x
-        current_angular_velocity = self.velocity.angular.z
-        current_distance_from_target = EuclideanDistance(current_source, current_target)
-        target_reached = True
-        next_linear_velocity = 0.
-        next_angular_velocity = 0.
-        if current_distance_from_target >= linear_tolerance:
-            current_displacement_from_target = [current_target[0]-current_source[0],current_target[1]-current_source[1]]
-            current_angle_from_target = acos(current_displacement_from_target[0]/current_distance_from_target)
-            if current_displacement_from_target[1]<0: current_angle_from_target *= -1.
-            current_angle_difference = AngleDifference(current_angle_from_target,current_source[2])
-            if (new_target and abs(current_angle_difference) >= angular_tolerance) or (not new_target and abs(current_angle_difference) >= reorientation_tolerance):
-                next_linear_velocity = max(0.,current_linear_velocity-maximum_linear_velocity/linear_velocity_smoothing)
-                if current_linear_velocity < float_precision:
-                    if current_angle_difference > 0:
-                        next_angular_velocity = max(current_angular_velocity-maximum_angular_velocity/angular_velocity_smoothing,-maximum_angular_velocity)
-                    else:
-                        next_angular_velocity = min(current_angular_velocity+maximum_angular_velocity/angular_velocity_smoothing,maximum_angular_velocity)
+        if not self.position or not self.target or self.IsInterrupted(): return
+        angular = 0.
+        linear = 0.
+        source = self.position
+        target = self.target
+        clinear = self.velocity.linear.x
+        cangular = self.velocity.angular.z
+        state = self.velocity_controller_state
+        distance = EuclideanDistance(source,target)
+        angle = AngleToTarget(source,target)
+        if state == 1:
+            if distance >= upper_linear_tolerance:
+                if abs(angle) >= upper_angular_tolerance:
+                    angular = float_precision if angle>0 else -float_precision
+                    state = 2
+                else: state = 4
+            else: state = 9
+        elif state == 2:
+            if (cangular<0 and angle<=-lower_angular_tolerance) or (cangular>=0 and angle>=lower_angular_tolerance):
+                angular = AccelerateAngular(cangular)
+            else: state = 3
+        elif state == 3:
+            if abs(cangular) >= float_precision:
+                angular = DecelerateAngular(cangular)
             else:
-                if current_angular_velocity < 0:
-                    next_angular_velocity = min(current_angular_velocity+maximum_angular_velocity/angular_velocity_smoothing,0.)
+                self.velocity_controller_buffer_state_state = 0
+                self.velocity_controller_buffer_state_next_state = 1
+                state = 12
+        elif state == 4:
+            if distance >= upper_linear_tolerance:
+                if abs(angle) < upper_reorientation_tolerance: state = 5
                 else:
-                    next_angular_velocity = max(current_angular_velocity-maximum_angular_velocity/angular_velocity_smoothing,0.)
-                if abs(current_angular_velocity) < float_precision:
-                    next_linear_velocity = min(maximum_linear_velocity,current_linear_velocity+maximum_linear_velocity/linear_velocity_smoothing)
-            target_reached = False
-        else:
-            next_linear_velocity = max(0.,current_linear_velocity-maximum_linear_velocity/linear_velocity_smoothing)
-            if current_linear_velocity >= float_precision:
-                target_reached = False
-        self.velocity.linear.x = next_linear_velocity
-        self.velocity.angular.z = next_angular_velocity
-        if target_reached: self.target = None
+                    angular = float_precision if angle>0 else -float_precision
+                    state = 7
+            else: state = 9
+        elif state == 5:
+            if distance >= lower_linear_tolerance and abs(angle) < upper_reorientation_tolerance:
+                linear = AccelerateLinear(clinear)
+            else: state = 6
+        elif state == 6:
+            if clinear >= float_precision:
+                linear = DecelerateLinear(clinear)
+            else:
+                self.velocity_controller_buffer_state_state = 0
+                self.velocity_controller_buffer_state_next_state = 4
+                state = 12
+        elif state == 7:
+            if (cangular<0 and angle<=-lower_reorientation_tolerance) or (cangular>=0 and angle>=lower_reorientation_tolerance):
+                angular = AccelerateAngular(cangular)
+            else: state = 8
+        elif state == 8:
+            if abs(cangular) >= float_precision:
+                angular = DecelerateAngular(cangular)
+            else:
+                self.velocity_controller_buffer_state_state = 0
+                self.velocity_controller_buffer_state_next_state = 4
+                state = 12
+        elif state == 9:
+            if target[2] is not None:
+                reorient_angle = ReoirentationAngleToTarget(source,target)
+                if abs(reorient_angle) >= upper_angular_tolerance:
+                    angular = float_precision if reorient_angle>0 else -float_precision
+                    state = 10
+                else: state = 0
+            else: state = 0
+        elif state == 10:
+            reorient_angle = ReoirentationAngleToTarget(source,target)
+            if (cangular<0 and angle<=-lower_angular_tolerance) or (cangular>=0 and angle>=lower_angular_tolerance):
+                angular = AccelerateAngular(cangular)
+            else: state = 11
+        elif state == 11:
+            if abs(cangular) >= float_precision:
+                angular = DecelerateAngular(cangular)
+            else:
+                self.velocity_controller_buffer_state_state = 0
+                self.velocity_controller_buffer_state_next_state = 9
+                state = 12
+        elif state == 12:
+            if self.velocity_controller_buffer_state_state < num_buffer_transitions:
+                self.velocity_controller_buffer_state_state += 1
+            else:
+                state = self.velocity_controller_buffer_state_next_state
+        self.velocity.linear.x = linear
+        self.velocity.angular.z = angular
+        self.velocity_controller_state = state
+        # stdout.write(f'v:{linear:.2f},w:{angular:.2f},s:{state},d:{distance:.2f},t:{angle:.2f}\n')
+
+    # def ComputeVelocity(self):
+        
+    #     if self.IsInterrupted(): return
+
+    #     if not self.position or not self.target:
+    #         self.velocity.linear.x = 0.
+    #         self.velocity.angular.z = 0.
+    #         return
+
+    #     current_source = self.position
+    #     current_target = self.target[0],self.target[1],self.target[2]
+    #     new_target = self.target[3]
+    #     self.target = self.target[0],self.target[1],self.target[2],False
+    #     current_linear_velocity = self.velocity.linear.x
+    #     current_angular_velocity = self.velocity.angular.z
+    #     current_distance_from_target = EuclideanDistance(current_source, current_target)
+    #     target_reached = True
+    #     next_linear_velocity = 0.
+    #     next_angular_velocity = 0.
+    #     angle_to_target = None
+    #     if current_distance_from_target >= linear_tolerance:
+    #         anticlockwise_angle_to_target = (atan2(current_target[1]-current_source[1],current_target[0]-current_source[0])-current_source[2]+two_pi)%two_pi
+    #         clockwise_angle_to_target = two_pi-anticlockwise_angle_to_target
+    #         angle_to_target = anticlockwise_angle_to_target if abs(anticlockwise_angle_to_target) <= abs(clockwise_angle_to_target) else -clockwise_angle_to_target
+    #         if (new_target and abs(angle_to_target) >= angular_tolerance) or (not new_target and abs(angle_to_target) >= reorientation_tolerance):
+    #             next_linear_velocity = max(0.,current_linear_velocity-maximum_linear_velocity/linear_velocity_smoothing)
+    #             if current_linear_velocity < float_precision:
+    #                 if angle_to_target < 0:
+    #                     next_angular_velocity = max(current_angular_velocity-maximum_angular_velocity/angular_velocity_smoothing,-maximum_angular_velocity)
+    #                 else:
+    #                     next_angular_velocity = min(current_angular_velocity+maximum_angular_velocity/angular_velocity_smoothing,maximum_angular_velocity)
+    #         else:
+    #             if current_angular_velocity < 0:
+    #                 next_angular_velocity = min(current_angular_velocity+maximum_angular_velocity/angular_velocity_smoothing,0.)
+    #             else:
+    #                 next_angular_velocity = max(current_angular_velocity-maximum_angular_velocity/angular_velocity_smoothing,0.)
+    #             if abs(current_angular_velocity) < float_precision:
+    #                 print('angle_set')
+    #                 next_linear_velocity = min(maximum_linear_velocity,current_linear_velocity+maximum_linear_velocity/linear_velocity_smoothing)
+    #         target_reached = False
+    #     else:
+    #         next_linear_velocity = max(0.,current_linear_velocity-maximum_linear_velocity/linear_velocity_smoothing)
+    #         if current_linear_velocity >= float_precision:
+    #             target_reached = False
+    #         elif current_target[2] is not None:
+    #             anticlockwise_angle_to_target = (current_target[2]-current_source[2]+two_pi)%two_pi
+    #             clockwise_angle_to_target = two_pi-anticlockwise_angle_to_target
+    #             angle_to_target = anticlockwise_angle_to_target if abs(anticlockwise_angle_to_target) <= abs(clockwise_angle_to_target) else -clockwise_angle_to_target
+    #             if abs(angle_to_target) >= angular_tolerance:
+    #                 if angle_to_target < 0:
+    #                     next_angular_velocity = max(current_angular_velocity-maximum_angular_velocity/angular_velocity_smoothing,-maximum_angular_velocity)
+    #                 else:
+    #                     next_angular_velocity = min(current_angular_velocity+maximum_angular_velocity/angular_velocity_smoothing,maximum_angular_velocity)
+    #                 target_reached = False
+    #             else:
+    #                 if current_angular_velocity < 0:
+    #                     next_angular_velocity = min(current_angular_velocity+maximum_angular_velocity/angular_velocity_smoothing,0.)
+    #                 else:
+    #                     next_angular_velocity = max(current_angular_velocity-maximum_angular_velocity/angular_velocity_smoothing,0.)
+    #                 if abs(current_angular_velocity) >= float_precision:
+    #                     target_reached = False
+    #     stdout.write('\rlin:'+str(next_linear_velocity)+',ang:'+str(next_angular_velocity)+',dist:'+str(current_distance_from_target)+',ang:'+str(angle_to_target))
+    #     self.velocity.linear.x = next_linear_velocity
+    #     self.velocity.angular.z = next_angular_velocity
+    #     if target_reached: self.target = None
     
     def UpdatePlan(self):
 
@@ -525,8 +676,9 @@ class Controller:
 
         self.goal_changed = False
         self.target_reached = False
+        beg=time()
         plan = self.world.PlanPath(self.position,self.goal)
-
+        print('planning_time:',time()-beg)
         if not plan: return
 
         px,py,_ = self.position
@@ -539,14 +691,22 @@ class Controller:
             else:
                 m = (by-ay)/(bx-ax)
                 x = (m*(py-ay)+m*m*ax+px)/(1+m*m)
-                y = m*(x-ax)+ay
-                d = EuclideanDistance((px,py),(x,y))
-                entry = (d,(x,y),i)
-            if cache is None or entry[0] < cache[0]:
+                if x >= min(ax,bx) and x <= max(ax,bx):
+                    y = m*(x-ax)+ay
+                    d = EuclideanDistance((px,py),(x,y))
+                    entry = (d,(x,y),i)
+                else:
+                    da = EuclideanDistance((px,py),(ax,ay))
+                    db = EuclideanDistance((px,py),(bx,by))
+                    if da < db:
+                        entry = (da,(ax,ay),i)
+                    else:
+                        entry = (db,(bx,by),i)
+            if cache is None or entry[0] <= cache[0]+float_precision:
                 cache = entry
-        
         plan = plan[cache[2]:]
         plan.insert(0,cache[1])
+        plan = CoalescePlan(plan)
         self.plan = plan
 
     def VerifyTargetVisibility(self):
@@ -563,56 +723,71 @@ class Controller:
         
         c = dx/r
         s = dy/r
-        vmin = -half_robot_width+robot_visibility
+        vmin = -half_robot_width-robot_visibility
         vmax = half_robot_width+robot_visibility
         umin = -half_robot_width
         umax = EuclideanDistance(self.position,self.target)+robot_visibility+half_robot_width
         u = umin
 
         while u <= umax:
-            pose1 = self.world.TransformPositionToRegion((self.position[0]+u*c-vmin*s,self.position[1]+u*s+vmin*c))
-            pose2 = self.world.TransformPositionToRegion((self.position[0]+u*c-vmax*s,self.position[1]+u*s+vmax*c))
-            a1 = min(pose1[0],pose2[0])
-            b1 = min(pose1[1],pose2[1])
-            a2 = max(pose1[0],pose2[0])+1
-            b2 = max(pose1[1],pose2[1])+1
+            # pose1 = self.world.TransformPositionToRegion((self.position[0]+u*c-vmin*s,self.position[1]+u*s+vmin*c))
+            # pose2 = self.world.TransformPositionToRegion((self.position[0]+u*c-vmax*s,self.position[1]+u*s+vmax*c))
+            # a1 = min(pose1[0],pose2[0])
+            # b1 = min(pose1[1],pose2[1])
+            # a2 = max(pose1[0],pose2[0])+1
+            # b2 = max(pose1[1],pose2[1])+1
             v = vmin
-            for a in range(a1,a2):
-                for b in range(b1,b2):
-                    region_id = (a,b)
-                    region_data = self.world.GetRegion(region_id)
-                    region_bounds = self.world.RegionBounds(region_id)
-                    while v <= vmax:
-                        pose = self.position[0]+u*c-v*s,self.position[1]+u*s+v*c
-                        if pose[0] >= region_bounds[0]+float_precision and pose[0] <= region_bounds[0]-float_precision and pose[1] >= region_bounds[1]+float_precision and pose[1] <= region_bounds[1]-float_precision:
-                            local = self.world.TransformPositionToLocalCoordinates(pose)
-                            if region_data[local] > occupied_prob_log_limit:
-                                self.Interrupt(1)
-                                self.replanning_time = -1
-                                self.target = None
-                                return
-                        else:
-                            v += resolution
-                            break
-                        v += resolution
+            while v <= vmax:
+                pose = self.position[0]+u*c-v*s,self.position[1]+u*s+v*c
+                if self.world.GetAtPosition(pose) > occupied_prob_log_limit:
+                    self.Interrupt(1)
+                    self.replanning_time = -1
+                    self.target = None
+                    return
+                v += resolution                    
+            # for a in range(a1,a2):
+            #     for b in range(b1,b2):
+            #         region_id = (a,b)
+            #         region_data = self.world.GetRegion(region_id)[1]
+            #         region_bounds = self.world.RegionBounds(region_id)
+            #         while v <= vmax:
+            #             pose = self.position[0]+u*c-v*s,self.position[1]+u*s+v*c
+            #             if pose[0] >= region_bounds[0]+float_precision and pose[0] <= region_bounds[0]-float_precision and pose[1] >= region_bounds[1]+float_precision and pose[1] <= region_bounds[1]-float_precision:
+            #                 local = self.world.TransformPositionToLocalCoordinates(pose)
+            #                 region_data[local] = 1
+            #                 if region_data[local] == obstacle_identifier:
+            #                     self.Interrupt(1)
+            #                     self.replanning_time = -1
+            #                     self.target = None
+            #                     return
+            #             else:
+            #                 v += resolution
+            #                 break
+            #             v += resolution
             u += resolution
         
     def DecideTarget(self):
         if not self.plan: return
-        if not self.target:
-            skip_poses = num_skip_poses
-            while skip_poses and self.plan:
-                pose = self.plan.pop(0)
-                skip_poses -= 1
-            if self.plan:
-                pose = self.plan.pop(0)
-            self.target = pose[0],pose[1],None,True
+        if self.velocity_controller_state == 0:
+            pose = self.plan.pop(0)
+            self.target = pose[0],pose[1],None
+            self.velocity_controller_state = 1
 
     def ExecutePlan(self):
+        _b = time()
         self.UpdatePlan()
+        _e1 = time()
         self.DecideTarget()
+        _e2 = time()
         self.ComputeVelocity()
-        self.VerifyTargetVisibility()
+        _e3 = time()
+        #self.VerifyTargetVisibility()
+        _e4 = time()
+        # print('EFPS:')
+        # print(f'UpdatePlan:{1/(_e1-_b):.2f}')
+        # print(f'DecideTarget:{1/(_e2-_e1):.2f}')
+        # print(f'ComputeVelocity:{1/(_e3-_e2):.2f}')
+        # print(f'VerifyTargetViz:{1/(_e4-_e3):.2f}')
         self.velocity_publisher.publish(self.velocity)
 
     def FlushCache(self):
@@ -639,13 +814,14 @@ class Controller:
         num_calls += 1
         average_fps += _5-_1
 
-        stdout.write(f'\rAverage fps:{(num_calls/average_fps)}')
+        # print(f'\rAverage fps:{(num_calls/average_fps)}')
         # print('FPS:')
         # print('spin_once:',1/(_2-_1))
         # print('execute_plan:',1/(_3-_2))
         # print('visualize:',1/(_4-_3))
         # print('interrupts:',1/(_5-_4))
         # print('overall:',1/(_5-_1))
+        #print()
 
     def DestroyController(self):
         self.node.destroy_node()
@@ -653,7 +829,7 @@ class Controller:
         self.world.cache.Flush()
     
     def VisualizeCurrentRegion(self):
-
+        return
         if self.IsInterrupted(): return
 
         self.visualization_time = (self.visualization_time+1)%visualization_callback_period
@@ -693,6 +869,20 @@ class Controller:
         
         region_data = complete_region_data[1]
         image_map = 255*(1-region_data)
+        
+        if self.plan:
+            prev_local = None
+            for pose in self.plan:
+                if self.world.TransformPositionToRegion(pose) == region_id:
+                    i,j = self.world.TransformPositionToLocalCoordinates(pose)
+                    if prev_local is not None:
+                        image_map = cv2.line(image_map,prev_local,(j,i),128,plan_line_thickness)
+                    prev_local = (j,i)
+            begin = self.world.TransformPositionToLocalCoordinates(self.plan[0])
+            end = self.world.TransformPositionToLocalCoordinates(self.plan[-1])
+            image_map = cv2.circle(image_map,(begin[1],begin[0]),plan_point_radius,190,cv2.FILLED)
+            cv2.circle(image_map,(end[1],end[0]),plan_point_radius,190,cv2.FILLED)
+        
         image_map = np.rot90(image_map,1)
         image_map = np.fliplr(image_map)
         cv2.imshow('Planning Map',image_map)

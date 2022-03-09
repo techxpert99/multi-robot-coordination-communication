@@ -61,10 +61,13 @@ def InpuThreadStart():
             if this_target == 'q':
                 flag = False
             else:
-                temp = this_target.split(',')
-                target_lock.acquire()
-                goal = (float(temp[0]),float(temp[1]),None)
-                target_lock.release()
+                try:
+                    temp = this_target.split(',')
+                    target_lock.acquire()
+                    goal = (float(temp[0]),float(temp[1]),None)
+                    target_lock.release()
+                except:
+                    flag = False
     flag = True            
     inth = Thread(target=infunc)
     inth.start()
