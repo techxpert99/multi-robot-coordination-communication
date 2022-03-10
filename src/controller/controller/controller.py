@@ -26,16 +26,17 @@ low_visibility_identifier = 2
 high_visibility_identifier = 3
 replanning_period = 50000
 num_skip_poses = 10
-cache_flush_period = 1200000
+cache_flush_state = 1200000
 lidar_sensor_patch_state = 10
-visualization_state = 500
+visualization_state = 100
 plan_line_thickness = 3
 plan_point_radius = 3
 num_buffer_transitions_to_stop = 30
+destroyed_state = 4
 
 resolution = 0.2
 low_visibility_lower_bound = 0.2
-high_visibility_lower_bound = 0.5
+high_visibility_lower_bound = 1.0
 visibility_displacement = 0.1
 obstacle_spread = 0.1
 max_prob = 0.8
@@ -46,19 +47,19 @@ lower_linear_tolerance=0.4
 upper_linear_tolerance=0.6
 lower_angular_tolerance=3*pi/180
 upper_angular_tolerance=6*pi/180
-lower_reorientation_tolerance=10*pi/180
+lower_reorientation_tolerance=6*pi/180
 upper_reorientation_tolerance=20*pi/180
-linear_smoothing=8.
-angular_smoothing=1.
+linear_smoothing=32.
+angular_smoothing=4.
 maximum_linear_speed = 0.75
-maximum_slow_linear_speed = 0.15
+maximum_slow_linear_speed = 0.375
 maximum_angular_speed = 0.5
-maximum_slow_angular_speed = 0.1
-
+maximum_slow_angular_speed = 0.25
+low_visibility_cell_traversal_penalty = 100.
+angular_reorientation_penalty = 5.
 float_precision=0.0000000001
 robot_width = 0.5
 obstacle_exclude_distance = 0.4
-angular_cost = 5
 
 region_cache_location='cached_regions/'
 
@@ -75,8 +76,8 @@ occupied_prob_limit = (max_prob+min_prob+prob_tolerance)/2
 occupied_prob_log_limit = log(occupied_prob_limit/(1-occupied_prob_limit))
 half_resolution = resolution/2.
 half_robot_width = robot_width/2.
-critical_radius = ceil(low_visibility_lower_bound/resolution)
-hyper_critical_radius = ceil(high_visibility_lower_bound/resolution)
+critical_radius = ceil((robot_width/sqrt(2)+low_visibility_lower_bound)/resolution)
+hyper_critical_radius = ceil(sqrt(2)*(visibility_displacement+robot_width/sqrt(2)+high_visibility_lower_bound)/resolution)
 
 average_fps = 0
 num_calls = 0
@@ -139,21 +140,21 @@ def CoalescePlan(plan):
 
 def AccelerateAngular(cangular,slow=False):
     angular = maximum_slow_angular_speed if slow else maximum_angular_speed
-    if cangular > 0:
+    if cangular > 0.:
         return min(angular,cangular+angular/angular_smoothing)
     return max(-angular,cangular-angular/angular_smoothing)
 
 def DecelerateAngular(cangular):
     if cangular > 0:
-        return max(0,cangular-maximum_angular_speed/angular_smoothing)
-    return min(0,cangular+maximum_angular_speed/angular_smoothing)
+        return max(0.,cangular-maximum_angular_speed/angular_smoothing)
+    return min(0.,cangular+maximum_angular_speed/angular_smoothing)
 
 def AccelerateLinear(clinear,slow=False):
     linear = maximum_slow_linear_speed if slow else maximum_linear_speed
     return min(linear,clinear+linear/linear_smoothing)
 
 def DecelerateLinear(clinear):
-    return max(0,clinear-maximum_linear_speed/linear_smoothing)
+    return max(0.,clinear-maximum_linear_speed/linear_smoothing)
 
 # Reduces the plan so that the robot does not go back and forth
 def ReducePlan(position,plan):
@@ -285,10 +286,10 @@ class World:
 
     def __init__(self):
 
-        #Region Cache        
+        #Region Cache
         self.cache = RegionCache()
         print('Loading cache')
-        #self.cache.InitialLoad()
+        self.cache.InitialLoad()
 
     # Transforms a position (x,y) to a region id (a,b)
     def TransformPositionToRegion(self,position):
@@ -356,7 +357,6 @@ class World:
             g = gcosts[cell]
             explored.add(cell)
 
-
             if cell == target_cell:
                 intermediate_cell = target_cell
                 path = []
@@ -373,10 +373,14 @@ class World:
             for i2,j2 in [(i-1,j),(i+1,j),(i,j-1),(i,j+1),(i-1,j-1),(i+1,j+1),(i-1,j+1),(i+1,j-1)]:
                 child_cell = (i2,j2)
                 if i2 >= 0 and j2 >= 0 and i2 < num_rows and j2 < num_cols and child_cell not in explored:
-                    if EuclideanDistance(source_cell,child_cell)*resolution <= obstacle_exclude_distance or region_data[child_cell] != obstacle_identifier:
+                    # if EuclideanDistance(source_cell,child_cell)*resolution <= obstacle_exclude_distance or region_data[child_cell] != obstacle_identifier:
+                    data = region_data[child_cell]
+                    if data != obstacle_identifier and data != no_visibility_identifier:
                         gchild = g + EuclideanDistance(cell,child_cell)
+                        if data == low_visibility_identifier:
+                            gchild += low_visibility_cell_traversal_penalty
                         if parent is not None: 
-                            gchild += angular_cost*acos(((cell[0]-parent[0])*(child_cell[0]-cell[0])+(cell[1]-parent[1])*(child_cell[1]-cell[1]))/(EuclideanDistance(child_cell,cell)*parent_distance))
+                            gchild += angular_reorientation_penalty*acos(((cell[0]-parent[0])*(child_cell[0]-cell[0])+(cell[1]-parent[1])*(child_cell[1]-cell[1]))/(EuclideanDistance(child_cell,cell)*parent_distance))
                         if child_cell not in gcosts or gcosts[child_cell] > gchild:
                             fchild = gchild + EuclideanDistance(child_cell,target_cell)
                             frontier.put((fchild,child_cell))
@@ -416,8 +420,10 @@ class Controller:
         self.plan_controller_state = 0
         self.sensor_controller_state = 0
         self.visualizer_controller_state = 0
+        self.cache_flush_controller_state = 0
+        self.destruction_controller_state = 0
 
-        self.cache_flush_time = 0
+        self.prev_vel = 0.
     
     def EstimatePosition(self, msg: Odometry):
         self.position = UnmarshalPosition(msg)
@@ -553,17 +559,22 @@ class Controller:
     
     def ChaseTarget(self):
         
-        if not self.position or not self.target:
+        if not self.position:
             self.velocity.linear.x = 0.
             self.velocity.angular.z = 0.
             return
         
-        angular = 0.
-        linear = 0.
+        if not self.target:
+            self.velocity.linear.x = DecelerateLinear(self.velocity.linear.x)
+            self.velocity.angular.z = DecelerateAngular(self.velocity.angular.z)
+            return
+        
         source = self.position
         target = self.target
         clinear = self.velocity.linear.x
         cangular = self.velocity.angular.z
+        angular = cangular
+        linear = clinear
         state = self.velocity_controller_state
         slow = self.slow_chase
         distance = EuclideanDistance(source,target)
@@ -667,11 +678,11 @@ class Controller:
             robot_visibility = high_visibility_lower_bound
         
         xmin = self.position[0]-robot_width/sqrt(2)-robot_visibility-visibility_displacement
-        ymin = self.position[0]-robot_width/sqrt(2)-robot_visibility-visibility_displacement
+        ymin = self.position[1]-robot_width/sqrt(2)-robot_visibility-visibility_displacement
         xmax = self.position[0]+robot_width/sqrt(2)+robot_visibility+visibility_displacement
-        ymax = self.position[0]+robot_width/sqrt(2)+robot_visibility+visibility_displacement
+        ymax = self.position[1]+robot_width/sqrt(2)+robot_visibility+visibility_displacement
         i1,j1 = self.world.TransformPositionToRegion((xmin,ymin))
-        i2,j2 = self.world.TransformPositionToRegion((xmin,ymin))
+        i2,j2 = self.world.TransformPositionToRegion((xmax,ymax))
 
         for i in range(i1,i2+1):
             for j in range(j1,j2+1):
@@ -685,6 +696,10 @@ class Controller:
                 for u in range(umin,umax+1):
                     for v in range(vmin,vmax+1):
                         if region_data[u,v] > occupied_prob_log_limit:
+                            xdata = self.world.GetRegion(region_id)[1]
+                            for p in range(umin,umax+1):
+                                for q in range(vmin,vmax+1):
+                                    xdata[p,q] = 11
                             return False
         
         return True
@@ -721,6 +736,13 @@ class Controller:
             low_visibility = self.VerifyVisibility(True)
             if low_visibility: plan = self.world.PlanPath(position,goal)
             if not low_visibility or not plan or len(plan) < 2:
+
+                if not low_visibility:
+
+                    self.visualizer_controller_state = visualization_state
+                    self.VisualizeCurrentRegion()
+                    print('Entered no visibility region')
+                
                 if EuclideanDistance(position,goal) < upper_linear_tolerance:
                     print('Goal Reached')
                 else:
@@ -731,7 +753,7 @@ class Controller:
                 state = 4
         
         elif state == 4:
-            if self.plan and len(self.plan) >= 2:
+            if self.plan:
                 self.DecideTarget()
                 state = 5
             else:
@@ -744,10 +766,13 @@ class Controller:
         elif state == 5:
             high_visibility = self.VerifyVisibility()
             if not high_visibility:
+
+                print('Entered low visibility region')
+
                 self.target = None
                 self.velocity_controller_state = 0
-                self.velocity_controller_buffer_state = 0
-                self.velocity_controller_buffer_next_state = 6
+                self.plan_controller_buffer_state = 0
+                self.plan_controller_buffer_next_state = 6
                 state = 2
             elif self.velocity_controller_state == 0: state = 4
         
@@ -758,6 +783,11 @@ class Controller:
             else:
                 low_visibility = self.VerifyVisibility(True)
                 if not low_visibility:
+
+                    print('Entered no visibility region')
+                    self.visualizer_controller_state = visualization_state
+                    self.VisualizeCurrentRegion()
+
                     print('Cannot find a path to the goal')
                     state = 0
                 else:
@@ -770,7 +800,7 @@ class Controller:
                     state = 7
 
         elif state == 7:
-            if self.plan and len(self.plan) >= 2:
+            if self.plan:
                 self.DecideTarget()
                 state = 8
             else:
@@ -786,13 +816,19 @@ class Controller:
             if not high_visibility:
                 low_visibility = self.VerifyVisibility(True)
                 if not low_visibility:
+
+                    print('Entered no visibility region')
+                    self.visualizer_controller_state = visualization_state
+                    self.VisualizeCurrentRegion()
+                    
                     self.target = None
                     self.velocity_controller_state = 0
-                    self.velocity_controller_buffer_state = 0
-                    self.velocity_controller_buffer_next_state = 9
+                    self.plan_controller_buffer_state = 0
+                    self.plan_controller_buffer_next_state = 9
                     state = 2
                 elif self.velocity_controller_state == 0: state = 7
             else:
+                print('Re-entered high visibility region')
                 self.slow_chase = False
                 state = 5
         
@@ -805,17 +841,53 @@ class Controller:
             state = 0
         
         self.plan_controller_state = state
+        
+        # print('plan:',state)
 
     def FlushCache(self):
 
-        self.cache_flush_time = (self.cache_flush_time+1)%cache_flush_period
-        if self.cache_flush_time: return
+        state = self.cache_flush_controller_state
 
-        #self.world.cache.Flush()
-      
-        print('Flushing cache')
+        if state == cache_flush_state:
+            print('Flushing cache')
+            self.world.cache.Flush()
+            state = 0
+        else: state += 1
+
+        self.cache_flush_controller_state = state
+
+    def CheckForDestruction(self):
+
+        state = self.destruction_controller_state
+        
+        if state == 1:
+            print('Destroying controller')
+            self.target = None
+            self.goal = None
+            self.plan = None
+            self.plan_controller_state = 0
+            self.velocity_controller_state = 0
+            self.destruction_controller_buffer_state = 0
+            self.destruction_controller_buffer_next_state = 3
+            state = 2
+        
+        elif state == 2:
+            if state == num_buffer_transitions_to_stop:
+                state = self.destruction_controller_buffer_next_state
+            else: state += 1
+        
+        elif state == 3:
+            print('Flushing Cache')
+            self.world.cache.Flush()
+            self.node.destroy_node()
+            state = destroyed_state
+        
+        self.destruction_controller_state = state
 
     def RunController(self):
+        
+        if self.destruction_controller_state == destroyed_state:
+            return
         
         global num_calls,average_fps
 
@@ -826,10 +898,18 @@ class Controller:
         self.PlanForGoal()
         
         self.ChaseTarget()
+
+        self.CheckForDestruction()
         
-        self.velocity_publisher.publish(self.velocity)
+        if abs(self.prev_vel-self.velocity.linear.x) > 2*maximum_linear_speed/linear_smoothing:
+            print('anomaly:',self.prev_vel,self.velocity.linear.x)
+        self.prev_vel = self.velocity.linear.x
+
+        if self.destruction_controller_state != destroyed_state:
+            self.velocity_publisher.publish(self.velocity)
         
         _2 = time()
+
         # self.ExecutePlan()
         # _3 = time()
         # self.VisualizeCurrentRegion()
@@ -837,7 +917,7 @@ class Controller:
 
         num_calls += 1
         average_fps += _2-_1
-        print(f'\rAverage fps:{(num_calls/average_fps)},fps:{1/(_2-_1)}')
+        # print(f'\rAverage fps:{(num_calls/average_fps)},fps:{1/(_2-_1)}')
         # print('FPS:')
         # print('spin_once:',1/(_2-_1))
         # print('execute_plan:',1/(_3-_2))
@@ -846,9 +926,7 @@ class Controller:
         # print()
 
     def DestroyController(self):
-        self.node.destroy_node()
-        print('Flushing cache')
-        # self.world.cache.Flush()
+        self.destruction_controller_state = 1
     
     def VisualizeCurrentRegion(self):
 
@@ -900,18 +978,20 @@ class Controller:
                         image_map[i,j] = [255,255,0]
                     elif x == high_visibility_identifier:
                         image_map[i,j] = [255,255,255]
+                    elif x == 11:
+                        image_map[i,j] = [255,0,255]
             if self.plan:
                 prev_local = None
                 for pose in self.plan:
                     if self.world.TransformPositionToRegion(pose) == region_id:
                         i,j = self.world.TransformPositionToLocalCoordinates(pose)
                         if prev_local is not None:
-                            image_map = cv2.line(image_map,prev_local,(j,i),128,plan_line_thickness)
+                            image_map = cv2.line(image_map,prev_local,(j,i),[255,0,0],plan_line_thickness)
                         prev_local = (j,i)
                 begin = self.world.TransformPositionToLocalCoordinates(self.plan[0])
                 end = self.world.TransformPositionToLocalCoordinates(self.plan[-1])
-                image_map = cv2.circle(image_map,(begin[1],begin[0]),plan_point_radius,190,cv2.FILLED)
-                cv2.circle(image_map,(end[1],end[0]),plan_point_radius,190,cv2.FILLED)
+                image_map = cv2.circle(image_map,(begin[1],begin[0]),plan_point_radius,[0,255,0],cv2.FILLED)
+                cv2.circle(image_map,(end[1],end[0]),plan_point_radius,[0,0,255],cv2.FILLED)
             
             image_map = np.rot90(image_map,1)
             image_map = np.fliplr(image_map)

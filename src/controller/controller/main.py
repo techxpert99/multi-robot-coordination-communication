@@ -92,10 +92,12 @@ def entry_point():
         this_flag = flag
         in_lock.release()
         if not this_flag:
+            inth.join()
+            controller.DestroyController()
+            while controller.destruction_controller_state != 4:
+                controller.RunController()
             break
-    
-    inth.join()
-    controller.DestroyController()
+
     rclpy.shutdown()
     
     return
