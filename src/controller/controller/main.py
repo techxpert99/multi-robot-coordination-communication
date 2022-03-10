@@ -86,7 +86,7 @@ def entry_point():
         target_lock.release()
         if my_goal is not None:
             controller.goal = my_goal
-            controller.goal_changed = True
+            controller.plan_controller_state = 1
         controller.RunController()
         in_lock.acquire()
         this_flag = flag
