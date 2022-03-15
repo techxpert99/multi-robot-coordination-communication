@@ -1,7 +1,10 @@
+from logging import critical
 from math import asin, acos, atan2, ceil, cos, exp, floor, log, sin, sqrt, pi
 from queue import PriorityQueue
 from sys import stdout
 from time import time
+
+from sympy import hyper
 from geometry_msgs.msg import Twist
 from nav_msgs.msg import Odometry
 from rclpy.node import Node
@@ -15,72 +18,102 @@ from sensor_msgs.msg import LaserScan
 import cv2
 import rclpy
 
-#Constants
+# Deprecated Constants
+
+# obstacle_exclude_distance = 0.4
+# num_skip_poses = 10
+# replanning_period = 50000
+# obstacle_expansion = ceil((low_visibility_lower_bound+robot_width)/resolution)
+# visibility_displacement = 0.1
+
+
+
+# Independent Constants
+
+float_precision=0.0000000001
 
 region_data_length = 500
 region_memory_cache_size=16
 region_cache_size=128
+
 obstacle_identifier = 0
 no_visibility_identifier = 1
 low_visibility_identifier = 2
 high_visibility_identifier = 3
-replanning_period = 50000
-num_skip_poses = 10
+
 cache_flush_state = 1200000
-lidar_sensor_patch_state = 10
+lidar_sensor_patch_state = 2
 visualization_state = 100
+destroyed_state = 4
+num_buffer_transitions_to_stop = 60
+
 plan_line_thickness = 3
 plan_point_radius = 3
-num_buffer_transitions_to_stop = 30
-destroyed_state = 4
 
 resolution = 0.2
+sensor_range = 7.0
+robot_width = 0.2
+
 low_visibility_lower_bound = 0.2
 high_visibility_lower_bound = 1.0
-visibility_displacement = 0.1
-obstacle_spread = 0.1
-max_prob = 0.8
-min_prob = 0.2
-prob_tolerance = 0.2
-sensor_range = 7.0
+
+stuck_radius = 0.05
+unlodge_radius = 1.0
+
+barrier_probability = 0.2
+occupancy_probablity_tolerance = 0.2
+gaussian_spread = 1.
+
 lower_linear_tolerance=0.4
 upper_linear_tolerance=0.6
 lower_angular_tolerance=3*pi/180
 upper_angular_tolerance=6*pi/180
 lower_reorientation_tolerance=6*pi/180
 upper_reorientation_tolerance=20*pi/180
-linear_smoothing=32.
-angular_smoothing=4.
+
+linear_smoothing=40.
+angular_smoothing=1.
 maximum_linear_speed = 0.75
 maximum_slow_linear_speed = 0.375
 maximum_angular_speed = 0.5
 maximum_slow_angular_speed = 0.25
+
 low_visibility_cell_traversal_penalty = 100.
 angular_reorientation_penalty = 5.
-float_precision=0.0000000001
-robot_width = 0.5
-obstacle_exclude_distance = 0.4
 
 region_cache_location='cached_regions/'
 
+
+# Dependent Constants
+
 two_pi = 2*pi
 region_length = region_data_length*resolution
-obstacle_expansion = ceil((low_visibility_lower_bound+robot_width)/resolution)
-dr1 = sqrt(obstacle_spread*log(max_prob/min_prob))
-dr2 = sqrt(obstacle_spread*log(2*max_prob/(max_prob+min_prob)))
-min_prob_log = log(min_prob/(1-min_prob))
-max_prob_log = log(max_prob/(1-max_prob))
-free_prob_limit = (max_prob+min_prob-prob_tolerance)/2
-free_prob_log_limit = log(free_prob_limit/(1-free_prob_limit))
-occupied_prob_limit = (max_prob+min_prob+prob_tolerance)/2
-occupied_prob_log_limit = log(occupied_prob_limit/(1-occupied_prob_limit))
 half_resolution = resolution/2.
 half_robot_width = robot_width/2.
+
 critical_radius = ceil((robot_width/sqrt(2)+low_visibility_lower_bound)/resolution)
-hyper_critical_radius = ceil(sqrt(2)*(visibility_displacement+robot_width/sqrt(2)+high_visibility_lower_bound)/resolution)
+hyper_critical_radius = ceil(sqrt(2)*(robot_width/sqrt(2)+high_visibility_lower_bound)/resolution)
+
+gaussian_peak_probability = 1-barrier_probability
+gaussian_base_probability = barrier_probability
+
+gaussian_rising_interval = sqrt(gaussian_spread*log(gaussian_peak_probability/gaussian_base_probability))
+gaussian_falling_interval = sqrt(gaussian_spread*log(2*gaussian_peak_probability))
+
+peak_occupancy = log(gaussian_peak_probability/(1-gaussian_peak_probability))
+base_occupancy = log(gaussian_base_probability/(1-gaussian_base_probability))
+
+occupancy_lower_threshold = log((0.5+occupancy_probablity_tolerance/2)/(0.5-occupancy_probablity_tolerance/2))
+unoccupancy_upper_threshold = log((0.5-occupancy_probablity_tolerance/2)/(0.5+occupancy_probablity_tolerance/2))
+
+
+# State Variables
 
 average_fps = 0
 num_calls = 0
+
+
+# Code
 
 def EuclideanDistance(source, target):
     dx = source[0]-target[0]
@@ -431,86 +464,153 @@ class Controller:
     def TransformRobotCoordinatesToPosition(self,radial_distance,angle):
         return self.position[0]+radial_distance*sin(self.position[2]+angle),self.position[1]-radial_distance*cos(self.position[2]+angle)
 
-    def FillObstacleVicinities(self,obstacle_data,vicinity_data,min_cell,max_cell,critical=False):
+    def FillObstacleVicinities(self,obstacle_data,vicinity_data,min_cell,max_cell):
         
-        if critical:
-            radius = critical_radius
-        else:
-            radius = hyper_critical_radius
-        
+        # Dependent Parameters
+
         k1,l1 = min_cell
         k2,l2 = max_cell
         M,N = obstacle_data.shape
         n = l2-l1+1
-        rc = [0]*(n+2*radius)
-        cc = [0]*(n+4*radius)
-        kmin = max(-radius,k1-3*radius)
-        lmin = max(-radius,l1-3*radius)
-        lmax = min(N-radius,l2+radius+1)
-        kmax = min(M,k2+radius+1)
-        lmax2 = min(N,l2+radius+1)
-        kmin2 = max(0,k1-radius)
 
-        # Microoptimization
-        _1 = n+4*radius
-        _2 = l2-radius
-        _3 = -l1+3*radius
-        _4 = -l1+1+5*radius
-        _5 = -_3
-        _6 = l1-radius
-        _7 = -_6
-        _8 = 2*radius+1
+        # Micro-optimization
 
-        for k in range(kmin,kmax):
-            for l in range(_1):
-                cc[l] = 0
-            if k+radius < M:
-                for l in range(lmin,_2):
-                    if obstacle_data[k+radius,l+radius] > occupied_prob_log_limit:
-                        cc[l+_3] += 1
-                        cc[l+_4] -= 1
-                for l in range(_2,lmax):
-                    if obstacle_data[k+radius,l+radius] > occupied_prob_log_limit:
-                        cc[l+_3] += 1
-            s = 0
-            for l in range(_5,_6):
-                s += cc[l+_3]
-            for l in range(_6,lmax2):
-                s += cc[l+_3]
-                if s:
-                    rc[l+_7] = _8
-                if rc[l+_7]:
-                    rc[l+_7] -= 1
-                    if k >= kmin2 and l >= 0:
-                        if critical:
-                            if obstacle_data[k,l] > occupied_prob_log_limit:
-                                vicinity_data[k,l] = obstacle_identifier
+        c1 = k1-2*hyper_critical_radius
+        c2 = k2+2*hyper_critical_radius+1
+        c3 = max(0,l1-2*hyper_critical_radius)
+        c4 = min(N,l2+2*hyper_critical_radius+1)
+        c5 = -hyper_critical_radius
+        c6 = -l1+4*hyper_critical_radius+1
+        c7 = k1-2*critical_radius
+        c8 = k2+2*critical_radius
+        c9 = l1-2*critical_radius
+        c10 = l2+2*critical_radius
+        c11 = -critical_radius
+        c12 = -l1+4*critical_radius+1
+        c13 = 0
+        c14 = -l1+3*hyper_critical_radius
+        c15 = max(0,l1-hyper_critical_radius)
+        c16 = min(N,l2+hyper_critical_radius+1)
+        c17 = 2*hyper_critical_radius+1
+        c18 = 0
+        c19 = -l1+3*critical_radius
+        c20 = max(0,l1-critical_radius)
+        c21 = l2+critical_radius+1
+        c22 = 2*critical_radius+1
+        c23 = n+4*hyper_critical_radius
+        c24 = 0
+        c25 = 0
+        c27 = 0
+        c28 = n+4*critical_radius
+        c29 = 0
+        c30 = 0
+        c31 = -l1+2*hyper_critical_radius
+        c32 = -l1+2*critical_radius
+        c33 = critical_radius
+        c34 = hyper_critical_radius
+        c35 = M+hyper_critical_radius
+        c36 = M+critical_radius
+        c37 = max(-l1+3*hyper_critical_radius,2*hyper_critical_radius)
+        c38 = obstacle_identifier
+        c39 = no_visibility_identifier
+        c40 = high_visibility_identifier
+        c41 = low_visibility_identifier
+        c42 = occupancy_lower_threshold
+        c43 = max(-l1+3*critical_radius,2*critical_radius)
+        c44 = -max(0,l1-hyper_critical_radius)
+        c45 = -max(0,l1-critical_radius)
+        c46 = 0
+        c47 = 0
+
+        # Caches
+
+        t1 = [0]*(n+2*hyper_critical_radius)
+        t2 = [0]*(n+2*critical_radius)
+        t3 = [0]*(n+6*hyper_critical_radius+1)
+        t4 = [0]*(n+6*critical_radius+1)
+
+        # Data
+
+        x1 = obstacle_data
+        x2 = vicinity_data
+
+        # Logic
+
+        for k in range(c1,c2):
+            c24 = k >= c7 and k <= c8
+            c25 = k >= k1
+            c26 = k >= 0 and k < M
+            c29 = c25 and k >= c34 and k < c35
+            c30 = c25 and k >= c33 and k < c36
+            for l in range(c23):
+                t3[l] = 0
+            if c24:
+                for l in range(c28):
+                    t4[l] = 0
+            if c26:
+                c46 = x1[k]
+                for l in range(c3,c4):
+                    if c46[l] > c42:
+                        t3[l+c31] += 1
+                        t3[l+c6] -= 1
+                        if c24 and l >= c9 and l <= c10:
+                            t4[l+c32] += 1
+                            t4[l+c12] -= 1
+            c13 = 0
+            c46 = x2[k+c5]
+            for l in range(c37):
+                c13 += t3[l]
+            for l in range(c15,c16):
+                c13 += t3[l+c14]
+                if c13:
+                    t1[l+c44] = c17
+                if t1[l+c44]:
+                    t1[l+c44] -= 1
+                    if c29:
+                        c27 = c46[l]
+                        if c27 != c38 and c27 != c39:
+                            c46[l] = c41
+                elif c29:
+                    c46[l] = c40
+            if c24:
+                c18 = 0
+                c46 = x1[k+c11]
+                c47 = x2[k+c11]
+                for l in range(c43):
+                    c18 += t4[l]
+                for l in range(c20,c21):
+                    c18 += t4[l+c19]
+                    if c18:
+                        t2[l+c45] = c22
+                    if t2[l+c45]:
+                        t2[l+c45] -= 1
+                        if c30:
+                            if c46[l] > c42:
+                                c47[l] = c38
                             else:
-                                vicinity_data[k,l] = no_visibility_identifier
-                        else: vicinity_data[k,l] = low_visibility_identifier
-                elif not critical:
-                    if k >= kmin2 and l >= 0:
-                        vicinity_data[k,l] = high_visibility_identifier
+                                c47[l] = c39
 
     def FillObstacles(self,sensor_message,obstacle_data,region_id):
         
         sensor_data = sensor_message.ranges
         dt = sensor_message.angle_increment
         dr = resolution
-
         t=0
         for z in sensor_data:
-            r=0
-            rmax = min(sensor_range,z+dr2)
-            while r <= rmax:
-                position = self.TransformRobotCoordinatesToPosition(r,t)
-                if region_id == self.world.TransformPositionToRegion(position):
-                    local_position = self.world.TransformPositionToLocalCoordinates(position)
-                    if r < z-dr1:
-                        obstacle_data[local_position] = max(min_prob_log,obstacle_data[local_position]+min_prob_log)
+            r_gaussian_begin = z-gaussian_rising_interval
+            r_end = min(sensor_range,z+gaussian_falling_interval)
+            r = 0
+            while r <= r_end:
+                pose = self.TransformRobotCoordinatesToPosition(r,t)
+                if region_id == self.world.TransformPositionToRegion(pose):
+                    cell = self.world.TransformPositionToLocalCoordinates(pose)
+                    occupancy = obstacle_data[cell]
+                    if r < r_gaussian_begin:
+                        obstacle_data[cell] = base_occupancy if occupancy<=0 else base_occupancy+occupancy
                     else:
-                        p = max_prob*exp(-(r-z)*(r-z)/obstacle_spread)
-                        obstacle_data[local_position] = max(min_prob_log,min(max_prob_log,obstacle_data[local_position]+log(p/(1-p))))
+                        prob = gaussian_peak_probability*exp(-(r-z)*(r-z)/gaussian_spread)
+                        delta = log((prob+float_precision)/(1-prob+float_precision))
+                        obstacle_data[cell] = min(peak_occupancy,max(base_occupancy,occupancy+delta))
                 r += dr
             t += dt
 
@@ -518,12 +618,12 @@ class Controller:
 
         if not self.position: return
 
-        _b = time()
-
         state = self.sensor_controller_state
 
         if state == lidar_sensor_patch_state:
             
+            _b = time()
+
             min_pose = (self.position[0]-sensor_range,self.position[1]-sensor_range)
             max_pose = (self.position[0]+sensor_range,self.position[1]+sensor_range)
             i1,j1 = self.world.TransformPositionToRegion(min_pose)
@@ -535,27 +635,23 @@ class Controller:
                     region_id = (i,j)
                     region_data = self.world.GetRegion(region_id)
                     obstacle_data,vicinity_data = region_data
-
                     self.FillObstacles(msg,obstacle_data,region_id)
-                    
                     region_bounds = self.world.RegionBounds(region_id)
                     begin_pose = max(min_pose[0],region_bounds[0]+float_precision),max(min_pose[1],region_bounds[1]+float_precision)
                     end_pose = min(max_pose[0],region_bounds[2]-float_precision),min(max_pose[1],region_bounds[3]-float_precision)
                     min_cell = self.world.TransformPositionToLocalCoordinates(begin_pose)
                     max_cell = self.world.TransformPositionToLocalCoordinates(end_pose)
-
                     self.FillObstacleVicinities(obstacle_data,vicinity_data,min_cell,max_cell)
-                    self.FillObstacleVicinities(obstacle_data,vicinity_data,min_cell,max_cell,True)
                     self.world.SetRegion(region_id,region_data)
             
             state = 0
-        
+            
+            _e = time()
+            stdout.write(f'\rfps:{1/(_e-_b)}')
+
         else: state += 1
 
         self.sensor_controller_state = state
-
-        _e = time()
-        # print('*fps:',1/(_e-_b))
     
     def ChaseTarget(self):
         
@@ -670,17 +766,13 @@ class Controller:
 
         # stdout.write(f'v:{linear:.2f},w:{angular:.2f},s:{state},d:{distance:.2f},t:{angle:.2f}\n')
 
-    def VerifyVisibility(self,low_visibility=False):
+    def VerifyVisibility(self,visibility_radius):
         
-        if low_visibility:
-            robot_visibility = low_visibility_lower_bound
-        else:
-            robot_visibility = high_visibility_lower_bound
-        
-        xmin = self.position[0]-robot_width/sqrt(2)-robot_visibility-visibility_displacement
-        ymin = self.position[1]-robot_width/sqrt(2)-robot_visibility-visibility_displacement
-        xmax = self.position[0]+robot_width/sqrt(2)+robot_visibility+visibility_displacement
-        ymax = self.position[1]+robot_width/sqrt(2)+robot_visibility+visibility_displacement
+        xmin = self.position[0]-robot_width/sqrt(2)-visibility_radius
+        ymin = self.position[1]-robot_width/sqrt(2)-visibility_radius
+        xmax = self.position[0]+robot_width/sqrt(2)+visibility_radius
+        ymax = self.position[1]+robot_width/sqrt(2)+visibility_radius
+
         i1,j1 = self.world.TransformPositionToRegion((xmin,ymin))
         i2,j2 = self.world.TransformPositionToRegion((xmax,ymax))
 
@@ -695,11 +787,7 @@ class Controller:
                 
                 for u in range(umin,umax+1):
                     for v in range(vmin,vmax+1):
-                        if region_data[u,v] > occupied_prob_log_limit:
-                            xdata = self.world.GetRegion(region_id)[1]
-                            for p in range(umin,umax+1):
-                                for q in range(vmin,vmax+1):
-                                    xdata[p,q] = 11
+                        if region_data[u,v] > occupancy_lower_threshold:
                             return False
         
         return True
@@ -733,16 +821,13 @@ class Controller:
             else: state = self.plan_controller_buffer_next_state
         
         elif state == 3:
-            low_visibility = self.VerifyVisibility(True)
-            if low_visibility: plan = self.world.PlanPath(position,goal)
-            if not low_visibility or not plan or len(plan) < 2:
-
-                if not low_visibility:
-
+            visibility = self.VerifyVisibility(low_visibility_lower_bound)
+            if visibility: plan = self.world.PlanPath(position,goal)
+            if not visibility or not plan or len(plan) < 2:
+                if not visibility:
                     self.visualizer_controller_state = visualization_state
                     self.VisualizeCurrentRegion()
                     print('Entered no visibility region')
-                
                 if EuclideanDistance(position,goal) < upper_linear_tolerance:
                     print('Goal Reached')
                 else:
@@ -764,11 +849,9 @@ class Controller:
                 state = 0
         
         elif state == 5:
-            high_visibility = self.VerifyVisibility()
-            if not high_visibility:
-
+            visibility = self.VerifyVisibility(high_visibility_lower_bound)
+            if not visibility:
                 print('Entered low visibility region')
-
                 self.target = None
                 self.velocity_controller_state = 0
                 self.plan_controller_buffer_state = 0
@@ -781,13 +864,11 @@ class Controller:
                 print('Goal Reached')
                 state = 0
             else:
-                low_visibility = self.VerifyVisibility(True)
-                if not low_visibility:
-
+                visibility = self.VerifyVisibility(low_visibility_lower_bound)
+                if not visibility:
                     print('Entered no visibility region')
                     self.visualizer_controller_state = visualization_state
                     self.VisualizeCurrentRegion()
-
                     print('Cannot find a path to the goal')
                     state = 0
                 else:
@@ -795,9 +876,10 @@ class Controller:
                     if not plan or len(plan) < 2:
                         print('Cannot find a path to the goal')
                         state = 0
-                    self.plan = CoalescePlan(ReducePlan(position,plan))
-                    self.slow_chase = True
-                    state = 7
+                    else:
+                        self.plan = CoalescePlan(ReducePlan(position,plan))
+                        self.slow_chase = True
+                        state = 7
 
         elif state == 7:
             if self.plan:
@@ -812,15 +894,13 @@ class Controller:
                 state = 0
         
         elif state == 8:
-            high_visibility = self.VerifyVisibility()
-            if not high_visibility:
-                low_visibility = self.VerifyVisibility(True)
-                if not low_visibility:
-
+            visibility = self.VerifyVisibility(high_visibility_lower_bound)
+            if not visibility:
+                visibility = self.VerifyVisibility(low_visibility_lower_bound)
+                if not visibility:
                     print('Entered no visibility region')
                     self.visualizer_controller_state = visualization_state
                     self.VisualizeCurrentRegion()
-                    
                     self.target = None
                     self.velocity_controller_state = 0
                     self.plan_controller_buffer_state = 0
@@ -840,6 +920,10 @@ class Controller:
             self.slow_chase = False
             state = 0
         
+        if state == 0:
+            self.visualizer_controller_state = visualization_state
+            self.VisualizeCurrentRegion()
+
         self.plan_controller_state = state
         
         # print('plan:',state)
@@ -884,6 +968,43 @@ class Controller:
         
         self.destruction_controller_state = state
 
+    def TryDislodgeRobot(self):
+        
+        center = self.position
+
+        i1,j1 = self.world.TransformPositionToRegion((center[0]-stuck_radius,center[1]-stuck_radius))
+        i2,j2 = self.world.TransformPositionToRegion((center[0]+stuck_radius,center[1]+stuck_radius))
+        for i in range(i1,i2+1):
+            for j in range(j1,j2+1):
+                region_id = (i,j)
+                obstacles,_ = self.world.GetRegion(region_id)
+                bounds = self.world.RegionBounds(region_id)
+                ibounds = (max(bounds[0]+float_precision,center[0]-stuck_radius),max(bounds[1]+float_precision,center[1]-stuck_radius),min(bounds[2]-float_precision,center[0]+stuck_radius),min(bounds[3]+float_precision,center[1]+stuck_radius))
+                k1,l1 = self.world.TransformPositionToLocalCoordinates((ibounds[0],ibounds[1]))
+                k2,l2 = self.world.TransformPositionToLocalCoordinates((ibounds[2],ibounds[3]))
+                for k in range(k1,k2+1):
+                    row = obstacles[k]
+                    for l in range(l1,l2+1):
+                        if row[l] > occupancy_lower_threshold:
+                            return None
+        
+        i1,j1 = self.world.TransformPositionToRegion((center[0]-unlodge_radius,center[1]-unlodge_radius))
+        i2,j2 = self.world.TransformPositionToRegion((center[0]+unlodge_radius,center[1]+unlodge_radius))
+        for i in range(i1,i2+1):
+            for j in range(j1,j2+1):
+                region_id = (i,j)
+                obstacles,_ = self.world.GetRegion(region_id)
+                bounds = self.world.RegionBounds(region_id)
+                ibounds = (max(bounds[0]+float_precision,center[0]-unlodge_radius),max(bounds[1]+float_precision,center[1]-unlodge_radius),min(bounds[2]-float_precision,center[0]+unlodge_radius),min(bounds[3]+float_precision,center[1]+unlodge_radius))
+                k1,l1 = self.world.TransformPositionToLocalCoordinates((ibounds[0],ibounds[1]))
+                k2,l2 = self.world.TransformPositionToLocalCoordinates((ibounds[2],ibounds[3]))
+                for k in range(k1,k2+1):
+                    row = obstacles[k]
+                    for l in range(l1,l2+1):
+                        if row[l] > occupancy_lower_threshold:
+                            return None
+
+
     def RunController(self):
         
         if self.destruction_controller_state == destroyed_state:
@@ -892,6 +1013,9 @@ class Controller:
         global num_calls,average_fps
 
         _1 = time()
+
+        # if num_calls == 0:
+        #     self.__begin_time = time()
 
         rclpy.spin_once(self.node,timeout_sec=0.01)
         
@@ -910,16 +1034,15 @@ class Controller:
         
         _2 = time()
 
-        # self.ExecutePlan()
-        # _3 = time()
         # self.VisualizeCurrentRegion()
         # _4 = time()
 
-        num_calls += 1
-        average_fps += _2-_1
+        # num_calls += 1
+        # average_fps += _2-_1
+        # print(f'Actual av. fps:{num_calls/(time()-self.__begin_time+float_precision)}')
         # print(f'\rAverage fps:{(num_calls/average_fps)},fps:{1/(_2-_1)}')
         # print('FPS:')
-        # print('spin_once:',1/(_2-_1))
+        # print('fps:',1/(_2-_1))
         # print('execute_plan:',1/(_3-_2))
         # print('visualize:',1/(_4-_3))
         # print('overall:',1/(_5-_1))
@@ -944,9 +1067,9 @@ class Controller:
 
             for i in range(image_map.shape[0]):
                 for j in range(image_map.shape[1]):
-                    if region_data[i,j] < free_prob_log_limit:
+                    if region_data[i,j] < unoccupancy_upper_threshold:
                         image_map[i,j] = [255,255,255]
-                    elif region_data[i,j] > occupied_prob_log_limit:
+                    elif region_data[i,j] > occupancy_lower_threshold:
                         image_map[i,j] = [0,0,0]
             
             if self.plan:
