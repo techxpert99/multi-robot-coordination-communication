@@ -456,7 +456,7 @@ class Controller:
         self.cache_flush_controller_state = 0
         self.destruction_controller_state = 0
 
-        self.prev_vel = 0.
+        # self.prev_vel = 0.
     
     def EstimatePosition(self, msg: Odometry):
         self.position = UnmarshalPosition(msg)
@@ -464,7 +464,7 @@ class Controller:
     def TransformRobotCoordinatesToPosition(self,radial_distance,angle):
         return self.position[0]+radial_distance*sin(self.position[2]+angle),self.position[1]-radial_distance*cos(self.position[2]+angle)
 
-    def FillObstacleVicinities(self,obstacle_data,vicinity_data,min_cell,max_cell):
+    def FillObstacleVicinities(self,sensor_message,obstacle_data,vicinity_data,region_id,min_cell,max_cell):
         
         # Dependent Parameters
 
@@ -521,6 +521,31 @@ class Controller:
         c45 = -max(0,l1-critical_radius)
         c46 = 0
         c47 = 0
+        c48 = self.position[0]
+        c49 = self.position[1]
+        c50 = -self.position[2]+5*pi/2
+        c51 = 180/pi
+        c52 = 2*pi
+        c53 = resolution
+        c54 = region_length
+        c55 = region_id[0]
+        c56 = region_id[1]
+        c57 = 0
+        c58 = 0
+        c59 = 0
+        c60 = 0
+        c61 = 0
+        c62 = 0
+        c63 = 0
+        c64 = base_occupancy
+        c65 = 0
+        c66 = gaussian_peak_probability
+        c67 = gaussian_spread
+        c68 = 0
+        c69 = float_precision
+        c70 = peak_occupancy
+        c71 = 0
+        c72 = 0
 
         # Caches
 
@@ -528,65 +553,114 @@ class Controller:
         t2 = [0]*(n+2*critical_radius)
         t3 = [0]*(n+6*hyper_critical_radius+1)
         t4 = [0]*(n+6*critical_radius+1)
+        t5 = [[z-gaussian_rising_interval,min(sensor_range,z+gaussian_falling_interval)] for z in sensor_message.ranges]
 
         # Data
 
         x1 = obstacle_data
         x2 = vicinity_data
+        x3 = sensor_message.ranges
 
         # Logic
 
         for k in range(c1,c2):
+            
             c24 = k >= c7 and k <= c8
             c25 = k >= k1
             c26 = k >= 0 and k < M
             c29 = c25 and k >= c34 and k < c35
             c30 = c25 and k >= c33 and k < c36
+            c72 = k >= k1 and k <= k2
+
             for l in range(c23):
                 t3[l] = 0
+            
             if c24:
                 for l in range(c28):
                     t4[l] = 0
+            
             if c26:
                 c46 = x1[k]
+                c58 = (k+0.5)*c53+c54*c56-c49
+                
                 for l in range(c3,c4):
-                    if c46[l] > c42:
+
+                    c65 = c46[l]
+
+                    if c72 and l >= l1 and l <= l2:
+                        c57 = (l+0.5)*c53+c54*c55-c48
+                        c59 = sqrt(c57*c57+c58*c58)
+                        c60 = round(c51*((atan2(c58,c57)+c50)%c52))
+                        
+                        if c60 >= 0 and c60 <= 180:
+                            c61 = t5[c60]
+                            c62 = x3[c60]
+                        
+                            if c59 < c61[0]:
+                                c65 = c64 if c65<=0 else c64+c65
+                        
+                            elif c59 <= c61[1]:
+                                c63 = c59-c62
+                                c68 = c66*exp(-c63*c63/c67)
+                                c71 = log((c68+c69)/(1-c68+c69))
+                                c65 = min(c70,max(c64,c65+c71))
+
+                            c46[l] = c65
+
+                    if c65 > c42:
                         t3[l+c31] += 1
                         t3[l+c6] -= 1
+                        
                         if c24 and l >= c9 and l <= c10:
                             t4[l+c32] += 1
                             t4[l+c12] -= 1
+            
             c13 = 0
             c46 = x2[k+c5]
+            
             for l in range(c37):
                 c13 += t3[l]
+            
             for l in range(c15,c16):
                 c13 += t3[l+c14]
+            
                 if c13:
                     t1[l+c44] = c17
+            
                 if t1[l+c44]:
                     t1[l+c44] -= 1
+            
                     if c29:
                         c27 = c46[l]
+            
                         if c27 != c38 and c27 != c39:
                             c46[l] = c41
+            
                 elif c29:
                     c46[l] = c40
+            
             if c24:
                 c18 = 0
                 c46 = x1[k+c11]
                 c47 = x2[k+c11]
+            
                 for l in range(c43):
                     c18 += t4[l]
+            
                 for l in range(c20,c21):
                     c18 += t4[l+c19]
+            
                     if c18:
                         t2[l+c45] = c22
+            
                     if t2[l+c45]:
                         t2[l+c45] -= 1
+            
                         if c30:
+            
                             if c46[l] > c42:
                                 c47[l] = c38
+                         
                             else:
                                 c47[l] = c39
 
@@ -635,19 +709,19 @@ class Controller:
                     region_id = (i,j)
                     region_data = self.world.GetRegion(region_id)
                     obstacle_data,vicinity_data = region_data
-                    self.FillObstacles(msg,obstacle_data,region_id)
+                    # self.FillObstacles(msg,obstacle_data,region_id)
                     region_bounds = self.world.RegionBounds(region_id)
                     begin_pose = max(min_pose[0],region_bounds[0]+float_precision),max(min_pose[1],region_bounds[1]+float_precision)
                     end_pose = min(max_pose[0],region_bounds[2]-float_precision),min(max_pose[1],region_bounds[3]-float_precision)
                     min_cell = self.world.TransformPositionToLocalCoordinates(begin_pose)
                     max_cell = self.world.TransformPositionToLocalCoordinates(end_pose)
-                    self.FillObstacleVicinities(obstacle_data,vicinity_data,min_cell,max_cell)
+                    self.FillObstacleVicinities(msg,obstacle_data,vicinity_data,region_id,min_cell,max_cell)
                     self.world.SetRegion(region_id,region_data)
             
             state = 0
             
             _e = time()
-            stdout.write(f'\rfps:{1/(_e-_b)}')
+            # stdout.write(f'\rfps:{1/(_e-_b)}')
 
         else: state += 1
 
@@ -1025,9 +1099,9 @@ class Controller:
 
         self.CheckForDestruction()
         
-        if abs(self.prev_vel-self.velocity.linear.x) > 2*maximum_linear_speed/linear_smoothing:
-            print('anomaly:',self.prev_vel,self.velocity.linear.x)
-        self.prev_vel = self.velocity.linear.x
+        # if abs(self.prev_vel-self.velocity.linear.x) > 2*maximum_linear_speed/linear_smoothing:
+        #     print('anomaly:',self.prev_vel,self.velocity.linear.x)
+        # self.prev_vel = self.velocity.linear.x
 
         if self.destruction_controller_state != destroyed_state:
             self.velocity_publisher.publish(self.velocity)
@@ -1115,6 +1189,11 @@ class Controller:
                 end = self.world.TransformPositionToLocalCoordinates(self.plan[-1])
                 image_map = cv2.circle(image_map,(begin[1],begin[0]),plan_point_radius,[0,255,0],cv2.FILLED)
                 cv2.circle(image_map,(end[1],end[0]),plan_point_radius,[0,0,255],cv2.FILLED)
+            
+            pose = self.world.TransformPositionToLocalCoordinates(self.position)
+            cv2.circle(image_map,(pose[1],pose[0]),plan_point_radius,[128,225,175],cv2.FILLED)
+            pose2 = self.world.TransformPositionToLocalCoordinates((self.position[0]+4*cos(self.position[2]),self.position[1]+4*sin(self.position[2])))
+            cv2.line(image_map,(pose[1],pose[0]),(pose2[1],pose2[0]),[200,255,100],1)
             
             image_map = np.rot90(image_map,1)
             image_map = np.fliplr(image_map)
