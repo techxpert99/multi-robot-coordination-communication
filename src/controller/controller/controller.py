@@ -1,6 +1,7 @@
 from logging import critical
 from math import asin, acos, atan2, ceil, cos, exp, floor, log, sin, sqrt, pi
 from queue import PriorityQueue
+from random import random
 from sys import stdout
 from time import time
 
@@ -42,7 +43,7 @@ low_visibility_identifier = 2
 high_visibility_identifier = 3
 
 cache_flush_state = 1200000
-lidar_sensor_patch_state = 2
+lidar_sensor_patch_state = 1
 visualization_state = 100
 destroyed_state = 4
 num_buffer_transitions_to_stop = 60
@@ -58,14 +59,16 @@ low_visibility_lower_bound = 0.2
 high_visibility_lower_bound = 1.0
 
 stuck_radius = 0.05
-unlodge_radius = 1.0
+dislodge_radius = 0.4
+dislodger_consideration_radius = 1.0
+dislodger_movement = 1.0
 
 barrier_probability = 0.2
 occupancy_probablity_tolerance = 0.2
-gaussian_spread = 1.
+gaussian_spread = 0.1
 
-lower_linear_tolerance=0.4
-upper_linear_tolerance=0.6
+lower_linear_tolerance=0.1
+upper_linear_tolerance=0.15
 lower_angular_tolerance=3*pi/180
 upper_angular_tolerance=6*pi/180
 lower_reorientation_tolerance=6*pi/180
@@ -521,17 +524,13 @@ class Controller:
         c45 = -max(0,l1-critical_radius)
         c46 = 0
         c47 = 0
-        c48 = self.position[0]
-        c49 = self.position[1]
         c50 = -self.position[2]+5*pi/2
         c51 = 180/pi
         c52 = 2*pi
         c53 = resolution
-        c54 = region_length
-        c55 = region_id[0]
-        c56 = region_id[1]
+        c55 = region_length*region_id[0]-self.position[0]+(l1-0.5)*resolution
         c57 = 0
-        c58 = 0
+        c58 = region_length*region_id[1]-self.position[1]+(k1-0.5)*resolution
         c59 = 0
         c60 = 0
         c61 = 0
@@ -546,6 +545,7 @@ class Controller:
         c70 = peak_occupancy
         c71 = 0
         c72 = 0
+        c73 = sensor_range
 
         # Caches
 
@@ -564,129 +564,107 @@ class Controller:
         # Logic
 
         for k in range(c1,c2):
-            
             c24 = k >= c7 and k <= c8
             c25 = k >= k1
             c26 = k >= 0 and k < M
             c29 = c25 and k >= c34 and k < c35
             c30 = c25 and k >= c33 and k < c36
             c72 = k >= k1 and k <= k2
-
+            if c72:
+                c58 += c53
             for l in range(c23):
                 t3[l] = 0
-            
             if c24:
                 for l in range(c28):
                     t4[l] = 0
-            
             if c26:
                 c46 = x1[k]
-                c58 = (k+0.5)*c53+c54*c56-c49
-                
+                c57 = c55
                 for l in range(c3,c4):
-
                     c65 = c46[l]
-
                     if c72 and l >= l1 and l <= l2:
-                        c57 = (l+0.5)*c53+c54*c55-c48
+                        c57 += c53
                         c59 = sqrt(c57*c57+c58*c58)
-                        c60 = round(c51*((atan2(c58,c57)+c50)%c52))
-                        
-                        if c60 >= 0 and c60 <= 180:
-                            c61 = t5[c60]
-                            c62 = x3[c60]
-                        
-                            if c59 < c61[0]:
-                                c65 = c64 if c65<=0 else c64+c65
-                        
-                            elif c59 <= c61[1]:
-                                c63 = c59-c62
-                                c68 = c66*exp(-c63*c63/c67)
-                                c71 = log((c68+c69)/(1-c68+c69))
-                                c65 = min(c70,max(c64,c65+c71))
-
-                            c46[l] = c65
-
+                        if c59 <= c73:
+                            c60 = round(c51*((atan2(c58,c57)+c50)%c52))
+                            if c60 >= 0 and c60 <= 180:
+                                c61 = t5[c60]
+                                c62 = x3[c60]
+                            
+                                if c59 < c61[0]:
+                                    c65 = c64 if c65<=0 else c64+c65
+                            
+                                elif c59 <= c61[1]:
+                                    c63 = c59-c62
+                                    c68 = c66*exp(-c63*c63/c67)
+                                    c71 = log((c68+c69)/(1-c68+c69))
+                                    c65 = min(c70,max(c64,c65+c71))
+                                c46[l] = c65
                     if c65 > c42:
                         t3[l+c31] += 1
                         t3[l+c6] -= 1
-                        
                         if c24 and l >= c9 and l <= c10:
                             t4[l+c32] += 1
                             t4[l+c12] -= 1
-            
             c13 = 0
-            c46 = x2[k+c5]
-            
+            if c29:
+                c46 = x2[k+c5]
             for l in range(c37):
                 c13 += t3[l]
-            
             for l in range(c15,c16):
                 c13 += t3[l+c14]
-            
                 if c13:
                     t1[l+c44] = c17
-            
                 if t1[l+c44]:
                     t1[l+c44] -= 1
-            
                     if c29:
                         c27 = c46[l]
-            
                         if c27 != c38 and c27 != c39:
                             c46[l] = c41
-            
                 elif c29:
                     c46[l] = c40
-            
             if c24:
                 c18 = 0
-                c46 = x1[k+c11]
-                c47 = x2[k+c11]
-            
+                if c30:
+                    c46 = x1[k+c11]
+                    c47 = x2[k+c11]
                 for l in range(c43):
                     c18 += t4[l]
-            
                 for l in range(c20,c21):
                     c18 += t4[l+c19]
-            
                     if c18:
                         t2[l+c45] = c22
-            
                     if t2[l+c45]:
                         t2[l+c45] -= 1
-            
                         if c30:
-            
                             if c46[l] > c42:
                                 c47[l] = c38
-                         
                             else:
                                 c47[l] = c39
 
-    def FillObstacles(self,sensor_message,obstacle_data,region_id):
+    # def FillObstacles(self,sensor_message,obstacle_data,region_id):
         
-        sensor_data = sensor_message.ranges
-        dt = sensor_message.angle_increment
-        dr = resolution
-        t=0
-        for z in sensor_data:
-            r_gaussian_begin = z-gaussian_rising_interval
-            r_end = min(sensor_range,z+gaussian_falling_interval)
-            r = 0
-            while r <= r_end:
-                pose = self.TransformRobotCoordinatesToPosition(r,t)
-                if region_id == self.world.TransformPositionToRegion(pose):
-                    cell = self.world.TransformPositionToLocalCoordinates(pose)
-                    occupancy = obstacle_data[cell]
-                    if r < r_gaussian_begin:
-                        obstacle_data[cell] = base_occupancy if occupancy<=0 else base_occupancy+occupancy
-                    else:
-                        prob = gaussian_peak_probability*exp(-(r-z)*(r-z)/gaussian_spread)
-                        delta = log((prob+float_precision)/(1-prob+float_precision))
-                        obstacle_data[cell] = min(peak_occupancy,max(base_occupancy,occupancy+delta))
-                r += dr
-            t += dt
+    #     sensor_data = sensor_message.ranges
+    #     dt = sensor_message.angle_increment
+    #     dr = resolution
+    #     t=0
+    #     for z in sensor_data:
+    #         r_gaussian_begin = z-gaussian_rising_interval
+    #         r_end = min(sensor_range,z+gaussian_falling_interval)
+    #         r = 0
+    #         while r <= r_end:
+    #             pose = self.TransformRobotCoordinatesToPosition(r,t)
+    #             if region_id == self.world.TransformPositionToRegion(pose):
+    #                 cell = self.world.TransformPositionToLocalCoordinates(pose)
+    #                 occupancy = obstacle_data[cell]
+    #                 if r < r_gaussian_begin:
+    #                     obstacle_data[cell] = base_occupancy if occupancy<=0 else base_occupancy+occupancy
+    #                 else:
+    #                     prob = gaussian_peak_probability*exp(-(r-z)*(r-z)/gaussian_spread)
+    #                     delta = log((prob+float_precision)/(1-prob+float_precision))
+    #                     obstacle_data[cell] = min(peak_occupancy,max(base_occupancy,occupancy+delta))
+    #             r += dr
+    #         t += dt
 
     def PatchMapWithSensorData(self, msg: LaserScan):
 
@@ -709,7 +687,6 @@ class Controller:
                     region_id = (i,j)
                     region_data = self.world.GetRegion(region_id)
                     obstacle_data,vicinity_data = region_data
-                    # self.FillObstacles(msg,obstacle_data,region_id)
                     region_bounds = self.world.RegionBounds(region_id)
                     begin_pose = max(min_pose[0],region_bounds[0]+float_precision),max(min_pose[1],region_bounds[1]+float_precision)
                     end_pose = min(max_pose[0],region_bounds[2]-float_precision),min(max_pose[1],region_bounds[3]-float_precision)
@@ -898,15 +875,14 @@ class Controller:
             visibility = self.VerifyVisibility(low_visibility_lower_bound)
             if visibility: plan = self.world.PlanPath(position,goal)
             if not visibility or not plan or len(plan) < 2:
-                if not visibility:
-                    self.visualizer_controller_state = visualization_state
-                    self.VisualizeCurrentRegion()
-                    print('Entered no visibility region')
                 if EuclideanDistance(position,goal) < upper_linear_tolerance:
                     print('Goal Reached')
+                    state = 0
+                elif not visibility:
+                    state = 10
                 else:
-                    print('Cannot find a path to the goal')
-                state = 0
+                    print('Cannot reach the goal. No plan.')
+                    state = 0          
             else:
                 self.plan = CoalescePlan(ReducePlan(position,plan))
                 state = 4
@@ -940,11 +916,7 @@ class Controller:
             else:
                 visibility = self.VerifyVisibility(low_visibility_lower_bound)
                 if not visibility:
-                    print('Entered no visibility region')
-                    self.visualizer_controller_state = visualization_state
-                    self.VisualizeCurrentRegion()
-                    print('Cannot find a path to the goal')
-                    state = 0
+                    state = 10
                 else:
                     plan = self.world.PlanPath(position,goal)
                     if not plan or len(plan) < 2:
@@ -972,13 +944,10 @@ class Controller:
             if not visibility:
                 visibility = self.VerifyVisibility(low_visibility_lower_bound)
                 if not visibility:
-                    print('Entered no visibility region')
-                    self.visualizer_controller_state = visualization_state
-                    self.VisualizeCurrentRegion()
                     self.target = None
                     self.velocity_controller_state = 0
                     self.plan_controller_buffer_state = 0
-                    self.plan_controller_buffer_next_state = 9
+                    self.plan_controller_buffer_next_state = 10
                     state = 2
                 elif self.velocity_controller_state == 0: state = 7
             else:
@@ -986,14 +955,37 @@ class Controller:
                 self.slow_chase = False
                 state = 5
         
-        elif state == 9:
-            if EuclideanDistance(position,goal) < upper_linear_tolerance:
-                print('Goal Reached')
+        elif state == 10:
+            if self.velocity_controller_state == 0:
+                self.slow_chase = True
+                print('Entered no visibiltiy region. Trying to dislodge the robot.')
+                if self.IsStuck(stuck_radius):
+                    if EuclideanDistance(position,goal) < upper_linear_tolerance:
+                        print('Goal reached.')
+                    else:
+                        print('Cannot find a path to the goal. The robot is stuck.')
+                    self.slow_chase = False
+                    state = 0
+                elif self.VerifyVisibility(low_visibility_lower_bound):
+                    print('Successfully dislodged the robot.')
+                    self.slow_chase = False
+                    state = 3
+                else:
+                    target = self.DecideDislodgeTarget()
+                    print('Target Set:',target)
+                    self.target = (target[0],target[1],None)
+                    self.velocity_controller_state = 1
             else:
-                print('Cannot find a path to the goal')
-            self.slow_chase = False
-            state = 0
-        
+                visibility = self.VerifyVisibility(low_visibility_lower_bound)
+                stuck = self.IsStuck(stuck_radius)
+                target = self.DecideDislodgeTarget()
+                if visibility or stuck or self.target is None or EuclideanDistance(target,self.target) >= resolution:
+                    self.target = None
+                    self.velocity_controller_state = 0
+                    self.plan_controller_buffer_next_state = 10
+                    self.plan_controller_buffer_state = 0
+                    state = 2
+
         if state == 0:
             self.visualizer_controller_state = visualization_state
             self.VisualizeCurrentRegion()
@@ -1042,43 +1034,52 @@ class Controller:
         
         self.destruction_controller_state = state
 
-    def TryDislodgeRobot(self):
-        
+    def IsStuck(self,radius):
         center = self.position
-
-        i1,j1 = self.world.TransformPositionToRegion((center[0]-stuck_radius,center[1]-stuck_radius))
-        i2,j2 = self.world.TransformPositionToRegion((center[0]+stuck_radius,center[1]+stuck_radius))
+        i1,j1 = self.world.TransformPositionToRegion((center[0]-(radius+half_robot_width),center[1]-(radius+half_robot_width)))
+        i2,j2 = self.world.TransformPositionToRegion((center[0]+(radius+half_robot_width),center[1]+(radius+half_robot_width)))
         for i in range(i1,i2+1):
             for j in range(j1,j2+1):
                 region_id = (i,j)
                 obstacles,_ = self.world.GetRegion(region_id)
                 bounds = self.world.RegionBounds(region_id)
-                ibounds = (max(bounds[0]+float_precision,center[0]-stuck_radius),max(bounds[1]+float_precision,center[1]-stuck_radius),min(bounds[2]-float_precision,center[0]+stuck_radius),min(bounds[3]+float_precision,center[1]+stuck_radius))
+                ibounds = (max(bounds[0]+float_precision,center[0]-radius),max(bounds[1]+float_precision,center[1]-radius),min(bounds[2]-float_precision,center[0]+radius),min(bounds[3]+float_precision,center[1]+radius))
                 k1,l1 = self.world.TransformPositionToLocalCoordinates((ibounds[0],ibounds[1]))
                 k2,l2 = self.world.TransformPositionToLocalCoordinates((ibounds[2],ibounds[3]))
                 for k in range(k1,k2+1):
                     row = obstacles[k]
                     for l in range(l1,l2+1):
                         if row[l] > occupancy_lower_threshold:
-                            return None
+                            return True
+        return False
+
+    def DecideDislodgeTarget(self):
+        center = self.position
+        i1,j1 = self.world.TransformPositionToRegion((center[0]-(dislodger_consideration_radius+half_robot_width),center[1]-(dislodger_consideration_radius+half_robot_width)))
+        i2,j2 = self.world.TransformPositionToRegion((center[0]+(dislodger_consideration_radius+half_robot_width),center[1]+(dislodger_consideration_radius+half_robot_width)))
+        ts = float_precision*(-pi+random()*two_pi)
+        tw = float_precision
+        for i in range(i1,i2+1):
+            for j in range(j1,j2+1):
+                region_id = (i,j)
+                obstacles,_ = self.world.GetRegion(region_id)
+                bounds = self.world.RegionBounds(region_id)
+                ibounds = (max(bounds[0]+float_precision,center[0]-dislodger_consideration_radius),max(bounds[1]+float_precision,center[1]-dislodger_consideration_radius),min(bounds[2]-float_precision,center[0]+dislodger_consideration_radius),min(bounds[3]+float_precision,center[1]+dislodger_consideration_radius))
+                k1,l1 = self.world.TransformPositionToLocalCoordinates((ibounds[0],ibounds[1]))
+                k2,l2 = self.world.TransformPositionToLocalCoordinates((ibounds[2],ibounds[3]))
+                for k in range(k1,k2+1):
+                    row = obstacles[k]
+                    for l in range(l1,l2+1):
+                        if row[l] > occupancy_lower_threshold:
+                            pose = self.world.TransformLocalCoordinatesToPosition(region_id,(k,l))
+                            angle = atan2(center[1]-pose[1],center[0]-pose[0])
+                            weight = 1/(sqrt(pose[0]*pose[0]+pose[1]*pose[1])+float_precision)
+                            ts += weight*angle
+                            tw += weight
+        t = ts/tw
+        target = (center[0]+dislodger_movement*cos(t),center[1]+dislodger_movement*sin(t))
+        return target
         
-        i1,j1 = self.world.TransformPositionToRegion((center[0]-unlodge_radius,center[1]-unlodge_radius))
-        i2,j2 = self.world.TransformPositionToRegion((center[0]+unlodge_radius,center[1]+unlodge_radius))
-        for i in range(i1,i2+1):
-            for j in range(j1,j2+1):
-                region_id = (i,j)
-                obstacles,_ = self.world.GetRegion(region_id)
-                bounds = self.world.RegionBounds(region_id)
-                ibounds = (max(bounds[0]+float_precision,center[0]-unlodge_radius),max(bounds[1]+float_precision,center[1]-unlodge_radius),min(bounds[2]-float_precision,center[0]+unlodge_radius),min(bounds[3]+float_precision,center[1]+unlodge_radius))
-                k1,l1 = self.world.TransformPositionToLocalCoordinates((ibounds[0],ibounds[1]))
-                k2,l2 = self.world.TransformPositionToLocalCoordinates((ibounds[2],ibounds[3]))
-                for k in range(k1,k2+1):
-                    row = obstacles[k]
-                    for l in range(l1,l2+1):
-                        if row[l] > occupancy_lower_threshold:
-                            return None
-
-
     def RunController(self):
         
         if self.destruction_controller_state == destroyed_state:
@@ -1109,14 +1110,15 @@ class Controller:
         _2 = time()
 
         # self.VisualizeCurrentRegion()
-        # _4 = time()
+
+        _4 = time()
 
         # num_calls += 1
         # average_fps += _2-_1
         # print(f'Actual av. fps:{num_calls/(time()-self.__begin_time+float_precision)}')
         # print(f'\rAverage fps:{(num_calls/average_fps)},fps:{1/(_2-_1)}')
         # print('FPS:')
-        # print('fps:',1/(_2-_1))
+        # stdout.write(f'\rfps:{1/(_4-_1)}')
         # print('execute_plan:',1/(_3-_2))
         # print('visualize:',1/(_4-_3))
         # print('overall:',1/(_5-_1))
@@ -1198,7 +1200,7 @@ class Controller:
             image_map = np.rot90(image_map,1)
             image_map = np.fliplr(image_map)
             cv2.imshow('Planning Map',image_map)
-            cv2.waitKey(100)
+            cv2.waitKey(10)
         
             state = 0
 
