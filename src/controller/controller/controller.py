@@ -1318,7 +1318,7 @@ class Controller:
 
         rclpy.spin_once(self.node,timeout_sec=0.01)
         
-        self.PlanForGoal()
+        self.PlanForGoalNew()
         
         self.ChaseTarget()
 
@@ -1328,7 +1328,7 @@ class Controller:
         #     print('anomaly:',self.prev_vel,self.velocity.linear.x)
         # self.prev_vel = self.velocity.linear.x
 
-        if False and self.destruction_controller_state != destroyed_state:
+        if self.destruction_controller_state != destroyed_state:
             self.velocity_publisher.publish(self.velocity)
         
         _2 = time()
@@ -1342,7 +1342,7 @@ class Controller:
         # print(f'Actual av. fps:{num_calls/(time()-self.__begin_time+float_precision)}')
         # print(f'\rAverage fps:{(num_calls/average_fps)},fps:{1/(_2-_1)}')
         # print('FPS:')
-        stdout.write(f'\rfps:{1/(_4-_1)}')
+        # stdout.write(f'\rfps:{1/(_4-_1)}')
         # print('execute_plan:',1/(_3-_2))
         # print('visualize:',1/(_4-_3))
         # print('overall:',1/(_5-_1))
