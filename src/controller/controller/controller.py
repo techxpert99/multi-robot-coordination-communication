@@ -59,8 +59,8 @@ low_visibility_lower_bound = 0.2
 high_visibility_lower_bound = 1.0
 visibility_displacement = 0.2
 stuck_radius = 0.05
+consideration_radius = 1.0
 
-# dislodger_consideration_radius = 8.0
 # dislodge_radius = 0.4
 # dislodger_movement = 1.0
 
@@ -85,9 +85,13 @@ maximum_slow_angular_speed = 0.25
 low_visibility_cell_traversal_penalty = 100.
 no_visibility_cell_traversal_penalty = 1000.
 angular_reorientation_penalty = 5.
+consideration_penalty = 1000.
 
 plan_inflation_tolerance = 1.5
 plan_verification_radius = 8.0
+
+periodic_rotation_state = 1000
+periodic_rotation_angle = pi/6
 
 region_cache_location='cached_regions/'
 
@@ -104,6 +108,7 @@ high_visibility_verification_lower_bound = robot_width/sqrt(2)+high_visibility_l
 stuck_upper_bound = robot_width/sqrt(2)+stuck_radius
 critical_radius = ceil(low_visibility_verification_lower_bound/resolution)
 hyper_critical_radius = ceil(high_visibility_verification_lower_bound/resolution)
+consideration_limit = ceil(consideration_radius/resolution)
 
 gaussian_peak_probability = 1-barrier_probability
 gaussian_base_probability = barrier_probability
@@ -170,23 +175,6 @@ def Direction(from_point,to_point):
     dy = to_point[1]-from_point[1]
     l = sqrt(dx*dx+dy*dy)
     return (dx/l,dy/l)
-
-# Coalesces the plan
-def CoalescePlan(plan):
-    if len(plan) < 3: return plan
-    coalesced_plan = [plan[0]]
-    old_direction = (plan[1][0]-plan[0][0]+float_precision,plan[1][1]-plan[0][1]+float_precision)
-    mod = EuclideanDistance((0,0),old_direction)
-    old_direction = old_direction[0]/mod,old_direction[1]/mod
-    for i in range(2,len(plan)):
-        new_direction = (plan[i][0]-plan[i-1][0]+float_precision,plan[i][1]-plan[i-1][1]+float_precision)
-        mod = EuclideanDistance((0,0),new_direction)
-        new_direction = new_direction[0]/mod,new_direction[1]/mod
-        if abs(old_direction[0]-new_direction[0]) >= float_precision or abs(old_direction[1]-new_direction[1]) >= float_precision:
-            coalesced_plan.append(plan[i-1])
-            old_direction = new_direction
-    coalesced_plan.append(plan[-1])
-    return coalesced_plan
 
 def AccelerateAngular(cangular,slow=False):
     angular = maximum_slow_angular_speed if slow else maximum_angular_speed
@@ -443,29 +431,37 @@ class World:
 
     # Coalesces the plan
     def CoalescePlan(self,plan):
-        cache = [[],[plan[0],plan[1]]]
-        coalesced_plan = []
-        d = Direction(self.TransformLocalCoordinatesToPosition(plan[0][0],plan[0][1]),self.TransformLocalCoordinatesToPosition(plan[1][0],plan[1][1]))
-        p = self.TransformLocalCoordinatesToPosition(plan[1][0],plan[1][1])
+        if not plan: return [],[[]]
+        p = self.TransformLocalCoordinatesToPosition(plan[0][0],plan[0][1])
+        n = self.TransformLocalCoordinatesToPosition(plan[1][0],plan[1][1])
+        coalesced_plan = [p]
+        cache = [[],[plan[0]],[plan[0]]]
+        if len(plan) == 1: return coalesced_plan,cache 
+        cache[-1].append(plan[1])
+        d = Direction(p,n)
+        p = n
         for i in range(2,len(plan)):
             n = self.TransformLocalCoordinatesToPosition(plan[i][0],plan[i][1])
             d2 = Direction(p,n)
             if EuclideanDistance(d,d2) >= float_precision:
+                cache.append([plan[i-1]])
                 coalesced_plan.append(p)
-                cache.append([])
             cache[-1].append(plan[i])
             p = n
             d = d2
+        coalesced_plan.append(p)
         return coalesced_plan,cache      
 
     # Plans a path from a source position (x1,y1) to a target position (x2,y2)
-    def PlanPath(self,source_position,target_position):
+    def PlanPath(self,source_position,target_position,critical=False):
 
         # Try local planning first. If it fails, switch to global planning
-        local_plan = self.LocalPlanPath(source_position,target_position)
+        local_plan = self.LocalPlanPath(source_position,target_position,critical)
         if local_plan is not None:
-            return self.CoalescePlan(local_plan)
-        return None
+            plan,cache = self.CoalescePlan(local_plan)
+            plan.append((target_position[0],target_position[1]))
+            cache.append([cache[-1][-1]])
+            return plan,cache
 
         # Try global planning
 
@@ -474,7 +470,7 @@ class World:
         d = inf
         j0 = None
         for j in range(len(entry)):
-            r_id,cell,_ = entry
+            r_id,cell,_ = entry[j]
             dist = EuclideanDistance(position,self.TransformLocalCoordinatesToPosition(r_id,cell))
             if dist < d:
                 j0 = j
@@ -489,74 +485,74 @@ class World:
                     r_id = r_id2
                     r_d = self.GetRegion(r_id)[1]
                 new_value = r_d[cell]
-                if new_value != old_value and new_value in [obstacle_identifier,no_visibility_identifier,low_visibility_identifier]:
+                if new_value != old_value and new_value in [obstacle_identifier,no_visibility_identifier]:
                     return False
         return True
     
-    def ReplanPath(self,plan):
-        if not plan or len(plan) < 2: return
-        segmented_plan = []
-        plan_segment = [plan[0]]
-        source = plan[0]
-        for target in plan:
-            x = source[0]
-            y = source[1]
-            invalid = False
-            if target[0] == source[0] and target[1] == source[1]:
-                if self.GetAtPosition(source) > occupancy_lower_threshold:
-                    invalid = True
-            elif target[0] == source[0]:
-                while y <= target[1]:
-                    pose = (source[0],y)
-                    if self.GetAtPosition(pose) > occupancy_lower_threshold:
-                        invalid = True
-                        break
-                    y += resolution
-            else:
-                m = (target[1]-source[1])/(target[0]-source[0])
-                while x <= target[0]:
-                    pose = (x,y)
-                    if self.GetAtPosition(pose) > occupancy_lower_threshold:
-                        invalid = True
-                        break
-                    x += resolution
-                    y += m*resolution
-            if invalid:
-                if len(plan_segment) > 1:
-                    segmented_plan.append(plan_segment)
-                plan_segment = [target]
-            else:
-                plan_segment.append(target)
-            source = target
-        if len(plan_segment) > 1:
-            segmented_plan.append(plan_segment)
-        if len(segmented_plan) != 0:
-            new_plan = []
-            path = self.PlanPath(plan[0],segmented_plan[0][0])
-            if path is None:
-                return self.PlanPath(plan[0],plan[-1])
-            new_plan.extend(path)
-            new_plan.extend(segmented_plan[0])
-            for i in range(1,len(segmented_plan)):
-                path = self.PlanPath(segmented_plan[i-1][-1],segmented_plan[i][0])
-                if path is None:
-                    return self.PlanPath(plan[0],plan[-1])
-                new_plan.extend(path)
-                new_plan.extend(segmented_plan[i])
-            path = self.PlanPath(segmented_plan[-1][-1],plan[-1])
-            if path is None:
-                return self.PlanPath(plan[0],plan[-1])
-            new_plan.extend(path)
-            l0 = PathLength(plan)
-            l1 = PathLength(new_plan)
-            e = (l1+float_precision)/(l0+float_precision)
-            if e < plan_inflation_tolerance:
-                print('inflation:',e)
-                return new_plan
-            return self.PlanPath(plan[0],plan[-1])
-        return self.PlanPath(plan[0],plan[-1])
+    # def ReplanPath(self,plan):
+    #     if not plan or len(plan) < 2: return
+    #     segmented_plan = []
+    #     plan_segment = [plan[0]]
+    #     source = plan[0]
+    #     for target in plan:
+    #         x = source[0]
+    #         y = source[1]
+    #         invalid = False
+    #         if target[0] == source[0] and target[1] == source[1]:
+    #             if self.GetAtPosition(source) > occupancy_lower_threshold:
+    #                 invalid = True
+    #         elif target[0] == source[0]:
+    #             while y <= target[1]:
+    #                 pose = (source[0],y)
+    #                 if self.GetAtPosition(pose) > occupancy_lower_threshold:
+    #                     invalid = True
+    #                     break
+    #                 y += resolution
+    #         else:
+    #             m = (target[1]-source[1])/(target[0]-source[0])
+    #             while x <= target[0]:
+    #                 pose = (x,y)
+    #                 if self.GetAtPosition(pose) > occupancy_lower_threshold:
+    #                     invalid = True
+    #                     break
+    #                 x += resolution
+    #                 y += m*resolution
+    #         if invalid:
+    #             if len(plan_segment) > 1:
+    #                 segmented_plan.append(plan_segment)
+    #             plan_segment = [target]
+    #         else:
+    #             plan_segment.append(target)
+    #         source = target
+    #     if len(plan_segment) > 1:
+    #         segmented_plan.append(plan_segment)
+    #     if len(segmented_plan) != 0:
+    #         new_plan = []
+    #         path = self.PlanPath(plan[0],segmented_plan[0][0])
+    #         if path is None:
+    #             return self.PlanPath(plan[0],plan[-1])
+    #         new_plan.extend(path)
+    #         new_plan.extend(segmented_plan[0])
+    #         for i in range(1,len(segmented_plan)):
+    #             path = self.PlanPath(segmented_plan[i-1][-1],segmented_plan[i][0])
+    #             if path is None:
+    #                 return self.PlanPath(plan[0],plan[-1])
+    #             new_plan.extend(path)
+    #             new_plan.extend(segmented_plan[i])
+    #         path = self.PlanPath(segmented_plan[-1][-1],plan[-1])
+    #         if path is None:
+    #             return self.PlanPath(plan[0],plan[-1])
+    #         new_plan.extend(path)
+    #         l0 = PathLength(plan)
+    #         l1 = PathLength(new_plan)
+    #         e = (l1+float_precision)/(l0+float_precision)
+    #         if e < plan_inflation_tolerance:
+    #             print('inflation:',e)
+    #             return new_plan
+    #         return self.PlanPath(plan[0],plan[-1])
+    #     return self.PlanPath(plan[0],plan[-1])
 
-    def LocalPlanPath(self,source_position,target_position):
+    def LocalPlanPath(self,source_position,target_position,critical=False):
         
         source_region_id = self.TransformPositionToRegion(source_position)
         target_region_id = self.TransformPositionToRegion(target_position)
@@ -568,7 +564,7 @@ class World:
         target_cell = self.TransformPositionToLocalCoordinates(target_position)
         region_data = self.GetRegion(source_region_id)[1]
 
-        if region_data[target_cell[0]][target_cell[1]] == obstacle_identifier: return None
+        if region_data[target_cell] == obstacle_identifier: return None
 
         frontier = PriorityQueue()
         explored = set()
@@ -582,7 +578,6 @@ class World:
         num_rows,num_cols = region_data.shape
 
         while not frontier.empty():
-
             f,cell = frontier.get()
             if cell in explored: continue
             g = gcosts[cell]
@@ -601,12 +596,10 @@ class World:
             parent = parents[cell]
             if parent is not None: parent_distance = EuclideanDistance(cell,parent)
 
-            # for i2,j2 in [(i-1,j),(i+1,j),(i,j-1),(i,j+1),(i-1,j-1),(i+1,j+1),(i-1,j+1),(i+1,j-1)]:
             for i2 in range(i-1,i+2):
                 for j2 in range(j-1,j+2):
                     child_cell = (i2,j2)
                     if child_cell != cell and i2 >= 0 and j2 >= 0 and i2 < num_rows and j2 < num_cols and child_cell not in explored:
-                        # if EuclideanDistance(source_cell,child_cell)*resolution <= obstacle_exclude_distance or region_data[child_cell] != obstacle_identifier:
                         data = region_data[child_cell]
                         if data != obstacle_identifier:
                             gchild = g + EuclideanDistance(cell,child_cell)
@@ -614,6 +607,13 @@ class World:
                                 gchild += low_visibility_cell_traversal_penalty
                             elif data == no_visibility_identifier:
                                 gchild += no_visibility_cell_traversal_penalty
+                                if critical:
+                                    for i3 in range(i2-consideration_limit,i2+consideration_limit+1):
+                                        for j3 in range(j2-consideration_limit,j2+consideration_limit):
+                                            if i3 >= 0 and i3 < num_rows and j3 >= 0 and j3 < num_cols:
+                                                consideration_cell = (i3,j3)
+                                                if region_data[consideration_cell] == obstacle_identifier:
+                                                    gchild += consideration_penalty/(resolution*EuclideanDistance(child_cell,consideration_cell))
                             if parent is not None: 
                                 gchild += angular_reorientation_penalty*acos(((cell[0]-parent[0])*(child_cell[0]-cell[0])+(cell[1]-parent[1])*(child_cell[1]-cell[1]))/(EuclideanDistance(child_cell,cell)*parent_distance))
                             if child_cell not in gcosts or gcosts[child_cell] > gchild:
@@ -657,13 +657,6 @@ class Controller:
         self.visualizer_controller_state = 0
         self.cache_flush_controller_state = 0
         self.destruction_controller_state = 0
-
-        # 0: velocity controller
-        # 1: plan controller
-        # 2: sensor controller
-        # 3: visualizer controller
-        # 4: miscellaneous controller
-        # self.states = [[0,0,None,False],[0,0,0,None],[0,0],[0,0],[0,0]]
 
         # self.prev_vel = 0.
     
@@ -848,30 +841,6 @@ class Controller:
                             else:
                                 c47[l] = c39
 
-    # def FillObstacles(self,sensor_message,obstacle_data,region_id):
-        
-    #     sensor_data = sensor_message.ranges
-    #     dt = sensor_message.angle_increment
-    #     dr = resolution
-    #     t=0
-    #     for z in sensor_data:
-    #         r_gaussian_begin = z-gaussian_rising_interval
-    #         r_end = min(sensor_range,z+gaussian_falling_interval)
-    #         r = 0
-    #         while r <= r_end:
-    #             pose = self.TransformRobotCoordinatesToPosition(r,t)
-    #             if region_id == self.world.TransformPositionToRegion(pose):
-    #                 cell = self.world.TransformPositionToLocalCoordinates(pose)
-    #                 occupancy = obstacle_data[cell]
-    #                 if r < r_gaussian_begin:
-    #                     obstacle_data[cell] = base_occupancy if occupancy<=0 else base_occupancy+occupancy
-    #                 else:
-    #                     prob = gaussian_peak_probability*exp(-(r-z)*(r-z)/gaussian_spread)
-    #                     delta = log((prob+float_precision)/(1-prob+float_precision))
-    #                     obstacle_data[cell] = min(peak_occupancy,max(base_occupancy,occupancy+delta))
-    #             r += dr
-    #         t += dt
-
     def PatchMapWithSensorData(self, msg: LaserScan):
 
         if not self.position: return
@@ -999,7 +968,7 @@ class Controller:
         
         elif state == 10:
             reorient_angle = ReoirentationAngleToTarget(source,target)
-            if (cangular<0 and angle<=-lower_angular_tolerance) or (cangular>=0 and angle>=lower_angular_tolerance):
+            if (cangular<0 and reorient_angle<=-lower_angular_tolerance) or (cangular>=0 and reorient_angle>=lower_angular_tolerance):
                 angular = AccelerateAngular(cangular,slow)
             else: state = 11
         
@@ -1048,257 +1017,12 @@ class Controller:
                             return False
         
         return True
-    
-    # def IsStuck(self,radius):
-    #     center = self.position
-    #     i1,j1 = self.world.TransformPositionToRegion((center[0]-(radius+half_robot_width),center[1]-(radius+half_robot_width)))
-    #     i2,j2 = self.world.TransformPositionToRegion((center[0]+(radius+half_robot_width),center[1]+(radius+half_robot_width)))
-    #     for i in range(i1,i2+1):
-    #         for j in range(j1,j2+1):
-    #             region_id = (i,j)
-    #             obstacles,_ = self.world.GetRegion(region_id)
-    #             bounds = self.world.RegionBounds(region_id)
-    #             ibounds = (max(bounds[0]+float_precision,center[0]-radius),max(bounds[1]+float_precision,center[1]-radius),min(bounds[2]-float_precision,center[0]+radius),min(bounds[3]+float_precision,center[1]+radius))
-    #             k1,l1 = self.world.TransformPositionToLocalCoordinates((ibounds[0],ibounds[1]))
-    #             k2,l2 = self.world.TransformPositionToLocalCoordinates((ibounds[2],ibounds[3]))
-    #             for k in range(k1,k2+1):
-    #                 row = obstacles[k]
-    #                 for l in range(l1,l2+1):
-    #                     if row[l] > occupancy_lower_threshold:
-    #                         return True
-    #     return False
 
     def SetAtPosition(self,pose,value):
         rid = self.world.TransformPositionToRegion(pose)
         loc = self.world.TransformPositionToLocalCoordinates(pose)
         rd = self.world.GetRegion(rid)[1]
         rd[loc] = value
-    
-    def VerifyPlan(self,plan,radius):
-        if not plan: return True
-        position = self.position
-        bounds = position[0]-radius,position[1]-radius,position[0]+radius,position[1]+radius
-        prv = (position[0],position[1])
-        for nxt in plan:
-            intersection = SegmentRectangleIntersection([prv,nxt],bounds)
-            prv = nxt
-            if intersection is not None:
-                source,target = intersection
-                if target[0] == source[0] and target[1] == source[1]:
-                    if self.world.GetAtPosition(source) > occupancy_lower_threshold:
-                        return False
-                elif target[0] == source[0]:
-                    y_min = min(source[1],target[1])
-                    y_max = max(source[1],target[1])
-                    y = y_min
-                    while y <= y_max:
-                        pose = (source[0],y)
-                        self.SetAtPosition(pose,11)
-                        if self.world.GetAtPosition(pose) > occupancy_lower_threshold:
-                            self.visualizer_controller_state = visualization_state
-                            self.VisualizeCurrentRegion()
-                            return False
-                        y += resolution
-                else:
-                    m = (target[1]-source[1])/(target[0]-source[0])
-                    if source[0] < target[0]:
-                        x = source[0]
-                        y = source[1]
-                        x_max = target[0]
-                    else:
-                        x = target[0]
-                        y = target[1]
-                        x_max = source[0]      
-                    while x <= x_max:
-                        pose = (x,y)
-                        self.SetAtPosition(pose,11)
-                        if self.world.GetAtPosition(pose) > occupancy_lower_threshold:
-                            self.visualizer_controller_state = visualization_state
-                            self.VisualizeCurrentRegion()
-                            return False
-                        x += resolution
-                        y += m*resolution
-        return True
-
-    def DecideTarget(self):
-
-        pose = self.plan.pop(0)
-        self.target = pose[0],pose[1],None
-        self.velocity_controller_state = 1
-        
-        print('Target Set:',pose)
-
-    def PlanForGoal(self):
-
-        if not self.position or not self.goal: return
-
-        position = self.position
-        goal = self.goal
-        state = self.plan_controller_state
-
-        if state == 1:
-            self.target = None
-            self.velocity_controller_state = 0
-            self.plan_controller_buffer_state = 0
-            self.plan_controller_buffer_next_state = 3
-            state = 2
-        
-        elif state == 2:
-            if self.plan_controller_buffer_state < num_buffer_transitions_to_stop:
-                self.plan_controller_buffer_state += 1
-            else: state = self.plan_controller_buffer_next_state
-        
-        elif state == 3:
-            visibility = self.VerifyVisibility(low_visibility_lower_bound)
-            if visibility: plan = self.world.PlanPath(position,goal)
-            if not visibility or not plan or len(plan) < 2:
-                if EuclideanDistance(position,goal) < upper_linear_tolerance:
-                    print('Goal Reached')
-                    state = 0
-                elif not visibility:
-                    state = 10
-                else:
-                    print('Cannot reach the goal. No plan.')
-                    state = 0          
-            else:
-                plan.append((goal[0],goal[1]))
-                self.plan = CoalescePlan(ReducePlan(position,plan))
-                state = 4
-        
-        elif state == 4:
-            if self.plan:
-                self.DecideTarget()
-                state = 5
-            else:
-                if EuclideanDistance(position,goal) < upper_linear_tolerance:
-                    print('Goal Reached')
-                else:
-                    print('Cannot find a path to the goal')
-                state = 0
-        
-        elif state == 5:
-            visibility = self.VerifyVisibility(high_visibility_lower_bound)
-            if not visibility:
-                print('Entered low visibility region')
-                self.target = None
-                self.velocity_controller_state = 0
-                self.plan_controller_buffer_state = 0
-                self.plan_controller_buffer_next_state = 6
-                state = 2
-            elif self.velocity_controller_state == 0: state = 4
-            elif not self.VerifyPlan(self.plan,plan_verification_radius):
-                print('Plan is obstructed.')
-                self.target = None
-                self.velocity_controller_state = 0
-                self.plan_controller_buffer_state = 0
-                self.plan_controller_buffer_next_state = 3
-                state = 2
-        
-        elif state == 6:                
-            if EuclideanDistance(position,goal) < upper_linear_tolerance:
-                print('Goal Reached')
-                state = 0
-            else:
-                visibility = self.VerifyVisibility(low_visibility_lower_bound)
-                if not visibility:
-                    state = 10
-                else:
-                    plan = self.world.PlanPath(position,goal)
-                    plan.append((goal[0],goal[1]))
-                    # if not self.plan or len(self.plan) < 2:
-                    #     plan = self.world.PlanPath(position,goal)
-                    #     plan.append((goal[0],goal[1]))
-                    # else:
-                    #     print('Replanning Path')
-                    #     plan = [(position[0],position[1])]
-                    #     plan.extend(self.plan)
-                    #     plan.append((goal[0],goal[1]))
-                    #     plan = self.world.ReplanPath(plan)
-                    #     plan.append((goal[0],goal[1]))
-                    if not plan or len(plan) < 2:
-                        print('Cannot find a path to the goal')
-                        state = 0
-                    else:
-                        self.plan = CoalescePlan(ReducePlan(position,plan))
-                        # print('Replanned-Plan:',self.plan)
-                        self.slow_chase = True
-                        state = 7
-
-        elif state == 7:
-            if self.plan:
-                self.DecideTarget()
-                state = 8
-            else:
-                if EuclideanDistance(position,goal) < upper_linear_tolerance:
-                    print('Goal Reached')
-                else:
-                    print('Cannot find a path to the goal')
-                self.slow_chase = False
-                state = 0
-        
-        elif state == 8:
-            visibility = self.VerifyVisibility(high_visibility_lower_bound)
-            if not visibility:
-                visibility = self.VerifyVisibility(low_visibility_lower_bound)
-                if not visibility:
-                    self.target = None
-                    self.velocity_controller_state = 0
-                    self.plan_controller_buffer_state = 0
-                    self.plan_controller_buffer_next_state = 10
-                    state = 2
-                elif self.velocity_controller_state == 0: state = 7
-            else:
-                print('Re-entered high visibility region')
-                self.slow_chase = False
-                state = 5
-        
-        elif state == 10:
-            if self.velocity_controller_state == 0:
-                self.slow_chase = True
-                print('Entered no visibiltiy region. Trying to dislodge the robot.')
-                if self.IsStuck(stuck_radius):
-                    if EuclideanDistance(position,goal) < upper_linear_tolerance:
-                        print('Goal reached.')
-                    else:
-                        print('Cannot find a path to the goal. The robot is stuck.')
-                    self.slow_chase = False
-                    state = 0
-                elif self.VerifyVisibility(dislodge_radius):
-                    print('Successfully dislodged the robot.')
-                    self.slow_chase = False
-                    state = 3
-                else:
-                    target = self.DecideDislodgeTarget()
-                    print('Target Set:',target)
-                    self.target = (target[0],target[1],None)
-                    self.velocity_controller_state = 1
-            else:
-                visibility = self.VerifyVisibility(low_visibility_lower_bound)
-                stuck = self.IsStuck(stuck_radius)
-                target = self.DecideDislodgeTarget()
-                if visibility or stuck or self.target is None or EuclideanDistance(target,self.target) >= resolution:
-                    self.target = None
-                    self.velocity_controller_state = 0
-                    self.plan_controller_buffer_next_state = 10
-                    self.plan_controller_buffer_state = 0
-                    state = 2
-
-        if state == 0:
-            self.visualizer_controller_state = visualization_state
-            self.VisualizeCurrentRegion()
-
-        self.plan_controller_state = state
-        
-        # print('plan:',state)
-
-
-    def DecideTargetNew(self):
-        path,cache = self.plan
-        cache.pop(0)
-        pose = path.pop(0)
-        self.target = pose[0],pose[1],None
-        self.velocity_controller_state = 1        
-        print('Target Set:',pose)
 
     def PlanForGoalNew(self):
 
@@ -1323,35 +1047,44 @@ class Controller:
         
         elif state == 3:
             print('Planning.')
-            not_stuck = self.VerifyVisibility(stuck_upper_bound)
-            result = None
-            if not_stuck:
-                result = self.world.PlanPath(position,goal)
-            else:
-                print('The robot is stuck.')
-            if result:
-                self.plan = result
-                state = 4
-            else:
-                if EuclideanDistance(position,goal) < upper_linear_tolerance:
-                    print('Goal Reached')
-                else:
-                    print('Cannot reach the goal. No plan.')
+            if EuclideanDistance(position,goal) < upper_linear_tolerance:
+                print('Goal Reached')
                 state = 0 
+            else:
+                not_stuck = self.VerifyVisibility(stuck_upper_bound)
+                result = None
+                if not_stuck:
+                    result = self.world.PlanPath(position,goal)
+                else:
+                    print('The robot is stuck.')
+                if result:
+                    self.plan = result
+                    state = 4
+                else:
+                    print('Cannot find a path to the goal. Entering periodic rotation and replanning state.')
+                    self.plan_controller_periodic_rotator_state = 0
+                    state = 8
         
         elif state == 4:
             print('Deciding Target.')
             if self.plan and len(self.plan[0])>0:
-                self.DecideTargetNew()
+                path,cache = self.plan
+                cache.pop(0)
+                pose = path.pop(0)
+                self.target = pose[0],pose[1],None
+                self.velocity_controller_state = 1        
                 self.slow_chase = False
                 self.visibility = True
+                print('Target Set:',pose)
                 state = 5
             else:
                 if EuclideanDistance(position,goal) < upper_linear_tolerance:
                     print('Goal Reached')
+                    state = 0
                 else:
-                    print('Cannot find a path to the goal')
-                state = 0
+                    print('Cannot find a path to the goal. Entering periodic rotation and replanning state.')
+                    self.plan_controller_periodic_rotator_state = 0
+                    state = 8
         
         elif state == 5:
             if self.velocity_controller_state == 0: state = 4
@@ -1398,8 +1131,103 @@ class Controller:
             state = 5
 
         elif state == 7:
-            # Code for no visibility movement
-            pass
+            print('Critical Planning')
+            if EuclideanDistance(position,goal) < upper_linear_tolerance:
+                print('Goal Reached')
+                state = 0
+            else:
+                not_stuck = self.VerifyVisibility(stuck_upper_bound)
+                result = None
+                if not_stuck:
+                    result = self.world.PlanPath(position,goal,True)
+                else:
+                    print('The robot is stuck.')
+                if result:
+                    self.plan = result
+                    state = 9
+                else:
+                    print('Cannot find a path to the goal. Entering periodic rotation and replanning state.')
+                    self.plan_controller_periodic_rotator_state = 0
+                    state = 8
+
+        elif state == 8:
+            if self.plan_controller_periodic_rotator_state < periodic_rotation_state:
+                self.plan_controller_periodic_rotator_state += 1
+            elif self.plan_controller_periodic_rotator_state == periodic_rotation_state:
+                print('Periodic Rotation')
+                self.velocity_controller_state = 1
+                self.target = (position[0],position[1],position[2]+periodic_rotation_angle)
+                self.slow_chase = True
+                self.plan_controller_periodic_rotator_state += 1
+            else:
+                if self.velocity_controller_state == 0:
+                    print('Periodic Replanning')
+                    not_stuck = self.VerifyVisibility(stuck_upper_bound)
+                    if not_stuck:
+                        result = self.world.PlanPath(position,goal)
+                        if result and len(result[0]) > 0:
+                            print('Replanning successful. Exiting Periodic Rotation and Replanning State.')
+                            self.plan = result
+                            state = 4
+                        else:
+                            print('Replanning failed. Cannot find a path to the goal.')
+                            self.plan_controller_periodic_rotator_state = 0
+                    else:
+                        print('Replanning failed. The robot is stuck.')
+                        self.plan_controller_periodic_rotator_state = 0
+        
+        elif state == 9:
+            print('Deciding Target.')
+            if self.plan and len(self.plan[0])>0:
+                path,cache = self.plan
+                cache.pop(0)
+                pose = path.pop(0)
+                self.target = pose[0],pose[1],None
+                self.velocity_controller_state = 1        
+                self.slow_chase = True
+                print('Target Set:',pose)
+                state = 10
+            else:
+                if EuclideanDistance(position,goal) < upper_linear_tolerance:
+                    print('Goal Reached')
+                    state = 0
+                else:
+                    print('Cannot find a path to the goal. Entering periodic rotation and replanning state.')
+                    self.plan_controller_periodic_rotator_state = 0
+                    state = 8
+        
+        elif state == 10:
+            if self.velocity_controller_state == 0: state = 9
+            else:
+                if self.world.VerifyPlan(position,self.plan[1]):
+                    if self.VerifyVisibility(low_visibility_lower_bound+visibility_displacement):
+                        print('Exited no visibility region.')
+                        self.visibility = False
+                        state = 5
+                    elif not self.VerifyVisibility(stuck_upper_bound):
+                        self.velocity_controller_state = 0
+                        self.target = None
+                        self.plan_controller_buffer_state = 0
+                        self.plan_controller_buffer_next_state = 11            
+                else:
+                    print('Plan is obstructed. Replanning.')
+                    self.velocity_controller_state = 0
+                    self.target = None
+                    self.plan_controller_buffer_state = 0
+                    self.plan_controller_buffer_next_state = 7
+                    state = 2
+        
+        elif state == 11:
+            if EuclideanDistance(position,goal) < upper_linear_tolerance:
+                print('Goal Reached')
+                state = 0
+            elif not self.VerifyVisibility(stuck_upper_bound):
+                print('The robot is stuck.')
+                self.plan_controller_periodic_rotator_state = 0
+                state = 8
+            else:
+                print('Anomaly detected. Replanning')
+                state = 3
 
         if state == 0:
             self.visualizer_controller_state = visualization_state
@@ -1449,38 +1277,38 @@ class Controller:
         
         self.destruction_controller_state = state
 
-    def DecideDislodgeTarget(self):
-        center = self.position
-        i1,j1 = self.world.TransformPositionToRegion((center[0]-(dislodger_consideration_radius+half_robot_width),center[1]-(dislodger_consideration_radius+half_robot_width)))
-        i2,j2 = self.world.TransformPositionToRegion((center[0]+(dislodger_consideration_radius+half_robot_width),center[1]+(dislodger_consideration_radius+half_robot_width)))
-        ts = float_precision*(-pi+random()*two_pi)
-        tw = float_precision
-        for i in range(i1,i2+1):
-            for j in range(j1,j2+1):
-                region_id = (i,j)
-                obstacles,_ = self.world.GetRegion(region_id)
-                bounds = self.world.RegionBounds(region_id)
-                ibounds = (max(bounds[0]+float_precision,center[0]-dislodger_consideration_radius),max(bounds[1]+float_precision,center[1]-dislodger_consideration_radius),min(bounds[2]-float_precision,center[0]+dislodger_consideration_radius),min(bounds[3]+float_precision,center[1]+dislodger_consideration_radius))
-                k1,l1 = self.world.TransformPositionToLocalCoordinates((ibounds[0],ibounds[1]))
-                k2,l2 = self.world.TransformPositionToLocalCoordinates((ibounds[2],ibounds[3]))
-                for k in range(k1,k2+1):
-                    row = obstacles[k]
-                    for l in range(l1,l2+1):
-                        value = row[l]
-                        if value >= unoccupancy_upper_threshold:
-                            pose = self.world.TransformLocalCoordinatesToPosition(region_id,(k,l))
-                            distance = sqrt(pose[0]*pose[0]+pose[1]*pose[1])+float_precision
-                            if value > occupancy_lower_threshold:
-                                angle = atan2(center[1]-pose[1],center[0]-pose[0])
-                                weight = 1/distance
-                            else:
-                                angle = atan2(pose[1]-center[1],pose[0]-center[0])
-                                weight = 0.5/distance
-                            ts += weight*angle
-                            tw += weight
-        t = ts/tw
-        target = (center[0]+dislodger_movement*cos(t),center[1]+dislodger_movement*sin(t))
-        return target
+    # def DecideDislodgeTarget(self):
+    #     center = self.position
+    #     i1,j1 = self.world.TransformPositionToRegion((center[0]-(dislodger_consideration_radius+half_robot_width),center[1]-(dislodger_consideration_radius+half_robot_width)))
+    #     i2,j2 = self.world.TransformPositionToRegion((center[0]+(dislodger_consideration_radius+half_robot_width),center[1]+(dislodger_consideration_radius+half_robot_width)))
+    #     ts = float_precision*(-pi+random()*two_pi)
+    #     tw = float_precision
+    #     for i in range(i1,i2+1):
+    #         for j in range(j1,j2+1):
+    #             region_id = (i,j)
+    #             obstacles,_ = self.world.GetRegion(region_id)
+    #             bounds = self.world.RegionBounds(region_id)
+    #             ibounds = (max(bounds[0]+float_precision,center[0]-dislodger_consideration_radius),max(bounds[1]+float_precision,center[1]-dislodger_consideration_radius),min(bounds[2]-float_precision,center[0]+dislodger_consideration_radius),min(bounds[3]+float_precision,center[1]+dislodger_consideration_radius))
+    #             k1,l1 = self.world.TransformPositionToLocalCoordinates((ibounds[0],ibounds[1]))
+    #             k2,l2 = self.world.TransformPositionToLocalCoordinates((ibounds[2],ibounds[3]))
+    #             for k in range(k1,k2+1):
+    #                 row = obstacles[k]
+    #                 for l in range(l1,l2+1):
+    #                     value = row[l]
+    #                     if value >= unoccupancy_upper_threshold:
+    #                         pose = self.world.TransformLocalCoordinatesToPosition(region_id,(k,l))
+    #                         distance = sqrt(pose[0]*pose[0]+pose[1]*pose[1])+float_precision
+    #                         if value > occupancy_lower_threshold:
+    #                             angle = atan2(center[1]-pose[1],center[0]-pose[0])
+    #                             weight = 1/distance
+    #                         else:
+    #                             angle = atan2(pose[1]-center[1],pose[0]-center[0])
+    #                             weight = 0.5/distance
+    #                         ts += weight*angle
+    #                         tw += weight
+    #     t = ts/tw
+    #     target = (center[0]+dislodger_movement*cos(t),center[1]+dislodger_movement*sin(t))
+    #     return target
         
     def RunController(self):
         
@@ -1550,16 +1378,17 @@ class Controller:
                     elif region_data[i,j] > occupancy_lower_threshold:
                         image_map[i,j] = [0,0,0]
             
-            if self.plan:
+            if self.plan and len(self.plan[0]) > 0:
+                path = self.plan[0]
                 prev_local = None
-                for pose in self.plan:
+                for pose in path:
                     if self.world.TransformPositionToRegion(pose) == region_id:
                         i,j = self.world.TransformPositionToLocalCoordinates(pose)
                         if prev_local is not None:
                             image_map = cv2.line(image_map,prev_local,(j,i),(255,0,0),plan_line_thickness)
                         prev_local = (j,i)
-                begin = self.world.TransformPositionToLocalCoordinates(self.plan[0])
-                end = self.world.TransformPositionToLocalCoordinates(self.plan[-1])
+                begin = self.world.TransformPositionToLocalCoordinates(path[0])
+                end = self.world.TransformPositionToLocalCoordinates(path[-1])
                 image_map = cv2.circle(image_map,(begin[1],begin[0]),plan_point_radius,(0,255,255),cv2.FILLED)
                 cv2.circle(image_map,(end[1],end[0]),plan_point_radius,(0,255,0),cv2.FILLED)
             
@@ -1581,16 +1410,17 @@ class Controller:
                         image_map[i,j] = [255,255,255]
                     elif x == 11:
                         image_map[i,j] = [255,0,255]
-            if self.plan:
+            if self.plan and len(self.plan[0]) > 0:
+                path = self.plan[0]
                 prev_local = None
-                for pose in self.plan:
+                for pose in path:
                     if self.world.TransformPositionToRegion(pose) == region_id:
                         i,j = self.world.TransformPositionToLocalCoordinates(pose)
                         if prev_local is not None:
                             image_map = cv2.line(image_map,prev_local,(j,i),[255,0,0],plan_line_thickness)
                         prev_local = (j,i)
-                begin = self.world.TransformPositionToLocalCoordinates(self.plan[0])
-                end = self.world.TransformPositionToLocalCoordinates(self.plan[-1])
+                begin = self.world.TransformPositionToLocalCoordinates(path[0])
+                end = self.world.TransformPositionToLocalCoordinates(path[-1])
                 image_map = cv2.circle(image_map,(begin[1],begin[0]),plan_point_radius,[0,255,0],cv2.FILLED)
                 cv2.circle(image_map,(end[1],end[0]),plan_point_radius,[0,0,255],cv2.FILLED)
             
